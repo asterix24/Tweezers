@@ -11,12 +11,10 @@ SOURCES += main.cpp \
     tag_converter.cpp
 
 HEADERS += tweezers.h \
-    lib/exv_conf.h \
-    tag_converter.h
+           tag_converter.h
 
 FORMS += tweezers.ui
 
-LIBS += -Llib/src
+LIBS += -Llib/lib -lexiv2
 
-INCLUDEPATH += -Ilib/src \
-               -Ilib
+INCLUDEPATH += lib/include
