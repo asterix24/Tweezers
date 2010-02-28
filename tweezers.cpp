@@ -10,11 +10,11 @@ Tweezers::Tweezers(QWidget *parent) :
     ui(new Ui::Tweezers)
 {
 
-    select_dir =  QDir::home().absolutePath();
+    curr_path =  QDir::home().absolutePath();
     file_list.clear();
 
     ui->setupUi(this);
-    ui->selectDir->setText(select_dir);
+    ui->selectDir->setText(curr_path);
     ui->globSelect->setText("*.*");
     ui->expField->setText("<exiftime>");
 
@@ -39,25 +39,25 @@ void Tweezers::changeEvent(QEvent *e)
     }
 }
 
-void Tweezers::open()
+void Tweezers::openDir()
 {
-    select_dir = QFileDialog::getExistingDirectory(this, QString(tr("Open Directory")), select_dir, QFileDialog::ShowDirsOnly);
+    curr_path = QFileDialog::getExistingDirectory(this, QString(tr("Open Directory")), curr_path, QFileDialog::ShowDirsOnly);
 
-    if (! select_dir.isEmpty())
-        ui->selectDir->setText(select_dir);
+    if (! curr_path.isEmpty())
+        ui->selectDir->setText(curr_path);
 }
 
 void Tweezers::selectDirectory()
 {
-    select_dir = ui->selectDir->text();
+    curr_path = ui->selectDir->text();
 
-    if (! select_dir.isEmpty())
+    if (! curr_path.isEmpty())
         preview();
 }
 
 void Tweezers::preview()
 {
-    QDir dir(select_dir);
+    QDir dir(curr_path);
 
     glob_exp.clear();
     if (ui->globSelect->isModified())
@@ -85,15 +85,41 @@ void Tweezers::preview()
     for (int i = 0; i < file_list.length(); i++)
     {   
         QTableWidgetItem *newItem = new QTableWidgetItem(file_list[i]);
-        QTableWidgetItem *item_preview = new QTableWidgetItem(tag.fill_tags(select_dir, file_list[i], expr));
+        QTableWidgetItem *item_preview = new QTableWidgetItem(tag.fill_tags(curr_path, file_list[i], expr));
         ui->fileList->setItem(i, 0, newItem);
         ui->fileList->setItem(i, 1, item_preview);
     }
 }
 
+void Tweezers::renameAll()
+{
+    for (int i = 0; i < ui->fileList->rowCount(); i++)
+    {
+        QString old_name = curr_path + QDir::separator () + ui->fileList->item(i,0)->text();
+        QString new_name = curr_path + QDir::separator () + ui->fileList->item(i,1)->text();
+
+        QFile old_filename(old_name);
+        QFile new_filename(new_name);
+
+        if (backup.contains(new_name))
+            continue;
+
+        backup[old_name] = new_name;
+        old_filename.rename(new_name);
+    }
+
+}
+
+void Tweezers::renameSelection()
+{
+}
+
+void Tweezers::undoRename()
+{
+}
+
 void Tweezers::cleanTable()
 {
-
     ui->fileList->clear();
     ui->fileList->horizontalHeader()->setVisible(false);
     ui->fileList->setColumnCount(0);
@@ -102,8 +128,10 @@ void Tweezers::cleanTable()
 
 void Tweezers::createActions()
 {
-    connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(open()));
+    connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDir()));
     connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(preview()));
-    connect(ui->cleanAll, SIGNAL(clicked()), this, SLOT(cleanTable()));
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
+    connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(preview()));
+    connect(ui->doRename, SIGNAL(clicked()), this, SLOT(renameAll()));
+    connect(ui->undoRename, SIGNAL(clicked()), this, SLOT(undoRename()));
 }

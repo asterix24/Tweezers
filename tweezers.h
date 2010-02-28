@@ -4,6 +4,7 @@
 #include "tag_converter.h"
 
 #include <QMainWindow>
+#include <QFile>
 
 namespace Ui {
     class Tweezers;
@@ -19,16 +20,21 @@ protected:
     void changeEvent(QEvent *e);
 
 private slots:
-    void open();
+    void openDir();
     void preview();
     void cleanTable();
     void selectDirectory();
+    void renameAll();
+    void renameSelection();
+    void undoRename();
 
 private:
     TagConverter tag;
-    QString select_dir;
+    QString curr_path;
     QStringList glob_exp;
     QStringList file_list;
+
+    QHash<QString, QString> backup;
 
     void createActions();
     Ui::Tweezers *ui;
