@@ -26,9 +26,7 @@ QString getExif(QString path, QString item, QString exif_tag)
         Exiv2::ExifData &exifData = image->exifData();
         if (exifData.empty())
         {
-            //TODO: Error message?
             std::string error(name.toStdString());
-            error += ": No Exif data found in the file";
             return "";
         }
 
@@ -50,7 +48,6 @@ QString getExifdate(QString path, QString item)
 
     QStringList data_list = data_str.split(" ");
 
-    std::cerr << data_list.length() << " " << data_list[0].toStdString() << data_list[1].toStdString() << std::endl;
     return data_list[0];
 }
 
@@ -65,8 +62,17 @@ QString getExiftime(QString path, QString item)
     return time_list[1];
 }
 
+QString getExt(QString path, QString item)
+{
+    QString name = path + QDir::separator () + item;
+    QFileInfo fi(name);
+
+    return fi.suffix();
+}
+
 QString TagConverter::fill_tags(QString path, QString item, QString exp)
 {
+    // TODO: move into config module.
     QRegExp rx("(<\\w+>)");
 
     int pos = 0;
@@ -74,18 +80,22 @@ QString TagConverter::fill_tags(QString path, QString item, QString exp)
     {
         pos = rx.indexIn(exp, pos);
 
+        // No more tags we exit.
         if (pos < 0)
             break;
 
-        std::cerr << rx.cap(1).toStdString() << " " << pos << std::endl;
+         // We find a valid tag we replace it with its value.
         if (callback_table.contains(rx.cap(1)))
         {
             tag_callback f = callback_table[rx.cap(1)];
+
             QString value = f(path, item);
             pos += value.length();
-
             exp = exp.replace(rx.cap(1), value);
         }
+        else
+            // No valid tag, skip it.
+            pos += rx.matchedLength();
     }
 
     return exp;
@@ -95,6 +105,7 @@ TagConverter::TagConverter()
 {
     callback_table["<exiftime>"] = getExiftime;
     callback_table["<exifdate>"] = getExifdate;
+    callback_table["<ext>"] = getExt;
 }
 
 TagConverter::~TagConverter()
