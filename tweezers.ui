@@ -30,13 +30,6 @@
       <item row="3" column="2">
        <widget class="QLineEdit" name="expField"/>
       </item>
-      <item row="3" column="0">
-       <widget class="QPushButton" name="cleanAll">
-        <property name="text">
-         <string>Pulisci</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="1">
        <widget class="QPushButton" name="applyExp">
         <property name="text">
@@ -48,13 +41,6 @@
        <widget class="QPushButton" name="undoRename">
         <property name="text">
          <string>Undo</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QPushButton" name="doRename">
-        <property name="text">
-         <string>Rinomina</string>
         </property>
        </widget>
       </item>
@@ -90,9 +76,13 @@
         <attribute name="verticalHeaderStretchLastSection">
          <bool>true</bool>
         </attribute>
-        <attribute name="verticalHeaderStretchLastSection">
-         <bool>true</bool>
-        </attribute>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="doRename">
+        <property name="text">
+         <string>Rinomina</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -105,7 +95,7 @@
      <x>0</x>
      <y>0</y>
      <width>719</width>
-     <height>27</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
