@@ -95,17 +95,16 @@ void Tweezers::renameAll()
 {
     for (int i = 0; i < ui->fileList->rowCount(); i++)
     {
-        QString old_name = curr_path + QDir::separator () + ui->fileList->item(i,0)->text();
-        QString new_name = curr_path + QDir::separator () + ui->fileList->item(i,1)->text();
+        QString origin = curr_path + QDir::separator () + ui->fileList->item(i,0)->text();
+        QString renamed = curr_path + QDir::separator () + ui->fileList->item(i,1)->text();
 
-        QFile old_filename(old_name);
-        QFile new_filename(new_name);
+        QFile origin_filename(origin);
 
-        if (backup.contains(new_name))
+        if (backup.contains(renamed))
             continue;
 
-        backup[old_name] = new_name;
-        old_filename.rename(new_name);
+        if (origin_filename.rename(renamed))
+            backup[renamed] = origin;
     }
 
 }
@@ -116,6 +115,13 @@ void Tweezers::renameSelection()
 
 void Tweezers::undoRename()
 {
+    QHashIterator<QString, QString> i(backup);
+    while (i.hasNext())
+    {
+        i.next();
+        QFile renamed_filename(i.key());
+        renamed_filename.rename(i.value());
+    }
 }
 
 void Tweezers::cleanTable()
