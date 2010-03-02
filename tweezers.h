@@ -21,7 +21,7 @@ protected:
 
 private slots:
     void openDir();
-    void preview();
+    void namePreview(bool show=true);
     void cleanTable();
     void selectDirectory();
     void renameAll();
@@ -32,7 +32,6 @@ private:
     TagConverter tag;
     QString curr_path;
     QStringList glob_exp;
-    QStringList file_list;
 
     QHash<QString, QString> backup;
 
