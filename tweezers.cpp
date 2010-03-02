@@ -82,10 +82,12 @@ void Tweezers::preview()
 
     QString expr = ui->expField->text();
 
+
     for (int i = 0; i < file_list.length(); i++)
     {   
         QTableWidgetItem *newItem = new QTableWidgetItem(file_list[i]);
         QTableWidgetItem *item_preview = new QTableWidgetItem(tag.fill_tags(curr_path, file_list[i], expr));
+
         ui->fileList->setItem(i, 0, newItem);
         ui->fileList->setItem(i, 1, item_preview);
     }
@@ -106,7 +108,7 @@ void Tweezers::renameAll()
         if (origin_filename.rename(renamed))
             backup[renamed] = origin;
     }
-
+    preview();
 }
 
 void Tweezers::renameSelection()
@@ -122,6 +124,8 @@ void Tweezers::undoRename()
         QFile renamed_filename(i.key());
         renamed_filename.rename(i.value());
     }
+    backup.clear();
+    preview();
 }
 
 void Tweezers::cleanTable()
