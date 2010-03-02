@@ -11,7 +11,6 @@ Tweezers::Tweezers(QWidget *parent) :
 {
 
     curr_path =  QDir::home().absolutePath();
-    file_list.clear();
 
     ui->setupUi(this);
     ui->selectDir->setText(curr_path);
@@ -52,10 +51,10 @@ void Tweezers::selectDirectory()
     curr_path = ui->selectDir->text();
 
     if (! curr_path.isEmpty())
-        preview();
+        namePreview();
 }
 
-void Tweezers::preview()
+void Tweezers::namePreview(bool show)
 {
     QDir dir(curr_path);
 
@@ -63,7 +62,7 @@ void Tweezers::preview()
     if (ui->globSelect->isModified())
         glob_exp << ui->globSelect->text();
 
-    file_list.clear();
+    QStringList file_list;
     file_list = dir.entryList(glob_exp, QDir::Files);
 
     if(!file_list.length())
@@ -80,16 +79,18 @@ void Tweezers::preview()
     ui->fileList->setColumnCount(2);
     ui->fileList->setRowCount(file_list.length());
 
-    QString expr = ui->expField->text();
-
+    QString value = "";
 
     for (int i = 0; i < file_list.length(); i++)
     {   
-        QTableWidgetItem *newItem = new QTableWidgetItem(file_list[i]);
-        QTableWidgetItem *item_preview = new QTableWidgetItem(tag.fill_tags(curr_path, file_list[i], expr));
+        if (show)
+            value = tag.fill_tags(curr_path, file_list[i], ui->expField->text());
 
-        ui->fileList->setItem(i, 0, newItem);
-        ui->fileList->setItem(i, 1, item_preview);
+        QTableWidgetItem *item0 = new QTableWidgetItem(file_list[i]);
+        QTableWidgetItem *item1 = new QTableWidgetItem(value);
+
+        ui->fileList->setItem(i, 0, item0);
+        ui->fileList->setItem(i, 1, item1);
     }
 }
 
@@ -108,7 +109,7 @@ void Tweezers::renameAll()
         if (origin_filename.rename(renamed))
             backup[renamed] = origin;
     }
-    preview();
+    namePreview(false);
 }
 
 void Tweezers::renameSelection()
@@ -125,7 +126,7 @@ void Tweezers::undoRename()
         renamed_filename.rename(i.value());
     }
     backup.clear();
-    preview();
+    namePreview(true);
 }
 
 void Tweezers::cleanTable()
@@ -139,9 +140,9 @@ void Tweezers::cleanTable()
 void Tweezers::createActions()
 {
     connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDir()));
-    connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(preview()));
+    connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(namePreview()));
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
-    connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(preview()));
+    connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(namePreview()));
     connect(ui->doRename, SIGNAL(clicked()), this, SLOT(renameAll()));
     connect(ui->undoRename, SIGNAL(clicked()), this, SLOT(undoRename()));
 }
