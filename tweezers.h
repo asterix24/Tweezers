@@ -24,7 +24,7 @@ protected:
 
 private slots:
     void openDir();
-    void namePreview();
+    void preview();
     void loadFiles(void);
     void cleanTable();
     void selectDirectory();

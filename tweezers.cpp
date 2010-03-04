@@ -88,7 +88,7 @@ void Tweezers::loadFiles(void)
     }
 }
 
-void Tweezers::namePreview()
+void Tweezers::preview()
 {
     for (int i = 0; i < ui->fileList->rowCount(); i++)
     {
@@ -133,7 +133,7 @@ void Tweezers::undoRename()
     }
     backup.clear();
     loadFiles();
-    namePreview();
+    preview();
 }
 
 void Tweezers::cleanTable()
@@ -149,7 +149,7 @@ void Tweezers::createActions()
     connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDir()));
     connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(loadFiles()));
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
-    connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(namePreview()));
+    connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(preview()));
     connect(ui->doRename, SIGNAL(clicked()), this, SLOT(renameAll()));
     connect(ui->undoRename, SIGNAL(clicked()), this, SLOT(undoRename()));
 }
