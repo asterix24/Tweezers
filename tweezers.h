@@ -3,6 +3,9 @@
 
 #include "tag_converter.h"
 
+#define FILE_COL       0
+#define PREVIEW_COL    1
+
 #include <QMainWindow>
 #include <QFile>
 
@@ -21,7 +24,8 @@ protected:
 
 private slots:
     void openDir();
-    void namePreview(bool show=true);
+    void namePreview();
+    void loadFiles(void);
     void cleanTable();
     void selectDirectory();
     void renameAll();
@@ -34,6 +38,7 @@ private:
     QStringList glob_exp;
 
     QHash<QString, QString> backup;
+
 
     void createActions();
     Ui::Tweezers *ui;

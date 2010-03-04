@@ -15,7 +15,7 @@ Tweezers::Tweezers(QWidget *parent) :
     ui->setupUi(this);
     ui->selectDir->setText(curr_path);
     ui->globSelect->setText("*.*");
-    ui->expField->setText("<exiftime>");
+    ui->expField->setText("");
 
     createActions();
 }
@@ -51,10 +51,10 @@ void Tweezers::selectDirectory()
     curr_path = ui->selectDir->text();
 
     if (! curr_path.isEmpty())
-        namePreview();
+        loadFiles();
 }
 
-void Tweezers::namePreview(bool show)
+void Tweezers::loadFiles(void)
 {
     QDir dir(curr_path);
 
@@ -79,18 +79,21 @@ void Tweezers::namePreview(bool show)
     ui->fileList->setColumnCount(2);
     ui->fileList->setRowCount(file_list.length());
 
-    QString value = "";
-
     for (int i = 0; i < file_list.length(); i++)
     {   
-        if (show)
-            value = tag.fill_tags(curr_path, file_list[i], ui->expField->text());
-
         QTableWidgetItem *item0 = new QTableWidgetItem(file_list[i]);
-        QTableWidgetItem *item1 = new QTableWidgetItem(value);
+        QTableWidgetItem *item1 = new QTableWidgetItem("");
+        ui->fileList->setItem(i, FILE_COL, item0);
+        ui->fileList->setItem(i, PREVIEW_COL, item1);
+    }
+}
 
-        ui->fileList->setItem(i, 0, item0);
-        ui->fileList->setItem(i, 1, item1);
+void Tweezers::namePreview()
+{
+    for (int i = 0; i < ui->fileList->rowCount(); i++)
+    {
+        QString value = tag.fill_tags(curr_path, ui->fileList->item(i, FILE_COL)->text(), ui->expField->text());
+        ui->fileList->item(i, PREVIEW_COL)->setText(value);
     }
 }
 
@@ -98,8 +101,8 @@ void Tweezers::renameAll()
 {
     for (int i = 0; i < ui->fileList->rowCount(); i++)
     {
-        QString origin = curr_path + QDir::separator () + ui->fileList->item(i,0)->text();
-        QString renamed = curr_path + QDir::separator () + ui->fileList->item(i,1)->text();
+        QString origin = curr_path + QDir::separator () + ui->fileList->item(i, FILE_COL)->text();
+        QString renamed = curr_path + QDir::separator () + ui->fileList->item(i, PREVIEW_COL)->text();
 
         QFile origin_filename(origin);
 
@@ -107,9 +110,12 @@ void Tweezers::renameAll()
             continue;
 
         if (origin_filename.rename(renamed))
+        {
             backup[renamed] = origin;
+            ui->fileList->item(i, FILE_COL)->setText(ui->fileList->item(i, PREVIEW_COL)->text());
+            ui->fileList->item(i, PREVIEW_COL)->setText("");
+        }
     }
-    namePreview(false);
 }
 
 void Tweezers::renameSelection()
@@ -126,7 +132,8 @@ void Tweezers::undoRename()
         renamed_filename.rename(i.value());
     }
     backup.clear();
-    namePreview(true);
+    loadFiles();
+    namePreview();
 }
 
 void Tweezers::cleanTable()
@@ -140,7 +147,7 @@ void Tweezers::cleanTable()
 void Tweezers::createActions()
 {
     connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDir()));
-    connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(namePreview()));
+    connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(loadFiles()));
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
     connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(namePreview()));
     connect(ui->doRename, SIGNAL(clicked()), this, SLOT(renameAll()));
