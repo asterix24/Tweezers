@@ -34,7 +34,7 @@ typedef QString (*tag_callback)(QString path, QString item);
 class TagConverter
 {
 public:
-    QString fill_tags(QString path, QString item, QString exp);
+    QString fill_tags(QString path, QString item, QString exp, QList<QString> tag_list);
     TagConverter();
     ~TagConverter();
 private:

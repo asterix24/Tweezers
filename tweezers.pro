@@ -39,4 +39,4 @@ FORMS += tweezers.ui
 
 LIBS += -Llib/lib -lexiv2
 
-INCLUDEPATH += lib/include cfg/
+INCLUDEPATH += lib/include

@@ -27,4 +27,6 @@
 #ifndef CFG_TWEEZERS_H
 #define CFG_TWEEZERS_H
 
+#define TAG_PATTEN      "(<\\w+>)"
+
 #endif /* CFG_TWEEZERS_H */

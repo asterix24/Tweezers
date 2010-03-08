@@ -24,11 +24,13 @@
  * \author Daniele Basile <asterix@develer.com>
  */
 
-#include <QtGui>
-
 #include "tweezers.h"
 #include "ui_tweezers.h"
 #include "tag_converter.h"
+
+#include <cfg/cfg_tweezers.h>
+
+#include <QtGui>
 
 Tweezers::Tweezers(QWidget *parent) :
     QMainWindow(parent),
@@ -116,9 +118,29 @@ void Tweezers::loadFiles(void)
 
 void Tweezers::preview()
 {
+    //
+    QRegExp rx(TAG_PATTEN);
+    QList<QString> tag_list;
+    QString exp = ui->expField->text();
+    int pos = 0;
+
+    while (1)
+    {
+        pos = rx.indexIn(exp, pos);
+
+        // No more tags we exit.
+        if (pos < 0)
+            break;
+        tag_list << rx.cap(1);
+
+        // No valid tag, skip it.
+        pos += rx.matchedLength();
+    }
+
     for (int i = 0; i < ui->fileList->rowCount(); i++)
     {
-        QString value = tag.fill_tags(curr_path, ui->fileList->item(i, FILE_COL)->text(), ui->expField->text());
+        QString value = tag.fill_tags(curr_path, ui->fileList->item(i, FILE_COL)->text(), ui->expField->text(),
+                                      tag_list);
         ui->fileList->item(i, PREVIEW_COL)->setText(value);
     }
 }

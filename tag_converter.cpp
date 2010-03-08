@@ -25,10 +25,12 @@
  */
 
 #include "tag_converter.h"
+#include <cfg/cfg_tweezers.h>
 
 #include <QString>
 #include <QChar>
 #include <QDir>
+#include <QHash>
 
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
@@ -96,34 +98,18 @@ QString getExt(QString path, QString item)
     return fi.suffix();
 }
 
-QString TagConverter::fill_tags(QString path, QString item, QString exp)
+QString TagConverter::fill_tags(QString path, QString item, QString exp, QList<QString> tag_list)
 {
-    // TODO: move into config module.
-    QRegExp rx("(<\\w+>)");
-
-    int pos = 0;
-    while (1)
+    for (int i = 0; i < tag_list.length(); ++i)
     {
-        pos = rx.indexIn(exp, pos);
-
-        // No more tags we exit.
-        if (pos < 0)
-            break;
-
-         // We find a valid tag we replace it with its value.
-        if (callback_table.contains(rx.cap(1)))
+        if (callback_table.contains(tag_list[i]))
         {
-            tag_callback f = callback_table[rx.cap(1)];
+            tag_callback f = callback_table[tag_list[i]];
 
-            QString value = f(path, item);
-            pos += value.length();
-            exp = exp.replace(rx.cap(1), value);
+            QString  tag_value = f(path, item);
+            exp = exp.replace(tag_list[i], tag_value);
         }
-        else
-            // No valid tag, skip it.
-            pos += rx.matchedLength();
     }
-
     return exp;
 }
 
