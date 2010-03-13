@@ -113,11 +113,23 @@ QString TagConverter::fill_tags(QString path, QString item, QString exp, QList<Q
     return exp;
 }
 
+QList<QString> TagConverter::getTagDesc()
+{
+    return descr_table;
+}
+
 TagConverter::TagConverter()
 {
+    descr_table << "Elenco dei tag..";
+
     callback_table["<exiftime>"] = getExiftime;
+    descr_table << "<EXIFTIME>: Ritorna l'ora di scatto della foto";
+
     callback_table["<exifdate>"] = getExifdate;
+    descr_table << "<EXIFDATE>: Ritorna la data di scatto della foto";
+
     callback_table["<ext>"] = getExt;
+    descr_table << "<EXT>: Ritorna l'estensione del file";
 }
 
 TagConverter::~TagConverter()

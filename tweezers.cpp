@@ -44,6 +44,7 @@ Tweezers::Tweezers(QWidget *parent) :
     ui->selectDir->setText(curr_path);
     ui->globSelect->setText("*.*");
     ui->expField->setText("");
+    ui->expList->addItems(tag.getTagDesc());
 
     createActions();
 }
@@ -184,6 +185,19 @@ void Tweezers::undoRename()
     preview();
 }
 
+void Tweezers::selExpCombo(int index)
+{
+
+    if (!index)
+        return;
+
+    QStringList list = ui->expList->itemText(index).split(":");
+
+    if (!list.isEmpty())
+        ui->expField->insert(list.at(0));
+}
+
+
 void Tweezers::cleanTable()
 {
     ui->fileList->clear();
@@ -200,4 +214,5 @@ void Tweezers::createActions()
     connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(preview()));
     connect(ui->doRename, SIGNAL(clicked()), this, SLOT(renameAll()));
     connect(ui->undoRename, SIGNAL(clicked()), this, SLOT(undoRename()));
+    connect(ui->expList, SIGNAL(activated(int)), this, SLOT(selExpCombo(int)));
 }

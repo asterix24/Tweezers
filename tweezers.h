@@ -57,6 +57,7 @@ private slots:
     void renameAll();
     void renameSelection();
     void undoRename();
+    void selExpCombo(int index);
 
 private:
     TagConverter tag;

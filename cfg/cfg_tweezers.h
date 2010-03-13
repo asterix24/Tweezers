@@ -29,4 +29,7 @@
 
 #define TAG_PATTEN      "(<\\w+>)"
 
+#include <QList>
+#include <QString>
+
 #endif /* CFG_TWEEZERS_H */
