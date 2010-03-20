@@ -102,10 +102,12 @@ QString TagConverter::fill_tags(QString path, QString item, QString exp, QList<Q
 {
     for (int i = 0; i < tag_list.length(); ++i)
     {
-        if (callback_table.contains(tag_list[i]))
+        if (callback_table.contains(tag_list[i].toLower()))
         {
-            tag_callback f = callback_table[tag_list[i]];
+            // Search the right function to convert tag
+            tag_callback f = callback_table[tag_list[i].toLower()];
 
+            // Call the right function to convert tag
             QString  tag_value = f(path, item);
             exp = exp.replace(tag_list[i], tag_value);
         }

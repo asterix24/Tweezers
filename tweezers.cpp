@@ -132,12 +132,17 @@ void Tweezers::preview()
         // No more tags we exit.
         if (pos < 0)
             break;
+
+        /*
+         *  we find the tag, make it lower case and save into list
+         */
         tag_list << rx.cap(1);
 
-        // No valid tag, skip it.
+        // search forward into expr string
         pos += rx.matchedLength();
     }
 
+    // Update the table view
     for (int i = 0; i < ui->fileList->rowCount(); i++)
     {
         QString value = tag.fill_tags(curr_path, ui->fileList->item(i, FILE_COL)->text(), ui->expField->text(),
@@ -185,6 +190,9 @@ void Tweezers::undoRename()
     preview();
 }
 
+/*
+ * Fill expr edit line with tags select from combo tag list.
+ */
 void Tweezers::selExpCombo(int index)
 {
 
