@@ -25,7 +25,11 @@
  */
 
 #include "tweezers.h"
+#include "preference.h"
+
+#include "ui_preference.h"
 #include "ui_tweezers.h"
+
 #include "tag_converter.h"
 
 #include <cfg/cfg_tweezers.h>
@@ -37,9 +41,11 @@ Tweezers::Tweezers(QWidget *parent) :
     tag(),
     ui(new Ui::Tweezers)
 {
+    preference_window = new Preference;
     readSettings();
 
     ui->setupUi(this);
+
     ui->selectDir->setText(curr_path);
     ui->globSelect->setText("*.*");
     ui->expField->setText(last_expr);
@@ -59,6 +65,7 @@ Tweezers::Tweezers(QWidget *parent) :
 
 Tweezers::~Tweezers()
 {
+    delete preference_window;
     delete ui;
 }
 
@@ -250,7 +257,7 @@ void Tweezers::cleanTable()
 
 void Tweezers::preferences()
 {
-
+    preference_window->show();
 }
 
  void Tweezers::about()

@@ -28,6 +28,7 @@
 #define TWEEZERS_H
 
 #include "tag_converter.h"
+#include "preference.h"
 
 #define FILE_COL       0
 #define PREVIEW_COL    1
@@ -94,7 +95,7 @@ private:
     void createToolBars();
     void createStatusBar();
 
-
+    Preference *preference_window;
     Ui::Tweezers *ui;
 };
 
