@@ -59,6 +59,9 @@ private slots:
     void undoRename();
     void selExpCombo(int index);
 
+    void preferences();
+    void about();
+
 private:
     TagConverter tag;
     QString curr_path;
@@ -66,8 +69,24 @@ private:
 
     QHash<QString, QString> backup;
 
+    // Application Actions
+    QAction *preferenceAct;
+    QAction *aboutAct;
 
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *helpMenu;
+
+    QToolBar *fileToolBar;
+    QToolBar *editToolBar;
+
+    // Init the application menu and actions
     void createActions();
+    void createMenus();
+    void createToolBars();
+    void createStatusBar();
+
+
     Ui::Tweezers *ui;
 };
 

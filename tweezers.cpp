@@ -37,7 +37,6 @@ Tweezers::Tweezers(QWidget *parent) :
     tag(),
     ui(new Ui::Tweezers)
 {
-
     curr_path =  QDir::home().absolutePath();
 
     ui->setupUi(this);
@@ -47,6 +46,12 @@ Tweezers::Tweezers(QWidget *parent) :
     ui->expList->addItems(tag.getTagDesc());
 
     createActions();
+    createMenus();
+    createToolBars();
+    createStatusBar();
+
+    setUnifiedTitleAndToolBarOnMac(true);
+
 }
 
 Tweezers::~Tweezers()
@@ -214,8 +219,31 @@ void Tweezers::cleanTable()
     ui->fileList->setRowCount(0);
 }
 
+void Tweezers::preferences()
+{
+
+}
+
+ void Tweezers::about()
+ {
+    QMessageBox::about(this, tr("About Application"),
+             tr("The <b>Application</b> example demonstrates how to "
+                "write modern GUI applications using Qt, with a menu bar, "
+                "toolbars, and a status bar."));
+ }
+
 void Tweezers::createActions()
 {
+
+    preferenceAct = new QAction(tr("&Preference.."), this);
+    preferenceAct->setShortcuts(QKeySequence::Preferences);
+    preferenceAct->setStatusTip(tr("Tweezers preference"));
+    connect(preferenceAct, SIGNAL(triggered()), this, SLOT(preferences()));
+
+    aboutAct = new QAction(tr("&About"), this);
+    aboutAct->setStatusTip(tr("Show the application's About box"));
+    connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
+
     connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDir()));
     connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(loadFiles()));
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
@@ -224,3 +252,30 @@ void Tweezers::createActions()
     connect(ui->undoRename, SIGNAL(clicked()), this, SLOT(undoRename()));
     connect(ui->expList, SIGNAL(activated(int)), this, SLOT(selExpCombo(int)));
 }
+
+void Tweezers::createMenus()
+{
+     fileMenu = menuBar()->addMenu(tr("&File"));
+     fileMenu->addAction(preferenceAct);
+     fileMenu->addSeparator();
+
+     editMenu = menuBar()->addMenu(tr("&Edit"));
+
+     menuBar()->addSeparator();
+
+     helpMenu = menuBar()->addMenu(tr("&Help"));
+     helpMenu->addAction(aboutAct);
+
+ }
+
+ void Tweezers::createToolBars()
+ {
+     fileToolBar = addToolBar(tr("File"));
+
+     editToolBar = addToolBar(tr("Edit"));
+ }
+
+ void Tweezers::createStatusBar()
+ {
+     statusBar()->showMessage(tr("Ready"));
+ }
