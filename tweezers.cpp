@@ -181,6 +181,9 @@ void Tweezers::renameSelection()
 {
 }
 
+/*
+ * Undo last files rename
+ */
 void Tweezers::undoRename()
 {
     QHashIterator<QString, QString> i(backup);
@@ -210,7 +213,9 @@ void Tweezers::selExpCombo(int index)
         ui->expField->insert(list.at(0));
 }
 
-
+/*
+ * Clean all table widget
+ */
 void Tweezers::cleanTable()
 {
     ui->fileList->clear();
@@ -235,22 +240,35 @@ void Tweezers::preferences()
 void Tweezers::createActions()
 {
 
+    // Preference window action
     preferenceAct = new QAction(tr("&Preference.."), this);
     preferenceAct->setShortcuts(QKeySequence::Preferences);
     preferenceAct->setStatusTip(tr("Tweezers preference"));
     connect(preferenceAct, SIGNAL(triggered()), this, SLOT(preferences()));
 
+    // About window action
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
     connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
+    // Manage all directory widget signals
     connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDir()));
     connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(loadFiles()));
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
+
+    // Manage all expression field signals
     connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(preview()));
+
+    // Manage the rename action signals
     connect(ui->doRename, SIGNAL(clicked()), this, SLOT(renameAll()));
     connect(ui->undoRename, SIGNAL(clicked()), this, SLOT(undoRename()));
+
+    // Manage tag list signals
     connect(ui->expList, SIGNAL(activated(int)), this, SLOT(selExpCombo(int)));
+
+    // Manage list file to rename
+    // TODO: Complicare la struttura dei data contenuti nella tabella.
+    //connect(ui->fileList, SIGNAL(itemActivated (QTableWidgetItem)), this, SLOT());
 }
 
 void Tweezers::createMenus()
