@@ -120,6 +120,10 @@ void Tweezers::loadFiles(void)
         ui->fileList->setItem(i, FILE_COL, item0);
         ui->fileList->setItem(i, PREVIEW_COL, item1);
     }
+
+    // Update preview if there is already written the expression into its field.
+    if (!ui->expField->text().isEmpty())
+        preview();
 }
 
 void Tweezers::preview()
