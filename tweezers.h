@@ -47,17 +47,24 @@ public:
 
 protected:
     void changeEvent(QEvent *e);
+    void closeEvent(QCloseEvent *e);
 
 private slots:
-    void openDir();
     void preview();
-    void loadFiles(void);
     void cleanTable();
+
+    void openDir();
+    void loadFiles(void);
     void selectDirectory();
+
+    void selExpCombo(int index);
+
     void renameAll();
     void renameSelection();
     void undoRename();
-    void selExpCombo(int index);
+
+    void readSettings();
+    void writeSettings();
 
     void preferences();
     void about();
@@ -65,6 +72,7 @@ private slots:
 private:
     TagConverter tag;
     QString curr_path;
+    QString last_expr;
     QStringList glob_exp;
 
     QHash<QString, QString> backup;

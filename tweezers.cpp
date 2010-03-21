@@ -37,12 +37,12 @@ Tweezers::Tweezers(QWidget *parent) :
     tag(),
     ui(new Ui::Tweezers)
 {
-    curr_path =  QDir::home().absolutePath();
+    readSettings();
 
     ui->setupUi(this);
     ui->selectDir->setText(curr_path);
     ui->globSelect->setText("*.*");
-    ui->expField->setText("");
+    ui->expField->setText(last_expr);
     ui->expList->addItems(tag.getTagDesc());
 
     createActions();
@@ -51,6 +51,9 @@ Tweezers::Tweezers(QWidget *parent) :
     createStatusBar();
 
     setUnifiedTitleAndToolBarOnMac(true);
+
+    // Some init actions
+    loadFiles();
 
 }
 
@@ -71,6 +74,23 @@ void Tweezers::changeEvent(QEvent *e)
         break;
     }
 }
+
+ void Tweezers::closeEvent(QCloseEvent *e)
+ {
+    QMessageBox::StandardButton ret;
+    ret = QMessageBox::warning(this, tr("Application"), tr("Do you want really exit?"),
+               QMessageBox::Ok | QMessageBox::Cancel);
+
+    if (ret == QMessageBox::Ok)
+    {
+        writeSettings();
+        e->accept();
+    }
+    else /* ret == QMessageBox::Cancel */
+    {
+        e->ignore();
+    }
+ }
 
 void Tweezers::openDir()
 {
@@ -241,6 +261,32 @@ void Tweezers::preferences()
                 "toolbars, and a status bar."));
  }
 
+
+ void Tweezers::readSettings()
+ {
+     QSettings settings("Asterix", "Tweezers application");
+     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
+     QSize size = settings.value("size", QSize(400, 400)).toSize();
+
+     // Last directory
+     curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
+     last_expr = settings.value("expr", DEFAULT_EXPR).toString();
+
+     resize(size);
+     move(pos);
+ }
+
+ void Tweezers::writeSettings()
+ {
+     QSettings settings("Asterix", "Tweezers application");
+     settings.setValue("pos", pos());
+     settings.setValue("size", size());
+
+     settings.setValue("curr_path", curr_path);
+     settings.setValue("expr", ui->expField->text());
+ }
+
+
 void Tweezers::createActions()
 {
 
@@ -287,7 +333,6 @@ void Tweezers::createMenus()
 
      helpMenu = menuBar()->addMenu(tr("&Help"));
      helpMenu->addAction(aboutAct);
-
  }
 
  void Tweezers::createToolBars()

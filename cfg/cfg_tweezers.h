@@ -28,6 +28,7 @@
 #define CFG_TWEEZERS_H
 
 #define TAG_PATTEN      "(<\\w+>)"
+#define DEFAULT_EXPR    "<EXIFDATE>_<EXIFTIME>_<EXT>"
 
 #include <QList>
 #include <QString>
