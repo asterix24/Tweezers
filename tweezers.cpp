@@ -141,7 +141,7 @@ void Tweezers::loadFiles(void)
     ui->fileList->setRowCount(file_list.length());
 
     for (int i = 0; i < file_list.length(); i++)
-    {   
+    {
         QTableWidgetItem *item0 = new QTableWidgetItem(file_list[i]);
         QTableWidgetItem *item1 = new QTableWidgetItem("");
         ui->fileList->setItem(i, FILE_COL, item0);
@@ -299,7 +299,11 @@ void Tweezers::createActions()
 
     // Preference window action
     preferenceAct = new QAction(tr("&Preference.."), this);
+
+#ifdef Q_WS_MAC
     preferenceAct->setShortcuts(QKeySequence::Preferences);
+#endif
+
     preferenceAct->setStatusTip(tr("Tweezers preference"));
     connect(preferenceAct, SIGNAL(triggered()), this, SLOT(preferences()));
 
