@@ -42,6 +42,10 @@ protected:
     void changeEvent(QEvent *e);
 
 private:
+    void ok(void);
+    void cancel(void);
+    void createActions();
+
     Ui::Preference *m_ui;
 };
 

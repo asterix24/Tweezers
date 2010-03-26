@@ -49,3 +49,18 @@ void Preference::changeEvent(QEvent *e)
         break;
     }
 }
+
+void Preference::ok(void)
+{
+    this->close();
+}
+
+void Preference::cancel(void)
+{
+}
+
+void Preference::createActions()
+{
+    // Manage all directory widget signals
+    connect(m_ui->buttonBox, SIGNAL(clicked()), this, SLOT(ok()));
+}
