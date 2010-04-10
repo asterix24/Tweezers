@@ -42,10 +42,13 @@ Tweezers::Tweezers(QWidget *parent) :
     ui(new Ui::Tweezers)
 {
     preference_window = new Preference;
-    readSettings();
+
+    resize(preference_window->getSize());
+    move(preference_window->getPos());
+    curr_path = preference_window->getPath();
+    last_expr = preference_window->getLastExp();
 
     ui->setupUi(this);
-
     ui->selectDir->setText(curr_path);
     ui->globSelect->setText("*.*");
     ui->expField->setText(last_expr);
@@ -90,7 +93,11 @@ void Tweezers::changeEvent(QEvent *e)
 
     if (ret == QMessageBox::Ok)
     {
-        writeSettings();
+        preference_window->setSize(size());
+        preference_window->setPos(pos());
+        preference_window->setPath(curr_path);
+        preference_window->setLastExp(last_expr);
+
         e->accept();
     }
     else /* ret == QMessageBox::Cancel */
@@ -260,39 +267,13 @@ void Tweezers::preferences()
     preference_window->show();
 }
 
- void Tweezers::about()
- {
+void Tweezers::about()
+{
     QMessageBox::about(this, tr("About Application"),
              tr("The <b>Application</b> example demonstrates how to "
                 "write modern GUI applications using Qt, with a menu bar, "
                 "toolbars, and a status bar."));
- }
-
-
- void Tweezers::readSettings()
- {
-     QSettings settings("Asterix", "Tweezers application");
-     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
-     QSize size = settings.value("size", QSize(400, 400)).toSize();
-
-     // Last directory
-     curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
-     last_expr = settings.value("expr", DEFAULT_EXPR).toString();
-
-     resize(size);
-     move(pos);
- }
-
- void Tweezers::writeSettings()
- {
-     QSettings settings("Asterix", "Tweezers application");
-     settings.setValue("pos", pos());
-     settings.setValue("size", size());
-
-     settings.setValue("curr_path", curr_path);
-     settings.setValue("expr", ui->expField->text());
- }
-
+}
 
 void Tweezers::createActions()
 {

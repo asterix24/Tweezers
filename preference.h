@@ -34,16 +34,42 @@ namespace Ui {
 
 class Preference : public QWidget {
     Q_OBJECT
-public:
+
+public:    
+    QString getPath() { return curr_path; }
+    QString getLastExp() { return last_expr; }
+
+    void setPath(QString path) { curr_path = path; }
+    void setLastExp(QString expr) { last_expr = expr; }
+
+    QPoint getPos() { return pos; }
+    QSize getSize() { return size; }
+
+    void setPos(QPoint p) { pos = p; }
+    void setSize(QSize s) { size = s; }
+
     Preference(QWidget *parent = 0);
     ~Preference();
 
 protected:
     void changeEvent(QEvent *e);
 
-private:
+private slots:
     void ok(void);
     void cancel(void);
+
+private:
+    // Path settings
+    QString curr_path;
+    QString last_expr;
+
+    // Windows settings
+    QPoint pos;
+    QSize size;
+
+    void readSettings();
+    void writeSettings();
+
     void createActions();
 
     Ui::Preference *m_ui;

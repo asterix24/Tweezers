@@ -26,22 +26,30 @@
 #include "preference.h"
 #include "ui_preference.h"
 
+#include <cfg/cfg_tweezers.h>
+
+#include <QtGui>
+
 Preference::Preference(QWidget *parent) :
     QWidget(parent),
     m_ui(new Ui::Preference)
 {
     m_ui->setupUi(this);
+    createActions();
+    readSettings();
 }
 
 Preference::~Preference()
 {
+    writeSettings();
     delete m_ui;
 }
 
 void Preference::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
-    switch (e->type()) {
+    switch (e->type())
+    {
     case QEvent::LanguageChange:
         m_ui->retranslateUi(this);
         break;
@@ -52,15 +60,40 @@ void Preference::changeEvent(QEvent *e)
 
 void Preference::ok(void)
 {
-    this->close();
+    m_ui->preview->setText("ok");
 }
 
 void Preference::cancel(void)
 {
+    writeSettings();
+    this->close();
+}
+
+void Preference::readSettings()
+{
+    QSettings settings("Asterix", "Tweezers application");
+    pos = settings.value("pos", QPoint(200, 200)).toPoint();
+    size = settings.value("size", QSize(400, 400)).toSize();
+
+    // Last directory
+    curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
+    last_expr = settings.value("expr", DEFAULT_EXPR).toString();
+}
+
+void Preference::writeSettings()
+{
+     QSettings settings("Asterix", "Tweezers application");
+     settings.setValue("pos", pos);
+     settings.setValue("size", size);
+
+     settings.setValue("curr_path", curr_path);
+     settings.setValue("expr", last_expr);
 }
 
 void Preference::createActions()
 {
     // Manage all directory widget signals
-    connect(m_ui->buttonBox, SIGNAL(clicked()), this, SLOT(ok()));
+    connect(m_ui->buttonBox, SIGNAL(accepted()), this, SLOT(ok()));
+    connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancel()));
 }
+
