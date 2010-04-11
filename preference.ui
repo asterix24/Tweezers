@@ -17,7 +17,11 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="1" column="0">
-      <widget class="QTableWidget" name="category"/>
+      <widget class="QTableWidget" name="categoryList">
+       <property name="showGrid">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
      <item row="6" column="0" colspan="3">
       <widget class="QLineEdit" name="preview"/>
@@ -46,7 +50,11 @@
       </spacer>
      </item>
      <item row="1" column="1">
-      <widget class="QTableWidget" name="format"/>
+      <widget class="QTableWidget" name="formatList">
+       <property name="showGrid">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
      <item row="0" column="1">
       <widget class="QLabel" name="label_2">

@@ -26,7 +26,9 @@
 #ifndef PREFERENCE_H
 #define PREFERENCE_H
 
+#include <QtGui>
 #include <QtGui/QWidget>
+#include <QHash>
 
 namespace Ui {
     class Preference;
@@ -57,6 +59,8 @@ protected:
 private slots:
     void ok(void);
     void cancel(void);
+    void fillFormat(QTableWidgetItem *item);
+    void fillCustomFmt(QTableWidgetItem *item);
 
 private:
     // Path settings
@@ -66,6 +70,15 @@ private:
     // Windows settings
     QPoint pos;
     QSize size;
+
+    //Default format
+    QHash<QString, QStringList> category;
+    QStringList time_format;
+    QStringList date_format;
+    QStringList date;
+    QStringList time;
+
+    void fillCategory();
 
     void readSettings();
     void writeSettings();
