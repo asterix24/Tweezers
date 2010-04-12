@@ -64,9 +64,6 @@ private slots:
     void renameSelection();
     void undoRename();
 
-    void readSettings();
-    void writeSettings();
-
     void preferences();
     void about();
 
