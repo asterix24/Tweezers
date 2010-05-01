@@ -143,6 +143,8 @@ void Tweezers::loadFiles(void)
     ui->fileList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     ui->fileList->horizontalHeader()->setVisible(true);
     ui->fileList->verticalHeader()->setVisible(false);
+    ui->fileList->resizeColumnsToContents();
+    ui->fileList->resizeRowsToContents();
 
     ui->fileList->setColumnCount(2);
     ui->fileList->setRowCount(file_list.length());

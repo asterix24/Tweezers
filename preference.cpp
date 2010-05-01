@@ -123,6 +123,8 @@ void Preference::writeSettings()
 void Preference::fillCategory()
 {
     m_ui->categoryList->setRowCount(category.size());
+    m_ui->categoryList->resizeRowsToContents();
+    m_ui->categoryList->resizeColumnsToContents();
 
     int j = 0;
     QHashIterator<QString, QStringList> i(category);
@@ -141,6 +143,8 @@ void Preference::fillFormat(QTableWidgetItem *item)
     {
         QStringList list = category[item->text()];
         m_ui->formatList->setRowCount(list.size());
+        m_ui->formatList->resizeRowsToContents();
+        m_ui->formatList->resizeColumnsToContents();
         for (int i = 0; i < list.size(); i++)
         {
             QTableWidgetItem *_item = new QTableWidgetItem(list[i]);
