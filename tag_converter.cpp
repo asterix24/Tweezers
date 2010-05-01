@@ -31,6 +31,7 @@
 #include <QChar>
 #include <QDir>
 #include <QHash>
+#include <QDebug>
 
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
@@ -61,8 +62,9 @@ QString getExif(QString path, QString item, QString exif_tag)
         return QString(exifData[exif_tag.toStdString()].toString().c_str());
 
     }
-    catch (Exiv2::Error)
+    catch (Exiv2::AnyError& e)
     {
+        qDebug() << "Caught Exiv2 exception";
         return "";
     }
 }
