@@ -61,6 +61,7 @@ private slots:
     void cancel(void);
     void fillFormat(QTableWidgetItem *item);
     void fillCustomFmt(QTableWidgetItem *item);
+    void upDatePreview(QString str);
 
 private:
     // Path settings
@@ -75,8 +76,6 @@ private:
     QHash<QString, QStringList> category;
     QStringList time_format;
     QStringList date_format;
-    QStringList date;
-    QStringList time;
 
     void fillCategory();
 

@@ -30,6 +30,7 @@
 
 #include <QtGui>
 #include <QDate>
+#include <QDebug>
 
 Preference::Preference(QWidget *parent) :
     QWidget(parent),
@@ -53,18 +54,12 @@ Preference::Preference(QWidget *parent) :
     m_ui->categoryList->setColumnCount(1);
     m_ui->categoryList->setRowCount(0);
 
-    QDateTime now = QDateTime::currentDateTime();
+
 
     date_format << "dddd MMMM yyyy" << "d/m/yy" << "dd-mm-yy";
-    for (int i = 0; i < date_format.size(); i++)
-        date << now.toString(date_format[i]);
-
     time_format << "hh:MM:ss" << "h:M" << "hh-MM-ss";
-    for (int i = 0; i < time_format.size(); i++)
-        time << now.toString(time_format[i]);
-
-    category["Date"] = date;
-    category["Time"] = time;
+    category["Date"] = date_format;
+    category["Time"] = time_format;
 
     fillCategory();
 }
@@ -142,12 +137,19 @@ void Preference::fillFormat(QTableWidgetItem *item)
     if (category.contains(item->text()))
     {
         QStringList list = category[item->text()];
+
+        // Some view adjustment
         m_ui->formatList->setRowCount(list.size());
         m_ui->formatList->resizeRowsToContents();
         m_ui->formatList->resizeColumnsToContents();
+
+        // Mark all item whit its category.
+        QVariant v(item->text());
+
         for (int i = 0; i < list.size(); i++)
         {
             QTableWidgetItem *_item = new QTableWidgetItem(list[i]);
+            _item->setData(Qt::UserRole, v);
             m_ui->formatList->setItem(i, 0, _item);
         }
     }
@@ -157,6 +159,24 @@ void Preference::fillFormat(QTableWidgetItem *item)
 void Preference::fillCustomFmt(QTableWidgetItem *item)
 {
     m_ui->customFormat->setText(item->text());
+    QVariant d = item->data(Qt::UserRole);
+    m_ui->label_3->setText(d.toString());
+    qDebug() << d.toString();
+    upDatePreview(item->text());
+}
+
+void Preference::upDatePreview(QString str)
+{
+    QDateTime now = QDateTime::currentDateTime();
+
+    if ((m_ui->label_3->text() == "Date") || (m_ui->label_3->text() == "Time"))
+    {
+        m_ui->preview->setText(now.toString(str));
+    }
+    else
+    {
+        m_ui->preview->setText("");
+    }
 }
 
 void Preference::createActions()
@@ -168,5 +188,8 @@ void Preference::createActions()
     // Manage tag list signals
     connect(m_ui->categoryList, SIGNAL(itemPressed (QTableWidgetItem *)), this, SLOT(fillFormat(QTableWidgetItem *)));
     connect(m_ui->formatList, SIGNAL(itemPressed (QTableWidgetItem *)), this, SLOT(fillCustomFmt(QTableWidgetItem *)));
+
+    // Manage preview signals
+    connect(m_ui->customFormat, SIGNAL(textChanged(const QString)), this, SLOT(upDatePreview(QString)));
 }
 
