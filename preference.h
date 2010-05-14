@@ -37,7 +37,7 @@ namespace Ui {
 class Preference : public QWidget {
     Q_OBJECT
 
-public:    
+public:
     QString getPath() { return curr_path; }
     QString getLastExp() { return last_expr; }
 
@@ -74,8 +74,9 @@ private:
 
     //Default format
     QHash<QString, QStringList> category;
-    QStringList time_format;
-    QStringList date_format;
+
+	QString time_fmt;
+	QString date_fmt;
 
     void fillCategory();
 

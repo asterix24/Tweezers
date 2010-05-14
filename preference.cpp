@@ -56,10 +56,14 @@ Preference::Preference(QWidget *parent) :
 
 
 
-    date_format << "dddd MMMM yyyy" << "d/m/yy" << "dd-mm-yy";
-    time_format << "hh:MM:ss" << "h:M" << "hh-MM-ss";
-    category["Date"] = date_format;
-    category["Time"] = time_format;
+    QStringList date_fmt_lst;
+    QStringList time_fmt_lst;
+
+	date_fmt_lst << date_fmt << "dddd MMMM yyyy" << "d/m/yy" << "dd-mm-yy";
+	time_fmt_lst << time_fmt << "hh:MM:ss" << "h:M" << "hh-MM-ss";
+
+    category["Date"] = date_fmt_lst;
+    category["Time"] = time_fmt_lst;
 
     fillCategory();
 }
@@ -96,23 +100,32 @@ void Preference::cancel(void)
 
 void Preference::readSettings()
 {
-    QSettings settings("Asterix", "Tweezers application");
-    pos = settings.value("pos", QPoint(200, 200)).toPoint();
-    size = settings.value("size", QSize(400, 400)).toSize();
+	QSettings settings("Asterix", "Tweezers application");
+	pos = settings.value("pos", QPoint(200, 200)).toPoint();
+	size = settings.value("size", QSize(400, 400)).toSize();
 
-    // Last directory
-    curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
-    last_expr = settings.value("expr", DEFAULT_EXPR).toString();
+	// Last directory
+	curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
+	last_expr = settings.value("expr", DEFAULT_EXPR).toString();
+
+	//Format settings
+	time_fmt = settings.value("time", DEFAULT_TIME_FMT).toString();
+	date_fmt = settings.value("date", DEFAULT_DATE_FMT).toString();
 }
 
 void Preference::writeSettings()
 {
-     QSettings settings("Asterix", "Tweezers application");
-     settings.setValue("pos", pos);
-     settings.setValue("size", size);
+	QSettings settings("Asterix", "Tweezers application");
+	settings.setValue("pos", pos);
+	settings.setValue("size", size);
 
-     settings.setValue("curr_path", curr_path);
-     settings.setValue("expr", last_expr);
+	//Path settings and expression
+	settings.setValue("curr_path", curr_path);
+	settings.setValue("expr", last_expr);
+
+	//Format settings
+	settings.setValue("time", time_fmt);
+	settings.setValue("date", date_fmt);
 }
 
 void Preference::fillCategory()
@@ -120,6 +133,7 @@ void Preference::fillCategory()
     m_ui->categoryList->setRowCount(category.size());
     m_ui->categoryList->resizeRowsToContents();
     m_ui->categoryList->resizeColumnsToContents();
+
 
     int j = 0;
     QHashIterator<QString, QStringList> i(category);
@@ -137,6 +151,18 @@ void Preference::fillFormat(QTableWidgetItem *item)
     if (category.contains(item->text()))
     {
         QStringList list = category[item->text()];
+
+		//Ugly..
+		m_ui->label_3->setText(item->text());
+		if ((item->text() == "Date"))
+		{
+			upDatePreview(date_fmt);
+		}
+		else if ((item->text() == "Time"))
+		{
+			upDatePreview(time_fmt);
+		}
+		qDebug() << "Update " << item->text();
 
         // Some view adjustment
         m_ui->formatList->setRowCount(list.size());
@@ -158,7 +184,6 @@ void Preference::fillFormat(QTableWidgetItem *item)
 
 void Preference::fillCustomFmt(QTableWidgetItem *item)
 {
-    m_ui->customFormat->setText(item->text());
     QVariant d = item->data(Qt::UserRole);
     m_ui->label_3->setText(d.toString());
     qDebug() << d.toString();
@@ -169,9 +194,17 @@ void Preference::upDatePreview(QString str)
 {
     QDateTime now = QDateTime::currentDateTime();
 
-    if ((m_ui->label_3->text() == "Date") || (m_ui->label_3->text() == "Time"))
+    if ((m_ui->label_3->text() == "Date"))
+	{
+		date_fmt = str;
+		m_ui->customFormat->setText(date_fmt);
+        m_ui->preview->setText(now.toString(date_fmt));
+	}
+	else if ((m_ui->label_3->text() == "Time"))
     {
-        m_ui->preview->setText(now.toString(str));
+		time_fmt = str;
+		m_ui->customFormat->setText(time_fmt);
+		m_ui->preview->setText(now.toString(time_fmt));
     }
     else
     {

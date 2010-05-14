@@ -30,6 +30,9 @@
 #define TAG_PATTEN      "(<\\w+>)"
 #define DEFAULT_EXPR    "<EXIFDATE>_<EXIFTIME>_<EXT>"
 
+#define DEFAULT_TIME_FMT "hh.MM.ss"
+#define DEFAULT_DATE_FMT "dd-mm-yyyy"
+
 #include <QList>
 #include <QString>
 
