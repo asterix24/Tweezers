@@ -27,10 +27,9 @@
 #ifndef CFG_TWEEZERS_H
 #define CFG_TWEEZERS_H
 
-#define TAG_PATTEN      "(<\\w+>)"
-#define DEFAULT_EXPR    "<EXIFDATE>_<EXIFTIME>_<EXT>"
-
-#include <QList>
-#include <QString>
+#define TAG_PATTEN        "(<\\w+>)"
+#define DEFAULT_EXPR      "<EXIFDATE>_<EXIFTIME>_<EXT>"
+#define DEFAULT_DATE_FMT  "dd-MM-yyyy"
+#define DEFAULT_TIME_FMT  "hh.MM.ss"
 
 #endif /* CFG_TWEEZERS_H */

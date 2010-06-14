@@ -40,13 +40,6 @@ Preference::Preference(QWidget *parent) :
     createActions();
     readSettings();
 
-    m_ui->formatList->clear();
-    m_ui->formatList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-    m_ui->formatList->horizontalHeader()->setVisible(false);
-    m_ui->formatList->verticalHeader()->setVisible(false);
-    m_ui->formatList->setColumnCount(1);
-    m_ui->formatList->setRowCount(0);
-
     m_ui->categoryList->clear();
     m_ui->categoryList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     m_ui->categoryList->horizontalHeader()->setVisible(false);
@@ -54,12 +47,8 @@ Preference::Preference(QWidget *parent) :
     m_ui->categoryList->setColumnCount(1);
     m_ui->categoryList->setRowCount(0);
 
-
-
-    date_format << "dddd MMMM yyyy" << "d/m/yy" << "dd-mm-yy";
-    time_format << "hh:MM:ss" << "h:M" << "hh-MM-ss";
-    category["Date"] = date_format;
-    category["Time"] = time_format;
+    category["Date"] = DEFAULT_DATE_FMT;
+    category["Time"] = DEFAULT_TIME_FMT;
 
     fillCategory();
 }
@@ -103,16 +92,27 @@ void Preference::readSettings()
     // Last directory
     curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
     last_expr = settings.value("expr", DEFAULT_EXPR).toString();
+
+    // Format
+    curr_date_fmt = settings.value("date_fmt", DEFAULT_DATE_FMT).toString();
+    curr_time_fmt = settings.value("time_fmt", DEFAULT_TIME_FMT).toString();
 }
 
 void Preference::writeSettings()
 {
      QSettings settings("Asterix", "Tweezers application");
+
+     // Windows settings.
      settings.setValue("pos", pos);
      settings.setValue("size", size);
 
+     // Last directory
      settings.setValue("curr_path", curr_path);
      settings.setValue("expr", last_expr);
+
+     // Formats
+     settings.setValue("date_fmt", curr_date_fmt);
+     settings.setValue("time_fmt", curr_time_fmt);
 }
 
 void Preference::fillCategory()
@@ -122,7 +122,7 @@ void Preference::fillCategory()
     m_ui->categoryList->resizeColumnsToContents();
 
     int j = 0;
-    QHashIterator<QString, QStringList> i(category);
+    QHashIterator<QString, QString> i(category);
     while (i.hasNext())
     {
        i.next();
@@ -132,51 +132,23 @@ void Preference::fillCategory()
     }
 }
 
-void Preference::fillFormat(QTableWidgetItem *item)
+void Preference::preview(QTableWidgetItem *item)
 {
     if (category.contains(item->text()))
     {
-        QStringList list = category[item->text()];
-
-        // Some view adjustment
-        m_ui->formatList->setRowCount(list.size());
-        m_ui->formatList->resizeRowsToContents();
-        m_ui->formatList->resizeColumnsToContents();
-
-        // Mark all item whit its category.
-        QVariant v(item->text());
-
-        for (int i = 0; i < list.size(); i++)
-        {
-            QTableWidgetItem *_item = new QTableWidgetItem(list[i]);
-            _item->setData(Qt::UserRole, v);
-            m_ui->formatList->setItem(i, 0, _item);
-        }
+        QString fmt = category[item->text()];
+        m_ui->customFormat->setText(fmt);
+        upDatePreview(fmt);
     }
 
-}
-
-void Preference::fillCustomFmt(QTableWidgetItem *item)
-{
-    m_ui->customFormat->setText(item->text());
-    QVariant d = item->data(Qt::UserRole);
-    m_ui->label_3->setText(d.toString());
-    qDebug() << d.toString();
-    upDatePreview(item->text());
 }
 
 void Preference::upDatePreview(QString str)
 {
+    // Controllare quando la stringa non vale nulla..
     QDateTime now = QDateTime::currentDateTime();
+    m_ui->preview->setText(now.toString(str));
 
-    if ((m_ui->label_3->text() == "Date") || (m_ui->label_3->text() == "Time"))
-    {
-        m_ui->preview->setText(now.toString(str));
-    }
-    else
-    {
-        m_ui->preview->setText("");
-    }
 }
 
 void Preference::createActions()
@@ -186,8 +158,7 @@ void Preference::createActions()
     connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancel()));
 
     // Manage tag list signals
-    connect(m_ui->categoryList, SIGNAL(itemPressed (QTableWidgetItem *)), this, SLOT(fillFormat(QTableWidgetItem *)));
-    connect(m_ui->formatList, SIGNAL(itemPressed (QTableWidgetItem *)), this, SLOT(fillCustomFmt(QTableWidgetItem *)));
+    connect(m_ui->categoryList, SIGNAL(itemPressed (QTableWidgetItem *)), this, SLOT(preview(QTableWidgetItem *)));
 
     // Manage preview signals
     connect(m_ui->customFormat, SIGNAL(textChanged(const QString)), this, SLOT(upDatePreview(QString)));

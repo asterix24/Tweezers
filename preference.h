@@ -59,8 +59,7 @@ protected:
 private slots:
     void ok(void);
     void cancel(void);
-    void fillFormat(QTableWidgetItem *item);
-    void fillCustomFmt(QTableWidgetItem *item);
+    void preview(QTableWidgetItem *item);
     void upDatePreview(QString str);
 
 private:
@@ -73,9 +72,10 @@ private:
     QSize size;
 
     //Default format
-    QHash<QString, QStringList> category;
-    QStringList time_format;
-    QStringList date_format;
+    QHash<QString, QString> category;
+
+    QString curr_date_fmt;
+    QString curr_time_fmt;
 
     void fillCategory();
 
