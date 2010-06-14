@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      types.cpp
-  Version:   $Rev: 1937 $
+  Version:   $Rev: 2045 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   26-Jan-04, ahu: created
              11-Feb-04, ahu: isolated as a component
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: types.cpp 1937 2009-11-27 05:59:23Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: types.cpp 2045 2010-04-03 07:53:30Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -59,9 +59,15 @@ namespace {
         const char* name_;                      //!< Name of the type
         long size_;                             //!< Bytes per data entry
         //! Comparison operator for \em typeId
-        bool operator==(Exiv2::TypeId typeId) const;
+        bool operator==(Exiv2::TypeId typeId) const
+        {
+            return typeId_ == typeId;
+        }
         //! Comparison operator for \em name
-        bool operator==(const std::string& name) const;
+        bool operator==(const std::string& name) const
+        {
+            return 0 == strcmp(name_, name.c_str());
+        }
     }; // struct TypeInfoTable
 
     //! Lookup list with information of Exiv2 types
@@ -91,16 +97,6 @@ namespace {
         { Exiv2::xmpSeq,           "XmpSeq",      1 },
         { Exiv2::langAlt,          "LangAlt",     1 }
     };
-
-    bool TypeInfoTable::operator==(Exiv2::TypeId typeId) const
-    {
-        return typeId_ == typeId;
-    }
-
-    bool TypeInfoTable::operator==(const std::string& name) const
-    {
-        return std::string(name_) == name;
-    }
 
 }
 

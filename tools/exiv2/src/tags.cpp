@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,15 +20,15 @@
  */
 /*
   File:      tags.cpp
-  Version:   $Rev: 1965 $
+  Version:   $Rev: 2239 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
-             Gilles Caulier (gc) <caulier.gilles@kdemail.net>
+             Gilles Caulier (gc) <caulier dot gilles at gmail dot com>
   History:   15-Jan-04, ahu: created
              21-Jan-05, ahu: added MakerNote TagInfo registry and related code
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: tags.cpp 1965 2009-12-25 16:15:09Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: tags.cpp 2239 2010-05-25 14:53:56Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -88,9 +88,7 @@ namespace Exiv2 {
 
     bool IfdInfo::operator==(const Item& item) const
     {
-        const char* i = item.i_.c_str();
-        if (i == 0) return false;
-        return 0 == strcmp(i, item_);
+        return 0 == strcmp(item.i_.c_str(), item_);
     }
 
     // Important: IFD item must be unique!
@@ -107,6 +105,11 @@ namespace Exiv2 {
         { subImage2Id,       "SubImage2", "SubImage2",    ExifTags::ifdTagList           },
         { subImage3Id,       "SubImage3", "SubImage3",    ExifTags::ifdTagList           },
         { subImage4Id,       "SubImage4", "SubImage4",    ExifTags::ifdTagList           },
+        { subImage5Id,       "SubImage5", "SubImage5",    ExifTags::ifdTagList           },
+        { subImage6Id,       "SubImage6", "SubImage6",    ExifTags::ifdTagList           },
+        { subImage7Id,       "SubImage7", "SubImage7",    ExifTags::ifdTagList           },
+        { subImage8Id,       "SubImage8", "SubImage8",    ExifTags::ifdTagList           },
+        { subImage9Id,       "SubImage9", "SubImage9",    ExifTags::ifdTagList           },
         { mnIfdId,           "Makernote", "MakerNote",    ExifTags::mnTagList            },
         { canonIfdId,        "Makernote", "Canon",        CanonMakerNote::tagList        },
         { canonCsIfdId,      "Makernote", "CanonCs",      CanonMakerNote::tagListCs      },
@@ -130,6 +133,12 @@ namespace Exiv2 {
         { nikonWtIfdId,      "Makernote", "NikonWt",      Nikon3MakerNote::tagListWt     },
         { nikonIiIfdId,      "Makernote", "NikonIi",      Nikon3MakerNote::tagListIi     },
         { nikonAfIfdId,      "Makernote", "NikonAf",      Nikon3MakerNote::tagListAf     },
+        { nikonAf2IfdId,     "Makernote", "NikonAf2",     Nikon3MakerNote::tagListAf2    },
+        { nikonFiIfdId,      "Makernote", "NikonFi",      Nikon3MakerNote::tagListFi     },
+        { nikonMeIfdId,      "Makernote", "NikonMe",      Nikon3MakerNote::tagListMe     },
+        { nikonFl1IfdId,     "Makernote", "NikonFl1",     Nikon3MakerNote::tagListFl1    },
+        { nikonFl2IfdId,     "Makernote", "NikonFl2",     Nikon3MakerNote::tagListFl2    },
+        { nikonFl3IfdId,     "Makernote", "NikonFl3",     Nikon3MakerNote::tagListFl3    },
         { nikonSi1IfdId,     "Makernote", "NikonSiD80",   Nikon3MakerNote::tagListSi1    },
         { nikonSi2IfdId,     "Makernote", "NikonSiD40",   Nikon3MakerNote::tagListSi2    },
         { nikonSi3IfdId,     "Makernote", "NikonSiD300a", Nikon3MakerNote::tagListSi3    },
@@ -167,7 +176,17 @@ namespace Exiv2 {
         { panaRawIfdId,      "PanaRaw",   "PanasonicRaw", PanasonicMakerNote::tagListRaw },
         { pentaxIfdId,       "Makernote", "Pentax",       PentaxMakerNote::tagList       },
         { sigmaIfdId,        "Makernote", "Sigma",        SigmaMakerNote::tagList        },
-        { sonyIfdId,         "Makernote", "Sony",         SonyMakerNote::tagList         },
+        { sony1IfdId,        "Makernote", "Sony1",        SonyMakerNote::tagList         },
+        { sony2IfdId,        "Makernote", "Sony2",        SonyMakerNote::tagList         },
+        { sonyMltIfdId,      "Makernote", "SonyMinolta",  MinoltaMakerNote::tagList      },
+        { sony1CsIfdId,      "Makernote", "Sony1Cs",      SonyMakerNote::tagListCs       },
+        { sony1Cs2IfdId,     "Makernote", "Sony1Cs2",     SonyMakerNote::tagListCs2      },
+        { sony1MltCs7DIfdId, "Makernote", "Sony1MltCs7D", MinoltaMakerNote::tagListCs7D  },
+        { sony1MltCsOldIfdId,"Makernote", "Sony1MltCsOld",MinoltaMakerNote::tagListCsStd },
+        { sony1MltCsNewIfdId,"Makernote", "Sony1MltCsNew",MinoltaMakerNote::tagListCsStd },
+        { sony1MltCsA100IfdId,"Makernote","Sony1MltCsA100",MinoltaMakerNote::tagListCsA100},
+        { sony2CsIfdId,      "Makernote", "Sony2Cs",      SonyMakerNote::tagListCs       },
+        { sony2Cs2IfdId,     "Makernote", "Sony2Cs2",     SonyMakerNote::tagListCs2      },
         { lastIfdId,         "(Last IFD info)", "(Last IFD item)", 0 }
     };
 
@@ -190,6 +209,8 @@ namespace Exiv2 {
         { dngTags,         "DngTags",              N_("Adobe DNG tags")               },
         { panaRaw,         "PanasonicRaw",         N_("Panasonic RAW tags")           },
         { tiffEp,          "TIFF/EP",              N_("TIFF/EP tags")                 },
+        { tiffPm6,         "TIFF&PM6",             N_("TIFF PageMaker 6.0 tags")      },
+        { adobeOpi,        "AdobeOPI",             N_("Adobe OPI tags")               },
         { lastSectionId,   "(LastSection)",        N_("Last section")                 }
     };
 
@@ -218,6 +239,13 @@ namespace Exiv2 {
         {  5, N_("Thumbnail/Preview image, Transparency mask")                  },
         {  6, N_("Primary image, Multi page file, Transparency mask")           },
         {  7, N_("Thumbnail/Preview image, Multi page file, Transparency mask") }
+    };
+
+    //! SubfileType, TIFF tag 0x00ff
+    extern const TagDetails exifSubfileType[] = {
+        {  1, N_("Full-resolution image data")                                  },
+        {  2, N_("Reduced-resolution image data")                               },
+        {  3, N_("A single page of a multi-page image")                         }
     };
 
     //! Units for measuring X and Y resolution, tags 0x0128, 0xa210
@@ -279,6 +307,13 @@ namespace Exiv2 {
         { 34892, N_("Linear Raw")         }
     };
 
+    //! Threshholding, tag 0x0107
+    extern const TagDetails exifThreshholding[] = {
+        { 1, N_("No dithering or halftoning")           },
+        { 2, N_("Ordered dither or halftone technique") },
+        { 3, N_("Randomized process")                   }
+    };
+
     //! Orientation, tag 0x0112
     extern const TagDetails exifOrientation[] = {
         { 1, N_("top, left")     },
@@ -289,6 +324,43 @@ namespace Exiv2 {
         { 6, N_("right, top")    },
         { 7, N_("right, bottom") },
         { 8, N_("left, bottom")  }
+    };
+
+    //! Predictor, tag 0x013d
+    extern const TagDetails exifPredictor[] = {
+        { 1, N_("No prediction scheme used") },
+        { 2, N_("Horizontal differencing")   }
+    };
+
+    //! InkSet, tag 0x014c
+    extern const TagDetails exifInkSet[] = {
+        { 1, N_("CMYK")     },
+        { 2, N_("not CMYK") }
+    };
+
+    //! SampleFormat, tag 0x0153
+    extern const TagDetails exifSampleFormat[] = {
+        { 1, N_("Unsigned integer data")                },
+        { 2, N_("Two's complement signed integer data") },
+        { 3, N_("IEEE floating point data")             },
+        { 4, N_("Undefined data format")                }
+    };
+
+    //! Indexed, tag 0x015a
+    extern const TagDetails exifIndexed[] = {
+        { 0, N_("Not indexed") },
+        { 1, N_("Indexed")     }
+    };
+
+    //! exifJpegLosslessPredictor, tag 0x0205
+    extern const TagDetails exifJpegLosslessPredictor[] = {
+        { 1, N_("A")           },
+        { 2, N_("B")           },
+        { 3, N_("C")           },
+        { 4, N_("A+B-C")       },
+        { 5, N_("A+((B-C)/2)") },
+        { 6, N_("B+((A-C)/2)") },
+        { 7, N_("(A+B)/2")     }
     };
 
     //! YCbCrPositioning, tag 0x0213
@@ -346,6 +418,10 @@ namespace Exiv2 {
         TagInfo(0x00fe, "NewSubfileType", N_("New Subfile Type"),
                 N_("A general indication of the kind of data contained in this subfile."),
                 ifd0Id, imgStruct, unsignedLong, EXV_PRINT_TAG(exifNewSubfileType)), // TIFF tag
+        TagInfo(0x00ff, "SubfileType", N_("Subfile Type"),
+                N_("A general indication of the kind of data contained in this subfile. "
+                   "This field is deprecated. The NewSubfileType field should be used instead."),
+                ifd0Id, imgStruct, unsignedShort, EXV_PRINT_TAG(exifSubfileType)), // TIFF tag
         TagInfo(0x0100, "ImageWidth", N_("Image Width"),
                 N_("The number of columns of image data, equal to the number of "
                 "pixels per row. In JPEG compressed data a JPEG marker is "
@@ -371,6 +447,18 @@ namespace Exiv2 {
                 N_("The pixel composition. In JPEG compressed data a JPEG "
                 "marker is used instead of this tag."),
                 ifd0Id, imgStruct, unsignedShort, EXV_PRINT_TAG(exifPhotometricInterpretation)),
+        TagInfo(0x0107, "Threshholding", N_("Threshholding"),
+                N_("For black and white TIFF files that represent shades of gray, "
+                   "the technique used to convert from gray to black and white pixels."),
+                ifd0Id, imgStruct, unsignedShort, EXV_PRINT_TAG(exifThreshholding)), // TIFF tag
+        TagInfo(0x0108, "CellWidth", N_("Cell Width"),
+                N_("The width of the dithering or halftoning matrix used to create a "
+                   "dithered or halftoned bilevel file."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
+        TagInfo(0x0109, "CellLength", N_("Cell Length"),
+                N_("The length of the dithering or halftoning matrix used to create a "
+                   "dithered or halftoned bilevel file."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
         TagInfo(0x010a, "FillOrder", N_("Fill Order"),
                 N_("The logical order of bits within a byte"),
                 ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
@@ -435,6 +523,18 @@ namespace Exiv2 {
                 "is used instead of this tag. If this field does not exist, "
                 "the TIFF default of 1 (chunky) is assumed."),
                 ifd0Id, imgStruct, unsignedShort, printValue),
+        TagInfo(0x0122, "GrayResponseUnit", N_("Gray Response Unit"),
+                N_("The precision of the information contained in the GrayResponseCurve."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
+        TagInfo(0x0123, "GrayResponseCurve", N_("Gray Response Curve"),
+                N_("For grayscale data, the optical density of each possible pixel value."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
+        TagInfo(0x0124, "T4Options", N_("T4 Options"),
+                N_("T.4-encoding options."),
+                ifd0Id, imgStruct, unsignedLong, printValue), // TIFF tag
+        TagInfo(0x0125, "T6Options", N_("T6 Options"),
+                N_("T.6-encoding options."),
+                ifd0Id, imgStruct, unsignedLong, printValue), // TIFF tag
         TagInfo(0x0128, "ResolutionUnit", N_("Resolution Unit"),
                 N_("The unit for measuring <XResolution> and <YResolution>. The same "
                 "unit is used for both <XResolution> and <YResolution>. If "
@@ -464,10 +564,14 @@ namespace Exiv2 {
                 "left blank, it is treated as unknown. Ex.) \"Camera owner, John "
                 "Smith; Photographer, Michael Brown; Image creator, Ken James\""),
                 ifd0Id, otherTags, asciiString, printValue),
-        TagInfo(0x013c, "HostComputer", N_("Host computer"),
+        TagInfo(0x013c, "HostComputer", N_("Host Computer"),
                 N_("This tag records information about the host computer used "
                 "to generate the image."),
                 ifd0Id, otherTags, asciiString, printValue),
+        TagInfo(0x013d, "Predictor", N_("Predictor"),
+                N_("A predictor is a mathematical operator that is applied to "
+                   "the image data before an encoding scheme is applied."),
+                ifd0Id, imgStruct, unsignedShort, EXV_PRINT_TAG(exifPredictor)), // TIFF tag
         TagInfo(0x013e, "WhitePoint", N_("White Point"),
                 N_("The chromaticity of the white point of the image. Normally "
                 "this tag is not necessary, since color space is specified "
@@ -478,6 +582,17 @@ namespace Exiv2 {
                 "Normally this tag is not necessary, since colorspace is "
                 "specified in the colorspace information tag (<ColorSpace>)."),
                 ifd0Id, imgCharacter, unsignedRational, printValue),
+        TagInfo(0x0140, "ColorMap", N_("Color Map"),
+                N_("A color map for palette color images. This field defines "
+                   "a Red-Green-Blue color map (often called a lookup table) "
+                   "for palette-color images. In a palette-color image, a "
+                   "pixel value is used to index into an RGB lookup table."),
+                ifd0Id, imgCharacter, unsignedShort, printValue),
+        TagInfo(0x0141, "HalftoneHints", N_("Halftone Hints"),
+                N_("The purpose of the HalftoneHints field is to convey to the "
+                   "halftone function the range of gray levels within a "
+                   "colorimetrically-specified image that should retain tonal detail."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
         TagInfo(0x0142, "TileWidth", N_("Tile Width"),
                 N_("The tile width in pixels. This is the number of columns in each tile."),
                 ifd0Id, recOffset, unsignedShort, printValue), // TIFF tag
@@ -497,13 +612,62 @@ namespace Exiv2 {
         TagInfo(0x014a, "SubIFDs", N_("SubIFD Offsets"),
                 N_("Defined by Adobe Corporation to enable TIFF Trees within a TIFF file."),
                 ifd0Id, tiffEp, unsignedLong, printValue),
+        TagInfo(0x014c, "InkSet", N_("Ink Set"),
+                N_("The set of inks used in a separated (PhotometricInterpretation=5) image."),
+                ifd0Id, imgStruct, unsignedShort, EXV_PRINT_TAG(exifInkSet)), // TIFF tag
+        TagInfo(0x014d, "InkNames", N_("Ink Names"),
+                N_("The name of each ink used in a separated (PhotometricInterpretation=5) image."),
+                ifd0Id, imgStruct, asciiString, printValue), // TIFF tag
+        TagInfo(0x014e, "NumberOfInks", N_("Number Of Inks"),
+                N_("The number of inks. Usually equal to SamplesPerPixel, unless there are extra samples."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
+        TagInfo(0x0150, "DotRange", N_("Dot Range"),
+                N_("The component values that correspond to a 0% dot and 100% dot."),
+                ifd0Id, imgStruct, unsignedByte, printValue), // TIFF tag
+        TagInfo(0x0151, "TargetPrinter", N_("Target Printer"),
+                N_("A description of the printing environment for which this separation is intended."),
+                ifd0Id, imgStruct, asciiString, printValue), // TIFF tag
+        TagInfo(0x0152, "ExtraSamples", N_("Extra Samples"),
+                N_("Specifies that each pixel has m extra components whose interpretation "
+                   "is defined by one of the values listed below."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
+        TagInfo(0x0153, "SampleFormat", N_("Sample Format"),
+                N_("This field specifies how to interpret each data sample in a pixel."),
+                ifd0Id, imgStruct, unsignedShort, EXV_PRINT_TAG(exifSampleFormat)), // TIFF tag
+        TagInfo(0x0154, "SMinSampleValue", N_("SMin Sample Value"),
+                N_("This field specifies the minimum sample value."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
+        TagInfo(0x0155, "SMaxSampleValue", N_("SMax Sample Value"),
+                N_("This field specifies the maximum sample value."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
         TagInfo(0x0156, "TransferRange", N_("Transfer Range"),
                 N_("Expands the range of the TransferFunction"),
                 ifd0Id, imgCharacter, unsignedShort, printValue), // TIFF tag
+        TagInfo(0x0157, "ClipPath", N_("Clip Path"),
+                N_("A TIFF ClipPath is intended to mirror the essentials of PostScript's "
+                   "path creation functionality."),
+                ifd0Id, tiffPm6, unsignedByte, printValue), // TIFF&PM6 tag
+        TagInfo(0x0158, "XClipPathUnits", N_("X Clip Path Units"),
+                N_("The number of units that span the width of the image, in terms of "
+                   "integer ClipPath coordinates."),
+                ifd0Id, tiffPm6, signedShort, printValue), // TIFF&PM6 tag
+        TagInfo(0x0159, "YClipPathUnits", N_("Y Clip Path Units"),
+                N_("The number of units that span the height of the image, in terms of "
+                   "integer ClipPath coordinates."),
+                ifd0Id, tiffPm6, signedShort, printValue), // TIFF&PM6 tag
+        TagInfo(0x015a, "Indexed", N_("Indexed"),
+                N_("Indexed images are images where the 'pixels' do not represent color "
+                   "values, but rather an index (usually 8-bit) into a separate color "
+                   "table, the ColorMap."),
+                ifd0Id, tiffPm6, unsignedShort, EXV_PRINT_TAG(exifIndexed)), // TIFF&PM6 tag
         TagInfo(0x015b, "JPEGTables", N_("JPEG tables"),
                 N_("This optional tag may be used to encode the JPEG quantization and"
                    "Huffman tables for subsequent use by the JPEG decompression process."),
                 ifd0Id, imgStruct, undefined, printValue), // TIFF/EP tag
+        TagInfo(0x015F, "OPIProxy", N_("OPI Proxy"),
+                N_("OPIProxy gives information concerning whether this image is a "
+                   "low-resolution proxy of a high-resolution image (Adobe OPI)."),
+                ifd0Id, adobeOpi, unsignedShort, printValue), // Adobe OPI tag
         TagInfo(0x0200, "JPEGProc", N_("JPEG Process"),
                 N_("This field indicates the process used to produce the compressed data"),
                 ifd0Id, recOffset, unsignedLong, printValue), // TIFF tag
@@ -519,6 +683,29 @@ namespace Exiv2 {
                 "not be recorded. Compressed thumbnails must be recorded in no "
                 "more than 64 Kbytes, including all other data to be recorded in APP1."),
                 ifd0Id, recOffset, unsignedLong, printValue),
+        TagInfo(0x0203, "JPEGRestartInterval", N_("JPEG Restart Interval"),
+                N_("This Field indicates the length of the restart interval used "
+                   "in the compressed image data."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
+        TagInfo(0x0205, "JPEGLosslessPredictors", N_("JPEG Lossless Predictors"),
+                N_("This Field points to a list of lossless predictor-selection "
+                   "values, one per component."),
+                ifd0Id, imgStruct, unsignedShort, EXV_PRINT_TAG(exifJpegLosslessPredictor)), // TIFF tag
+        TagInfo(0x0206, "JPEGPointTransforms", N_("JPEG Point Transforms"),
+                N_("This Field points to a list of point transform values, one per component."),
+                ifd0Id, imgStruct, unsignedShort, printValue), // TIFF tag
+        TagInfo(0x0207, "JPEGQTables", N_("JPEG Q-Tables"),
+                N_("This Field points to a list of offsets to the quantization tables, "
+                   "one per component."),
+                ifd0Id, imgStruct, unsignedLong, printValue), // TIFF tag
+        TagInfo(0x0208, "JPEGDCTables", N_("JPEG DC-Tables"),
+                N_("This Field points to a list of offsets to the DC Huffman tables or "
+                   "the lossless Huffman tables, one per component."),
+                ifd0Id, imgStruct, unsignedLong, printValue), // TIFF tag
+        TagInfo(0x0209, "JPEGACTables", N_("JPEG AC-Tables"),
+                N_("This Field points to a list of offsets to the Huffman AC tables, "
+                   "one per component."),
+                ifd0Id, imgStruct, unsignedLong, printValue), // TIFF tag
         TagInfo(0x0211, "YCbCrCoefficients", N_("YCbCr Coefficients"),
                 N_("The matrix coefficients for transformation from RGB to YCbCr "
                 "image data. No default is given in TIFF; but here the "
@@ -565,6 +752,11 @@ namespace Exiv2 {
         TagInfo(0x4749, "RatingPercent", N_("Windows Rating Percent"),
                 N_("Rating tag used by Windows, value in percent"),
                 ifd0Id, otherTags, unsignedShort, printValue), // Windows Tag
+        TagInfo(0x800d, "ImageID", N_("Image ID"),
+                N_("ImageID is the full pathname of the original, high-resolution image, "
+                   "or any other identifying string that uniquely identifies the original "
+                   "image (Adobe OPI)."),
+                ifd0Id, adobeOpi, asciiString, printValue), // Adobe OPI tag
         TagInfo(0x828d, "CFARepeatPatternDim", N_("CFA Repeat Pattern Dimension"),
                 N_("Contains two values representing the minimum rows and columns "
                 "to define the repeating patterns of the color filter array"),
@@ -634,7 +826,7 @@ namespace Exiv2 {
         TagInfo(0x882b, "SelfTimerMode", N_("Self Timer Mode"), N_("Number of seconds image capture was delayed from button press."), ifd0Id, tiffEp, unsignedShort, printValue), // TIFF/EP tag
         TagInfo(0x9003, "DateTimeOriginal", N_("Date Time Original"), N_("The date and time when the original image data was generated."), ifd0Id, tiffEp, asciiString, printValue), // TIFF/EP tag
         TagInfo(0x9102, "CompressedBitsPerPixel", N_("Compressed Bits Per Pixel"), N_("Specific to compressed data; states the compressed bits per pixel."), ifd0Id, tiffEp, unsignedRational, printFloat), // TIFF/EP tag
-        TagInfo(0x9201, "ShutterSpeedValue", N_("Shutter Speed Value"), N_("Shutter speed."), ifd0Id, tiffEp, unsignedRational, print0x9201), // TIFF/EP tag
+        TagInfo(0x9201, "ShutterSpeedValue", N_("Shutter Speed Value"), N_("Shutter speed."), ifd0Id, tiffEp, signedRational, print0x9201), // TIFF/EP tag
         TagInfo(0x9202, "ApertureValue", N_("Aperture Value"), N_("The lens aperture."), ifd0Id, tiffEp, unsignedRational, print0x9202), // TIFF/EP tag
         TagInfo(0x9203, "BrightnessValue", N_("Brightness Value"), N_("The value of brightness."), ifd0Id, tiffEp, signedRational, printFloat), // TIFF/EP tag
         TagInfo(0x9204, "ExposureBiasValue", N_("Exposure Bias Value"), N_("The exposure bias."), ifd0Id, tiffEp, signedRational, print0x9204), // TIFF/EP tag
@@ -1770,6 +1962,11 @@ namespace Exiv2 {
         case subImage2Id:
         case subImage3Id:
         case subImage4Id:
+        case subImage5Id:
+        case subImage6Id:
+        case subImage7Id:
+        case subImage8Id:
+        case subImage9Id:
         case panaRawIfdId: rc = true; break;
         default:           rc = false; break;
         }
@@ -2515,17 +2712,14 @@ namespace Exiv2 {
         return os;
     }
 
-    // Todo: Implement this properly
     std::ostream& print0x9286(std::ostream& os, const Value& value, const ExifData*)
     {
-        if (value.size() > 8) {
-            DataBuf buf(value.size());
-            value.copy(buf.pData_, bigEndian);
-            // Hack: Skip the leading 8-Byte character code, truncate
-            // trailing '\0's and let the stream take care of the remainder
-            std::string userComment(reinterpret_cast<char*>(buf.pData_) + 8, buf.size_ - 8);
-            std::string::size_type pos = userComment.find_last_not_of('\0');
-            os << userComment.substr(0, pos + 1);
+        const CommentValue* pcv = dynamic_cast<const CommentValue*>(&value);
+        if (pcv) {
+            os << pcv->comment();
+        }
+        else {
+            os << value;
         }
         return os;
     }

@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,13 +20,13 @@
  */
 /*
   File:      utils.cpp
-  Version:   $Rev: 1937 $
+  Version:   $Rev: 2045 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   08-Dec-03, ahu: created
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: utils.cpp 1937 2009-11-27 05:59:23Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: utils.cpp 2045 2010-04-03 07:53:30Z ahuggel $")
 
 // *****************************************************************************
 // included header files

@@ -2,7 +2,7 @@
 /*!
   @file    doxygen.hpp
   @brief   Additional documentation, this file contains no source code
-  @version $Rev: 1850 $
+  @version $Rev: 2248 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    07-Feb-04, ahu: created
@@ -73,7 +73,10 @@
   - <a href="tags-xmp-iptcExt.html">Iptc4xmpExt schema</a>
   - <a href="tags-xmp-plus.html">PLUS schema</a>
   - <a href="tags-xmp-digiKam.html">digiKam schema</a>
+  - <a href="tags-xmp-kipi.html">KDE Image Program Interface schema</a>
   - <a href="tags-xmp-MicrosoftPhoto.html">MicrosoftPhoto schema</a>
+  - <a href="tags-xmp-mediapro.html">iView Media Pro schema</a>
+  - <a href="tags-xmp-expressionmedia.html">Microsoft Expression Media schema</a>
 
   @section formats File Formats
 
@@ -90,7 +93,7 @@
 
   @section license License
 
-  <P>Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net></P>
+  <P>Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net></P>
 
   <P>%Exiv2 is free software; you can redistribute it and/or modify it under the
   terms of the <a href="gpl-license.html">GNU General Public License</a> as

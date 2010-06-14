@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      actions.cpp
-  Version:   $Rev: 1977 $
+  Version:   $Rev: 2045 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   08-Dec-03, ahu: created
              30-Apr-06, Roger Larsson: Print filename if processing multiple files
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: actions.cpp 1977 2009-12-28 14:47:58Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: actions.cpp 2045 2010-04-03 07:53:30Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -129,12 +129,6 @@ namespace {
                  bool preserve);
 
     /*!
-      @brief Test to distinguish between Exif and other tags in TIFF-like files.
-             Only Exif tags are copyed, deleted, added.
-     */
-    bool isExifTag(const Exiv2::Exifdatum& ed);
-
-    /*!
       @brief Rename a file according to a timestamp value.
 
       @param path The original file path. Contains the new path on exit.
@@ -218,6 +212,7 @@ namespace Action {
         registerTask(insert,  Task::AutoPtr(new Insert));
         registerTask(modify,  Task::AutoPtr(new Modify));
         registerTask(fixiso,  Task::AutoPtr(new FixIso));
+        registerTask(fixcom,  Task::AutoPtr(new FixCom));
     } // TaskFactory c'tor
 
     Task::AutoPtr TaskFactory::create(TaskType type)
@@ -496,7 +491,6 @@ namespace Action {
         Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(path_);
         assert(image.get() != 0);
         image->readMetadata();
-        bool const manyFiles = Params::instance().files_.size() > 1;
         // Set defaults for metadata types and data columns
         if (Params::instance().printTags_ == Exiv2::mdNone) {
             Params::instance().printTags_ = Exiv2::mdExif | Exiv2::mdIptc | Exiv2::mdXmp;
@@ -504,11 +498,79 @@ namespace Action {
         if (Params::instance().printItems_ == 0) {
             Params::instance().printItems_ = Params::prKey | Params::prType | Params::prCount | Params::prTrans;
         }
+        if (!Params::instance().keys_.empty()) {
+            for (Params::Keys::const_iterator key = Params::instance().keys_.begin();
+                 key != Params::instance().keys_.end(); ++key) {
+                rc |= grepTag(*key, image.get());
+            }
+        }
+        else {
+            rc = printMetadata(image.get());
+        }
+        return rc;
+    } // Print::printList
+
+    int Print::grepTag(const std::string& key, const Exiv2::Image* image)
+    {
+        int rc = 0;
+        if (key.empty()) return rc;
+        switch (key[0]) {
+        case 'E':
+            if (Params::instance().printTags_ & Exiv2::mdExif) {
+                Exiv2::ExifKey ek(key);
+                const Exiv2::ExifData& exifData = image->exifData();
+                Exiv2::ExifData::const_iterator md = exifData.findKey(ek);
+                if (md != exifData.end()) printMetadatum(*md, image);
+                if (exifData.empty()) {
+                    if (Params::instance().verbose_) {
+                        std::cerr << path_ << ": " << _("No Exif data found in the file\n");
+                    }
+                    rc = -3;
+                }
+            }
+            break;
+        case 'I':
+            if (Params::instance().printTags_ & Exiv2::mdIptc) {
+                Exiv2::IptcKey ik(key);
+                const Exiv2::IptcData& iptcData = image->iptcData();
+                Exiv2::IptcData::const_iterator md = iptcData.findKey(ik);
+                if (md != iptcData.end()) printMetadatum(*md, image);
+                if (iptcData.empty()) {
+                    if (Params::instance().verbose_) {
+                        std::cerr << path_ << ": " << _("No IPTC data found in the file\n");
+                    }
+                    rc = -3;
+                }
+            }
+            break;
+        case 'X':
+            if (Params::instance().printTags_ & Exiv2::mdXmp) {
+                Exiv2::XmpKey xk(key);
+                const Exiv2::XmpData& xmpData = image->xmpData();
+                Exiv2::XmpData::const_iterator md = xmpData.findKey(xk);
+                if (md != xmpData.end()) printMetadatum(*md, image);
+                if (xmpData.empty()) {
+                    if (Params::instance().verbose_) {
+                        std::cerr << path_ << ": " << _("No XMP data found in the file\n");
+                    }
+                    rc = -3;
+                }
+            }
+            break;
+        default:
+            throw Exiv2::Error(1, std::string(_("Invalid key")) + " `" + key + "'");
+        }
+        return rc;
+    } // Print::grepTag
+
+    int Print::printMetadata(const Exiv2::Image* image)
+    {
+        int rc = 0;
         if (Params::instance().printTags_ & Exiv2::mdExif) {
-            Exiv2::ExifData& exifData = image->exifData();
+            const Exiv2::ExifData& exifData = image->exifData();
             for (Exiv2::ExifData::const_iterator md = exifData.begin();
                  md != exifData.end(); ++md) {
-                printMetadatum(*md, image.get(), manyFiles);
+                printMetadatum(*md, image);
             }
             if (exifData.empty()) {
                 if (Params::instance().verbose_) {
@@ -518,10 +580,10 @@ namespace Action {
             }
         }
         if (Params::instance().printTags_ & Exiv2::mdIptc) {
-            Exiv2::IptcData& iptcData = image->iptcData();
+            const Exiv2::IptcData& iptcData = image->iptcData();
             for (Exiv2::IptcData::const_iterator md = iptcData.begin();
                  md != iptcData.end(); ++md) {
-                printMetadatum(*md, image.get(), manyFiles);
+                printMetadatum(*md, image);
             }
             if (iptcData.empty()) {
                 if (Params::instance().verbose_) {
@@ -531,10 +593,10 @@ namespace Action {
             }
         }
         if (Params::instance().printTags_ & Exiv2::mdXmp) {
-            Exiv2::XmpData& xmpData = image->xmpData();
+            const Exiv2::XmpData& xmpData = image->xmpData();
             for (Exiv2::XmpData::const_iterator md = xmpData.begin();
                  md != xmpData.end(); ++md) {
-                printMetadatum(*md, image.get(), manyFiles);
+                printMetadatum(*md, image);
             }
             if (xmpData.empty()) {
                 if (Params::instance().verbose_) {
@@ -544,16 +606,15 @@ namespace Action {
             }
         }
         return rc;
-    } // Print::printList
+    } // Print::printMetadata
 
-    void Print::printMetadatum(const Exiv2::Metadatum& md,
-                               const Exiv2::Image* pImage,
-                               bool const manyFiles)
+    void Print::printMetadatum(const Exiv2::Metadatum& md, const Exiv2::Image* pImage)
     {
         if (   Params::instance().unknown_
             && md.tagName().substr(0, 2) == "0x") {
             return;
         }
+        bool const manyFiles = Params::instance().files_.size() > 1;
         if (manyFiles) {
             std::cout << std::setfill(' ') << std::left << std::setw(20)
                       << path_ << "  ";
@@ -625,11 +686,23 @@ namespace Action {
                 && (   md.typeId() == Exiv2::undefined
                     || md.typeId() == Exiv2::unsignedByte
                     || md.typeId() == Exiv2::signedByte)
-                && md.size() > 100) {
+                && md.size() > 128) {
                 std::cout << _("(Binary value suppressed)") << std::endl;
                 return;
             }
-            std::cout << std::dec << md.value();
+            bool done = false;
+            if (0 == strcmp(md.key().c_str(), "Exif.Photo.UserComment")) {
+                const Exiv2::CommentValue* pcv = dynamic_cast<const Exiv2::CommentValue*>(&md.value());
+                if (pcv) {
+                    Exiv2::CommentValue::CharsetId csId = pcv->charsetId();
+                    if (csId != Exiv2::CommentValue::undefined) {
+                        std::cout << "charset=\"" << Exiv2::CommentValue::CharsetInfo::name(csId) << "\" ";
+                    }
+                    std::cout << pcv->comment(Params::instance().charset_.c_str());
+                    done = true;
+                }
+            }
+            if (!done) std::cout << std::dec << md.value();
         }
         if (Params::instance().printItems_ & Params::prTrans) {
             if (!first) std::cout << "  ";
@@ -638,11 +711,19 @@ namespace Action {
                 && (   md.typeId() == Exiv2::undefined
                     || md.typeId() == Exiv2::unsignedByte
                     || md.typeId() == Exiv2::signedByte)
-                && md.size() > 100) {
+                && md.size() > 128) {
                 std::cout << _("(Binary value suppressed)") << std::endl;
                 return;
             }
-            std::cout << std::dec << md.print(&pImage->exifData());
+            bool done = false;
+            if (0 == strcmp(md.key().c_str(), "Exif.Photo.UserComment")) {
+                const Exiv2::CommentValue* pcv = dynamic_cast<const Exiv2::CommentValue*>(&md.value());
+                if (pcv) {
+                    std::cout << pcv->comment(Params::instance().charset_.c_str());
+                    done = true;
+                }
+            }
+            if (!done) std::cout << std::dec << md.print(&pImage->exifData());
         }
         if (Params::instance().printItems_ & Params::prHex) {
             if (!first) std::cout << std::endl;
@@ -651,7 +732,7 @@ namespace Action {
                 && (   md.typeId() == Exiv2::undefined
                     || md.typeId() == Exiv2::unsignedByte
                     || md.typeId() == Exiv2::signedByte)
-                && md.size() > 100) {
+                && md.size() > 128) {
                 std::cout << _("(Binary value suppressed)") << std::endl;
                 return;
             }
@@ -880,13 +961,7 @@ namespace Action {
         if (Params::instance().verbose_ && image->exifData().count() > 0) {
             std::cout << _("Erasing Exif data from the file") << std::endl;
         }
-        if (0 == strcmp(image->mimeType().c_str(), "image/tiff")) {
-            Exiv2::ExifData& ed = image->exifData();
-            ed.erase(std::remove_if(ed.begin(), ed.end(), isExifTag), ed.end());
-        }
-        else {
-            image->clearExifData();
-        }
+        image->clearExifData();
         return 0;
     }
 
@@ -1617,6 +1692,84 @@ namespace Action {
         return new FixIso(*this);
     }
 
+    FixCom::~FixCom()
+    {
+    }
+
+    int FixCom::run(const std::string& path)
+    {
+    try {
+        if (!Exiv2::fileExists(path, true)) {
+            std::cerr << path
+                      << ": " <<_("Failed to open the file\n");
+            return -1;
+        }
+        Timestamp ts;
+        if (Params::instance().preserve_) {
+            ts.read(path);
+        }
+        Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(path);
+        assert(image.get() != 0);
+        image->readMetadata();
+        Exiv2::ExifData& exifData = image->exifData();
+        if (exifData.empty()) {
+            std::cerr << path
+                      << ": " << _("No Exif data found in the file\n");
+            return -3;
+        }
+        Exiv2::ExifData::iterator pos = exifData.findKey(Exiv2::ExifKey("Exif.Photo.UserComment"));
+        if (pos == exifData.end()) {
+            if (Params::instance().verbose_) {
+                std::cout << _("No Exif user comment found") << "\n";
+            }
+            return 0;
+        }
+        Exiv2::Value::AutoPtr v = pos->getValue();
+        const Exiv2::CommentValue* pcv = dynamic_cast<const Exiv2::CommentValue*>(v.get());
+        if (!pcv) {
+            if (Params::instance().verbose_) {
+                std::cout << _("Found Exif user comment with unexpected value type") << "\n";
+            }
+            return 0;
+        }
+        Exiv2::CommentValue::CharsetId csId = pcv->charsetId();
+        if (csId != Exiv2::CommentValue::unicode) {
+            if (Params::instance().verbose_) {
+                std::cout << _("No Exif UNICODE user comment found") << "\n";
+            }
+            return 0;
+        }
+        std::string comment = pcv->comment(Params::instance().charset_.c_str());
+        if (Params::instance().verbose_) {
+            std::cout << _("Setting Exif UNICODE user comment to") << " \"" << comment << "\"\n";
+        }
+        comment = std::string("charset=\"") + Exiv2::CommentValue::CharsetInfo::name(csId) + "\" " + comment;
+        // Remove BOM and convert value from source charset to UCS-2, but keep byte order
+        pos->setValue(comment);
+        image->writeMetadata();
+        if (Params::instance().preserve_) {
+            ts.touch(path);
+        }
+        return 0;
+    }
+    catch(const Exiv2::AnyError& e)
+    {
+        std::cerr << "Exiv2 exception in fixcom action for file " << path
+                  << ":\n" << e << "\n";
+        return 1;
+    }
+    } // FixCom::run
+
+    FixCom::AutoPtr FixCom::clone() const
+    {
+        return AutoPtr(clone_());
+    }
+
+    FixCom* FixCom::clone_() const
+    {
+        return new FixCom(*this);
+    }
+
 }                                       // namespace Action
 
 // *****************************************************************************
@@ -1681,6 +1834,13 @@ namespace {
         if (!Util::strtol(timeStr.substr(17,2).c_str(), tmp)) return 10;
         tm->tm_sec = tmp;
 
+        // Conversions to set remaining fields of the tm structure
+        time_t time = timegm(tm);
+#ifdef EXV_HAVE_GMTIME_R
+        if (time == (time_t)-1 || gmtime_r(&time, tm) == 0) return 11;
+#else
+        if (time == (time_t)-1 || std::gmtime(&time)  == 0) return 11;
+#endif
         return 0;
     } // str2Tm
 
@@ -1739,22 +1899,7 @@ namespace {
                 std::cout << _("Writing Exif data from") << " " << source
                           << " " << _("to") << " " << target << std::endl;
             }
-            if (0 == strcmp(targetImage->mimeType().c_str(), "image/tiff")) {
-                Exiv2::ExifData& ted = targetImage->exifData();
-                if (!preserve) {
-                    targetImage->readMetadata();
-                    ted.erase(std::remove_if(ted.begin(), ted.end(), isExifTag), ted.end());
-                }
-                const Exiv2::ExifData& sed = sourceImage->exifData();
-                for (Exiv2::ExifData::const_iterator pos = sed.begin(); pos != sed.end(); ++pos) {
-                    if (isExifTag(*pos)) {
-                        ted[pos->key()] = pos->value();
-                    }
-                }
-            }
-            else {
-                targetImage->setExifData(sourceImage->exifData());
-            }
+            targetImage->setExifData(sourceImage->exifData());
         }
         if (   Params::instance().target_ & Params::ctIptc
             && !sourceImage->iptcData().empty()) {
@@ -1799,66 +1944,6 @@ namespace {
             return 0 == strcmp(s_, s);
         }
     };
-
-    bool isExifTag(const Exiv2::Exifdatum& ed)
-    {
-        // A somewhat random list of IFD0 tags which are considered as "Exif tags"
-        static const String exifTags[] = {
-            { "Exif.Image.ProcessingSoftware"      },
-            { "Exif.Image.DocumentName"            },
-            { "Exif.Image.ImageDescription"        },
-            { "Exif.Image.Make"                    },
-            { "Exif.Image.Model"                   },
-            { "Exif.Image.Software"                },
-            { "Exif.Image.DateTime"                },
-            { "Exif.Image.HostComputer"            },
-            { "Exif.Image.Artist"                  },
-            { "Exif.Image.XMLPacket"               },
-            { "Exif.Image.Rating"                  },
-            { "Exif.Image.RatingPercent"           },
-            { "Exif.Image.CFARepeatPatternDim"     },
-            { "Exif.Image.CFAPattern"              },
-            { "Exif.Image.BatteryLevel"            },
-            { "Exif.Image.IPTCNAA"                 },
-            { "Exif.Image.Copyright"               },
-            { "Exif.Image.ImageResources"          },
-            { "Exif.Image.ExifTag"                 },
-            { "Exif.Image.InterColorProfile"       },
-            { "Exif.Image.GPSTag"                  },
-            { "Exif.Image.XPTitle"                 },
-            { "Exif.Image.XPComment"               },
-            { "Exif.Image.XPAuthor"                },
-            { "Exif.Image.XPKeywords"              },
-            { "Exif.Image.XPSubject"               },
-            { "Exif.Image.PrintImageMatching"      },
-            { "Exif.Image.UniqueCameraModel"       },
-            { "Exif.Image.LocalizedCameraModel"    },
-            { "Exif.Image.CFAPlaneColor"           },
-            { "Exif.Image.CFALayout"               },
-            { "Exif.Image.CameraSerialNumber"      },
-            { "Exif.Image.LensInfo"                },
-            { "Exif.Image.OriginalRawFileName"     },
-            { "Exif.Image.ActiveArea"              },
-            { "Exif.Image.MaskedAreas"             },
-            { "Exif.Image.AsShotICCProfile"        },
-            { "Exif.Image.AsShotPreProfileMatrix"  },
-            { "Exif.Image.CurrentICCProfile"       },
-            { "Exif.Image.CurrentPreProfileMatrix" }
-        };
-
-        static const Exiv2::IfdId exifIfds[] = {
-            Exiv2::exifIfdId,
-            Exiv2::gpsIfdId,
-            Exiv2::iopIfdId
-        };
-
-        if (   0 != Exiv2::find(exifIfds, ed.ifdId())
-            || Exiv2::ExifTags::isMakerIfd(ed.ifdId())
-            || 0 != Exiv2::find(exifTags, ed.key().c_str())) {
-            return true;
-        }
-        return false;
-    } // isExifTag
 
     int renameFile(std::string& newPath, const struct tm* tm)
     {

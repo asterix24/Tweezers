@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -22,7 +22,7 @@
   @file    actions.hpp
   @brief   Implements base class Task, TaskFactory and the various supported
            actions (derived from Task).
-  @version $Rev: 1937 $
+  @version $Rev: 2045 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    11-Dec-03, ahu: created
@@ -61,7 +61,7 @@ namespace Action {
 
     //! Enumerates all tasks
     enum TaskType { none, adjust, print, rename, erase, extract, insert,
-                    modify, fixiso };
+                    modify, fixiso, fixcom };
 
 // *****************************************************************************
 // class definitions
@@ -170,10 +170,12 @@ namespace Action {
         int printSummary();
         //! Print Exif, IPTC and XMP metadata in user defined format
         int printList();
+        //! Print info for an individual tag specified by its key in a user defined format
+        int grepTag(const std::string& key, const Exiv2::Image* image);
+        //! Print all metadata in a user defined format
+        int printMetadata(const Exiv2::Image* image);
         //! Print a metadatum in a user defined format
-        void printMetadatum(const Exiv2::Metadatum& md,
-                            const Exiv2::Image* pImage,
-                            bool const manyFiles);
+        void printMetadatum(const Exiv2::Metadatum& md, const Exiv2::Image* image);
         //! Print the label for a summary line
         void printLabel(const std::string& label) const;
         /*!
@@ -387,6 +389,24 @@ namespace Action {
         std::string path_;
 
     }; // class FixIso
+
+    /*!
+      @brief Fix the character encoding of Exif UNICODE user comments.
+             Decodes the comment using the auto-detected or specified
+             character encoding and writes it back in UCS-2.
+     */
+    class FixCom : public Task {
+    public:
+        virtual ~FixCom();
+        virtual int run(const std::string& path);
+        typedef std::auto_ptr<FixCom> AutoPtr;
+        AutoPtr clone() const;
+
+    private:
+        virtual FixCom* clone_() const;
+        std::string path_;
+
+    }; // class FixCom
 
 }                                       // namespace Action
 

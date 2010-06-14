@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -24,7 +24,7 @@
            http://www.gvsoft.homedns.org/exif/makernote-pentax-type3.html and
            based on ExifTool implementation and
            <a href="http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Pentax.html">Pentax Makernote list</a> by Phil Harvey<br>
-  @version $Rev: 1750 $
+  @version $Rev: 2243 $
   @author  Michal Cihar
            <a href="mailto:michal@cihar.com">michal@cihar.com</a>
   @date    27-Sep-07
@@ -88,10 +88,10 @@ namespace Exiv2 {
       @brief Print function to translate Pentax "combi-values" to a description
              by looking up a reference table.
      */
-    template <int N, const TagDetails (&array)[N], int count, int ignoredcount>
+    template <int N, const TagDetails (&array)[N], int count, int ignoredcount, int ignoredcountmax>
     std::ostream& printCombiTag(std::ostream& os, const Value& value, const ExifData* metadata)
     {
-        if ((value.count() != count && value.count() != (count + ignoredcount)) || count > 4) {
+        if ((value.count() != count && (value.count() < (count + ignoredcount) || value.count() > (count + ignoredcountmax))) || count > 4) {
             return printValue(os, value, metadata);
         }
         unsigned long l = 0;
@@ -115,7 +115,9 @@ namespace Exiv2 {
     }
 
 //! Shortcut for the printCombiTag template which requires typing the array name only once.
-#define EXV_PRINT_COMBITAG(array, count, ignoredcount) printCombiTag<EXV_COUNTOF(array), array, count, ignoredcount>
+#define EXV_PRINT_COMBITAG(array, count, ignoredcount) printCombiTag<EXV_COUNTOF(array), array, count, ignoredcount, ignoredcount>
+//! Shortcut for the printCombiTag template which requires typing the array name only once.
+#define EXV_PRINT_COMBITAG_MULTI(array, count, ignoredcount, ignoredcountmax) printCombiTag<EXV_COUNTOF(array), array, count, ignoredcount, ignoredcountmax>
 
 }                                       // namespace Exiv2
 

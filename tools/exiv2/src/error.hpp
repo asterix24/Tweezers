@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    error.hpp
   @brief   Error class for exceptions
-  @version $Rev: 1957 $
+  @version $Rev: 2045 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    15-Jan-04, ahu: created<BR>
@@ -52,6 +52,15 @@ namespace Exiv2 {
 # pragma warning( disable : 4275 )
 #endif
 
+    //! Generalised toString function
+    template<typename charT, typename T>
+    std::basic_string<charT> toBasicString(const T& arg)
+    {
+        std::basic_ostringstream<charT> os;
+        os << arg;
+        return os.str();
+    }
+
     /*!
       @brief Error class interface. Allows the definition and use of a hierarchy
              of error classes which can all be handled in one catch block.
@@ -74,7 +83,7 @@ namespace Exiv2 {
         //@}
     }; // AnyError
 
-    //! %AnyBase output operator
+    //! %AnyError output operator
     inline std::ostream& operator<<(std::ostream& os, const AnyError& error)
     {
         return os << error.what();
@@ -84,79 +93,132 @@ namespace Exiv2 {
       @brief Simple error class used for exceptions. An output operator is
              provided to print errors to a stream.
      */
-    class EXIV2API Error : public AnyError {
+    template<typename charT>
+    class EXV_DLLPUBLIC BasicError : public AnyError {
     public:
         //! @name Creators
         //@{
         //! Constructor taking only an error code
-        explicit Error(int code);
+        EXV_DLLLOCAL explicit BasicError(int code);
         //! Constructor taking an error code and one argument
         template<typename A>
-        EXV_DLLLOCAL Error(int code, const A& arg1);
+        EXV_DLLLOCAL BasicError(int code, const A& arg1);
         //! Constructor taking an error code and two arguments
         template<typename A, typename B>
-        EXV_DLLLOCAL Error(int code, const A& arg1, const B& arg2);
+        EXV_DLLLOCAL BasicError(int code, const A& arg1, const B& arg2);
         //! Constructor taking an error code and three arguments
         template<typename A, typename B, typename C>
-        EXV_DLLLOCAL Error(int code, const A& arg1, const B& arg2, const C& arg3);
+        EXV_DLLLOCAL BasicError(int code, const A& arg1, const B& arg2, const C& arg3);
         //! Virtual destructor. (Needed because of throw())
-        virtual ~Error() throw();
+        EXV_DLLLOCAL virtual ~BasicError() throw();
         //@}
 
         //! @name Accessors
         //@{
-        virtual int code() const throw();
+        EXV_DLLLOCAL virtual int code() const throw();
         /*!
-          @brief Return the error message. The pointer returned by what()
-                 is valid only as long as the Error object exists.
+          @brief Return the error message as a C-string. The pointer returned by what()
+                 is valid only as long as the BasicError object exists.
          */
-        virtual const char* what() const throw();
+        EXV_DLLLOCAL virtual const char* what() const throw();
+#ifdef EXV_UNICODE_PATH
+        /*!
+          @brief Return the error message as a wchar_t-string. The pointer returned by
+                 wwhat() is valid only as long as the BasicError object exists.
+         */
+        EXV_DLLLOCAL virtual const wchar_t* wwhat() const throw();
+#endif
         //@}
 
     private:
         //! @name Manipulators
         //@{
-        void setMsg();
+        //! Assemble the error message from the arguments
+        EXIV2API void setMsg();
         //@}
-
-        static int errorIdx(int code);
 
         // DATA
         int code_;                              //!< Error code
         int count_;                             //!< Number of arguments
-        std::string arg1_;                      //!< First argument
-        std::string arg2_;                      //!< Second argument
-        std::string arg3_;                      //!< Third argument
-        std::string msg_;                       //!< Complete error message
+        std::basic_string<charT> arg1_;         //!< First argument
+        std::basic_string<charT> arg2_;         //!< Second argument
+        std::basic_string<charT> arg3_;         //!< Third argument
+        std::string              msg_;          //!< Complete error message
+#ifdef EXV_UNICODE_PATH
+	std::wstring             wmsg_;         //!< Complete error message as a wide string
+#endif
+    }; // class BasicError
 
-    }; // class Error
+    //! Error class used for exceptions (std::string based)
+    typedef BasicError<char> Error;
+#ifdef EXV_UNICODE_PATH
+    //! Error class used for exceptions (std::wstring based)
+    typedef BasicError<wchar_t> WError;
+#endif
 
 // *****************************************************************************
-// template and inline definitions
+// free functions, template and inline definitions
 
-    template<typename A>
-    Error::Error(int code, const A& arg1)
-        : code_(code), count_(1), arg1_(toString(arg1))
+    //! Return the error message for the error with code \em code.
+    EXIV2API const char* errMsg(int code);
+
+    template<typename charT>
+    BasicError<charT>::BasicError(int code)
+        : code_(code), count_(0)
     {
         setMsg();
     }
 
-    template<typename A, typename B>
-    Error::Error(int code, const A& arg1, const B& arg2)
+    template<typename charT> template<typename A>
+    BasicError<charT>::BasicError(int code, const A& arg1)
+        : code_(code), count_(1), arg1_(toBasicString<charT>(arg1))
+    {
+        setMsg();
+    }
+
+    template<typename charT> template<typename A, typename B>
+    BasicError<charT>::BasicError(int code, const A& arg1, const B& arg2)
         : code_(code), count_(2),
-          arg1_(toString(arg1)), arg2_(toString(arg2))
+          arg1_(toBasicString<charT>(arg1)),
+          arg2_(toBasicString<charT>(arg2))
     {
         setMsg();
     }
 
-    template<typename A, typename B, typename C>
-    Error::Error(int code, const A& arg1, const B& arg2, const C& arg3)
+    template<typename charT> template<typename A, typename B, typename C>
+    BasicError<charT>::BasicError(int code, const A& arg1, const B& arg2, const C& arg3)
         : code_(code), count_(3),
-          arg1_(toString(arg1)), arg2_(toString(arg2)), arg3_(toString(arg3))
+          arg1_(toBasicString<charT>(arg1)),
+          arg2_(toBasicString<charT>(arg2)),
+          arg3_(toBasicString<charT>(arg3))
     {
         setMsg();
     }
 
+    template<typename charT>
+    BasicError<charT>::~BasicError() throw()
+    {
+    }
+
+    template<typename charT>
+    int BasicError<charT>::code() const throw()
+    {
+        return code_;
+    }
+
+    template<typename charT>
+    const char* BasicError<charT>::what() const throw()
+    {
+        return msg_.c_str();
+    }
+
+#ifdef EXV_UNICODE_PATH
+    template<typename charT>
+    const wchar_t* BasicError<charT>::wwhat() const throw()
+    {
+        return wmsg_.c_str();
+    }
+#endif
 #ifdef _MSC_VER
 # pragma warning( default : 4275 )
 #endif

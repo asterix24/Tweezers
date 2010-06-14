@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    tags.hpp
   @brief   Exif tag and type information
-  @version $Rev: 1960 $
+  @version $Rev: 2052 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    15-Jan-04, ahu: created<BR>
@@ -67,7 +67,7 @@ namespace Exiv2 {
                      imgStruct, recOffset, imgCharacter, otherTags, exifFormat,
                      exifVersion, imgConfig, userInfo, relatedFile, dateTime,
                      captureCond, gpsTags, iopTags, makerTags, dngTags, panaRaw,
-                     tiffEp,
+                     tiffEp, tiffPm6, adobeOpi,
                      lastSectionId };
 
 // *****************************************************************************

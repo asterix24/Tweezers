@@ -24,8 +24,10 @@
 #include <stdio.h>	// For snprintf.
 
 #if XMP_WinBuild
+#ifdef _MSC_VER
 	#pragma warning ( disable : 4800 )	// forcing value to bool 'true' or 'false' (performance warning)
 	#pragma warning ( disable : 4996 )	// '...' was declared deprecated
+#endif
 #endif
 
 
@@ -600,7 +602,8 @@ static size_t MoveLargestProperty ( XMPMeta & stdXMP, XMPMeta * extXMP, PropSize
 		printf ( "  Move %s, %d bytes\n", propName, propSize );
 	#endif
 
-	bool moved = MoveOneProperty ( stdXMP, extXMP, schemaURI, propName );
+    bool moved = false;
+	moved = MoveOneProperty ( stdXMP, extXMP, schemaURI, propName );
 	XMP_Assert ( moved );
 
 	propSizes.erase ( lastPos );
@@ -1839,7 +1842,8 @@ XMPUtils::PackageForJPEG ( const XMPMeta & origXMP,
 	// Adjust the standard XMP padding to be up to 2KB.
 
 	XMP_Assert ( (sStandardXMP->size() > kTrailerLen) && (sStandardXMP->size() <= kStdXMPLimit) );
-	const char * packetEnd = sStandardXMP->c_str() + sStandardXMP->size() - kTrailerLen;
+	const char * packetEnd = 0;
+    packetEnd = sStandardXMP->c_str() + sStandardXMP->size() - kTrailerLen;
 	XMP_Assert ( XMP_LitMatch ( packetEnd, kPacketTrailer ) );
 
 	size_t extraPadding = kStdXMPLimit - sStandardXMP->size();	// ! Do this before erasing the trailer.

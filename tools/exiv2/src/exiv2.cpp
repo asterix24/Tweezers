@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -22,13 +22,13 @@
   Abstract:  Command line program to display and manipulate image metadata.
 
   File:      exiv2.cpp
-  Version:   $Rev: 1977 $
+  Version:   $Rev: 2045 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   10-Dec-03, ahu: created
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: exiv2.cpp 1977 2009-12-28 14:47:58Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: exiv2.cpp 2045 2010-04-03 07:53:30Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -41,6 +41,7 @@ EXIV2_RCSID("@(#) $Id: exiv2.cpp 1977 2009-12-28 14:47:58Z ahuggel $")
 #include "exiv2.hpp"
 #include "actions.hpp"
 #include "utils.hpp"
+#include "convert.hpp"
 #include "i18n.h"      // NLS support.
 #include "xmp.hpp"
 
@@ -118,6 +119,11 @@ namespace {
     bool parseLine(ModifyCmd& modifyCmd,
                    const std::string& line, int num);
 
+    /*!
+      @brief Parses a string containing backslash-escapes
+      @param input Input string, assumed to be UTF-8
+     */
+    std::string parseEscapes(const std::string& input);
 }
 
 // *****************************************************************************
@@ -200,7 +206,7 @@ void Params::cleanup()
 void Params::version(std::ostream& os) const
 {
     os << EXV_PACKAGE_STRING << "\n"
-       << _("Copyright (C) 2004-2009 Andreas Huggel.\n")
+       << _("Copyright (C) 2004-2010 Andreas Huggel.\n")
        << "\n"
        << _("This program is free software; you can redistribute it and/or\n"
             "modify it under the terms of the GNU General Public License\n"
@@ -244,12 +250,16 @@ void Params::help(std::ostream& os) const
             "                Requires option -c, -m or -M.\n")
        << _("  fi | fixiso   Copy ISO setting from the Nikon Makernote to the regular\n"
             "                Exif tag.\n")
+       << _("  fc | fixcom   Convert the UNICODE Exif user comment to UCS-2. Its current\n"
+            "                character encoding can be specified with the -n option.\n")
        << _("\nOptions:\n")
        << _("   -h      Display this help and exit.\n")
        << _("   -V      Show the program version and exit.\n")
        << _("   -v      Be verbose during the program run.\n")
        << _("   -b      Show large binary values.\n")
        << _("   -u      Show unknown tags.\n")
+       << _("   -g key  Only output info for this key (grep).\n")
+       << _("   -n enc  Charset to use to decode UNICODE Exif user comments.\n")
        << _("   -k      Preserve file timestamps (keep).\n")
        << _("   -t      Also set the file timestamp in 'rename' action (overrides -k).\n")
        << _("   -T      Only set the file timestamp in 'rename' action, do not rename\n"
@@ -331,6 +341,8 @@ int Params::option(int opt, const std::string& optarg, int optopt)
     case 'u': unknown_ = false; break;
     case 'f': force_ = true; fileExistsPolicy_ = overwritePolicy; break;
     case 'F': force_ = true; fileExistsPolicy_ = renamePolicy; break;
+    case 'g': keys_.push_back(optarg); printMode_ = pmList; break;
+    case 'n': charset_ = optarg; break;
     case 'r': rc = evalRename(opt, optarg); break;
     case 't': rc = evalRename(opt, optarg); break;
     case 'T': rc = evalRename(opt, optarg); break;
@@ -635,7 +647,7 @@ int Params::evalModify(int opt, const std::string& optarg)
     case Action::modify:
     case Action::extract:
     case Action::insert:
-        if (opt == 'c') jpegComment_ = optarg;
+        if (opt == 'c') jpegComment_ = parseEscapes(optarg);
         if (opt == 'm') cmdFiles_.push_back(optarg);  // parse the files later
         if (opt == 'M') cmdLines_.push_back(optarg);  // parse the commands later
         break;
@@ -731,6 +743,15 @@ int Params::nonoption(const std::string& argv)
             }
             action = true;
             action_ = Action::fixiso;
+        }
+        if (argv == "fc" || argv == "fixcom" || argv == "fixcomment") {
+            if (action_ != Action::none && action_ != Action::fixcom) {
+                std::cerr << progname() << ": "
+                          << _("Action fixcom is not compatible with the given options\n");
+                rc = 1;
+            }
+            action = true;
+            action_ = Action::fixcom;
         }
         if (action_ == Action::none) {
             // if everything else fails, assume print as the default action
@@ -1076,7 +1097,7 @@ namespace {
                 }
             }
 
-            value = line.substr(valStart, valEnd+1-valStart);
+            value = parseEscapes(line.substr(valStart, valEnd+1-valStart));
             std::string::size_type last = value.length()-1;
             if (   (value[0] == '"' && value[last] == '"')
                 || (value[0] == '\'' && value[last] == '\'')) {
@@ -1108,4 +1129,81 @@ namespace {
         return cmdIdAndString[i].cmdId_;
     }
 
+    std::string parseEscapes(const std::string& input) 
+    {
+        std::string result = "";
+        for (unsigned int i = 0; i < input.length(); ++i) {
+            char ch = input[i];
+            if (ch != '\\') {
+                result.push_back(ch);
+                continue;
+            }
+            int escapeStart = i;
+            if (!(input.length() - 1 > i)) {
+                result.push_back(ch);
+                continue;
+            }
+            ++i;
+            ch = input[i];
+            switch (ch) {
+            case '\\':                          // Escaping of backslash
+                result.push_back('\\');
+                break;
+            case 'r':                           // Escaping of carriage return
+                result.push_back('\r');
+                break;
+            case 'n':                           // Escaping of newline
+                result.push_back('\n');
+                break;
+            case 't':                           // Escaping of tab
+                result.push_back('\t');
+                break;
+            case 'u':                           // Escaping of unicode
+                if (input.length() - 4 > i) {
+                    int acc = 0;
+                    for (int j = 0; j < 4; ++j) {
+                        ++i;
+                        acc <<= 4;
+                        if (input[i] >= '0' && input[i] <= '9') {
+                            acc |= input[i] - '0';
+                        }
+                        else if (input[i] >= 'a' && input[i] <= 'f') {
+                            acc |= input[i] - 'a' + 10;
+                        }
+                        else if (input[i] >= 'A' && input[i] <= 'F') {
+                            acc |= input[i] - 'A' + 10;
+                        }
+                        else {
+                            acc = -1;
+                            break;
+                        }
+                    }
+                    if (acc == -1) {
+                        result.push_back('\\');
+                        i = escapeStart;
+                        break;
+                    }
+
+                    std::string ucs2toUtf8 = "";
+                    ucs2toUtf8.push_back((char) ((acc & 0xff00) >> 8));
+                    ucs2toUtf8.push_back((char) (acc & 0x00ff));
+
+                    if (Exiv2::convertStringCharset (ucs2toUtf8, "UCS-2BE", "UTF-8")) {
+                        result.append (ucs2toUtf8);
+                    }
+                }
+                else {
+                    result.push_back('\\');
+                    result.push_back(ch);
+                }
+                break;
+            default:
+                result.push_back('\\');
+                result.push_back(ch);
+            }
+        }
+        return result;
+    }
+
 }
+        

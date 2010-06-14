@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    datasets.hpp
   @brief   IPTC dataset and type information
-  @version $Rev: 1937 $
+  @version $Rev: 2045 $
   @author  Brad Schick (brad) <brad@robotbattle.com>
   @date    24-Jul-04, brad: created
  */

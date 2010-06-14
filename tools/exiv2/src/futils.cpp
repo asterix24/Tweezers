@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      futils.cpp
-  Version:   $Rev: 1937 $
+  Version:   $Rev: 2076 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   08-Dec-03, ahu: created
              02-Apr-05, ahu: moved to Exiv2 namespace
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: futils.cpp 1937 2009-11-27 05:59:23Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: futils.cpp 2076 2010-04-14 08:09:11Z cgilles $")
 
 // *****************************************************************************
 // included header files
@@ -93,7 +93,7 @@ namespace Exiv2 {
 #ifdef EXV_HAVE_STRERROR_R
         const size_t n = 1024;
 // _GNU_SOURCE: See Debian bug #485135
-# if defined EXV_STRERROR_R_CHAR_P || defined _GNU_SOURCE
+# if defined EXV_STRERROR_R_CHAR_P && defined _GNU_SOURCE
         char *buf = 0;
         char buf2[n];
         std::memset(buf2, 0x0, n);

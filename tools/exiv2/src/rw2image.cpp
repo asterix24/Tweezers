@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      rw2image.cpp
-  Version:   $Rev: 1977 $
+  Version:   $Rev: 2045 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   06-Jan-09, ahu: created
 
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: rw2image.cpp 1977 2009-12-28 14:47:58Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: rw2image.cpp 2045 2010-04-03 07:53:30Z ahuggel $")
 
 // *****************************************************************************
 // included header files

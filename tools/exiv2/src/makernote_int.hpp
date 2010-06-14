@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -24,7 +24,7 @@
            vendor specific makernote implementations.<BR>References:<BR>
   [1] <a href="http://www.sno.phy.queensu.ca/~phil/exiftool/">ExifTool</a> by Phil Harvey<BR>
   [2] <a href="http://www.cybercom.net/~dcoffin/dcraw/">Decoding raw digital photos in Linux</a> by Dave Coffin
-  @version $Rev: 1953 $
+  @version $Rev: 2239 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    11-Apr-06, ahu: created
@@ -109,6 +109,21 @@ namespace Exiv2 {
         const uint16_t nikonsi5  = 317; //!< Nikon Shot Info v2.* Tags
         const uint16_t nikonsi6  = 318; //!< Nikon Shot Info v1.* Tags
         const uint16_t canonfi   = 320; //!< Canon File Info
+        const uint16_t sonymltmn = 330; //!< Sony Minolta Makernotes
+        const uint16_t sony1cs   = 331; //!< Sony Camera Settings (in Sony1 makernote)
+        const uint16_t sony1cs2  = 332; //!< Sony Camera Settings 2 (in Sony1 makernote)
+        const uint16_t sony1mcso = 333; //!< Minolta (old) Camera Settings (in Sony1 makernote)
+        const uint16_t sony1mcsn = 334; //!< Minolta (new) Camera Settings (in Sony1 makernote)
+        const uint16_t sony1mcsa100=335;//!< Sony A100 Camera Settings (in Sony1 makernote)
+        const uint16_t sony1mcs7 = 336; //!< Minolta D7 Camera Settings (in Sony1 makernote)
+        const uint16_t sony2cs   = 337; //!< Sony Camera Settings (in Sony2 makernote)
+        const uint16_t sony2cs2  = 338; //!< Sony Camera Settings 2 (in Sony2 makernote)
+        const uint16_t nikonfi   = 362; //!< Nikon File Info Tags
+        const uint16_t nikonaf2  = 363; //!< Nikon Auto Focus 2 Tags
+        const uint16_t nikonme   = 364; //!< Nikon Multi Exposure Tags
+        const uint16_t nikonfl1  = 365; //!< Nikon Flash Info 1 Tags
+        const uint16_t nikonfl2  = 366; //!< Nikon Flash Info 2 Tags
+        const uint16_t nikonfl3  = 367; //!< Nikon Flash Info 3 Tags
     }
 
 // *****************************************************************************
@@ -643,6 +658,17 @@ namespace Exiv2 {
     TiffComponent* newSony2Mn2(uint16_t tag,
                                uint16_t group,
                                uint16_t mnGroup);
+
+    /*!
+      @brief Function to select cfg + def of the Sony Camera Settings complex binary array.
+
+      @param tag Tag number of the binary array
+      @param pData Pointer to the raw array data.
+      @param size Size of the array data.
+      @param pRoot Pointer to the root component of the TIFF tree.
+      @return An index into the array set, -1 if no match was found.
+     */
+    int sonyCsSelector(uint16_t tag, const byte* pData, uint32_t size, TiffComponent* const pRoot);
 
     /*!
       @brief Function to select cfg + def of a Nikon complex binary array.

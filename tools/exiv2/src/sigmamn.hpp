@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -23,7 +23,7 @@
   @brief   Sigma and Foveon MakerNote implemented according to the specification
            <a href="http://www.x3f.info/technotes/FileDocs/MakerNoteDoc.html">
            SIGMA and FOVEON EXIF MakerNote Documentation</a> by Foveon.
-  @version $Rev: 1750 $
+  @version $Rev: 2045 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    02-Apr-04, ahu: created

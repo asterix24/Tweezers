@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      crwimage.cpp
-  Version:   $Rev: 1937 $
+  Version:   $Rev: 2045 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   28-Aug-05, ahu: created
 
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: crwimage.cpp 1937 2009-11-27 05:59:23Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: crwimage.cpp 2045 2010-04-03 07:53:30Z ahuggel $")
 
 // Define DEBUG to output debug information to std::cerr, e.g, by calling make
 // like this: make DEFS=-DDEBUG crwimage.o

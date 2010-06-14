@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,7 +20,7 @@
  */
 /*
   File:      convert.cpp
-  Version:   $Rev: 1977 $
+  Version:   $Rev: 2090 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
              Vladimir Nadvornik (vn) <nadvornik@suse.cz>
   History:   17-Mar-08, ahu: created basic converter framework
@@ -28,7 +28,7 @@
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: convert.cpp 1977 2009-12-28 14:47:58Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: convert.cpp 2090 2010-04-14 16:17:55Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -73,12 +73,6 @@ namespace {
       The return code indicates if the operation was successful.
      */
     bool getTextValue(std::string& value, const Exiv2::XmpData::iterator& pos);
-
-    /*!
-      @brief Convert string charset with iconv.
-     */
-    bool convertStringCharset(std::string &str, const char* from, const char* to);
-
 }
 
 // *****************************************************************************
@@ -406,7 +400,7 @@ namespace Exiv2 {
         { mdIptc, "Iptc.Application2.SuppCategory",       "Xmp.photoshop.SupplementalCategory", &Converter::cnvIptcValue, &Converter::cnvXmpValueToIptc },
         { mdIptc, "Iptc.Application2.Keywords",           "Xmp.dc.subject",                     &Converter::cnvIptcValue, &Converter::cnvXmpValueToIptc },
         { mdIptc, "Iptc.Application2.SubLocation",        "Xmp.iptc.Location",                  &Converter::cnvIptcValue, &Converter::cnvXmpValueToIptc },
-        { mdIptc, "Iptc.Application2.SpecialInstructions","Xmp.photoshop.Instruction",          &Converter::cnvIptcValue, &Converter::cnvXmpValueToIptc },
+        { mdIptc, "Iptc.Application2.SpecialInstructions","Xmp.photoshop.Instructions",         &Converter::cnvIptcValue, &Converter::cnvXmpValueToIptc },
         { mdIptc, "Iptc.Application2.DateCreated",        "Xmp.photoshop.DateCreated",          &Converter::cnvIptcValue, &Converter::cnvXmpValueToIptc },
         { mdIptc, "Iptc.Application2.Byline",             "Xmp.dc.creator",                     &Converter::cnvIptcValue, &Converter::cnvXmpValueToIptc },
         { mdIptc, "Iptc.Application2.BylineTitle",        "Xmp.photoshop.AuthorsPosition",      &Converter::cnvIptcValue, &Converter::cnvXmpValueToIptc },
@@ -809,7 +803,8 @@ namespace Exiv2 {
 #endif
                 return;
             }
-            array << value << " ";
+            array << value;
+            if (i != pos->count() - 1) array << " ";
         }
         (*exifData_)[to] = array.str();
         if (erase_) xmpData_->erase(pos);
@@ -832,12 +827,16 @@ namespace Exiv2 {
         try {
             SXMPUtils::ConvertToDate(value, &datetime);
         }
-        catch (const XMP_Error& e) {
 #ifndef SUPPRESS_WARNINGS
+        catch (const XMP_Error& e) {
             std::cerr << "Warning: Failed to convert " << from << " to " << to << " (" << e.GetErrMsg() << ")\n";
-#endif
             return;
         }
+#else
+        catch (const XMP_Error&) {
+            return;
+        }
+#endif // SUPPRESS_WARNINGS
         char buf[30];
         if (std::string(to) != "Exif.GPSInfo.GPSTimeStamp") {
 
@@ -1315,6 +1314,55 @@ namespace Exiv2 {
         converter.cnvFromXmp();
     }
 
+    bool convertStringCharset(std::string &str, const char* from, const char* to)
+    {
+        if (0 == strcmp(from, to)) return true; // nothing to do
+#if defined EXV_HAVE_ICONV
+        bool ret = true;
+        iconv_t cd;
+        cd = iconv_open(to, from);
+        if (cd == (iconv_t)(-1)) {
+#ifndef SUPPRESS_WARNINGS
+            std::cerr << "Warning: iconv_open: " << strError() << "\n";
+#endif
+            return false;
+        }
+        std::string outstr;
+        EXV_ICONV_CONST char *inptr = const_cast<char *>(str.c_str());
+        size_t inbytesleft = str.length();
+        while (inbytesleft) {
+            char outbuf[100];
+            char *outptr = outbuf;
+            size_t outbytesleft = sizeof(outbuf) - 1;
+            size_t rc = iconv(cd,
+                              &inptr,
+                              &inbytesleft,
+                              &outptr,
+                              &outbytesleft);
+            int outbytesProduced = sizeof(outbuf) - 1 - outbytesleft;
+            if (rc == size_t(-1) && errno != E2BIG) {
+#ifndef SUPPRESS_WARNINGS
+                std::cerr << "Warning: iconv: "
+                          << strError()
+                          << " inbytesleft = " << inbytesleft << "\n";
+#endif
+                ret = false;
+                break;
+            }
+            *outptr = '\0';
+            outstr.append(std::string(outbuf, outbytesProduced));
+        }
+        if (cd != (iconv_t)(-1)) {
+            iconv_close(cd);
+        }
+
+        if (ret) str = outstr;
+        return ret;
+#else // !EXV_HAVE_ICONV
+        return false;
+#endif // EXV_HAVE_ICONV
+    }
+
 }                                       // namespace Exiv2
 
 // *****************************************************************************
@@ -1346,55 +1394,6 @@ namespace {
             value = pos->toString();
         }
         return pos->value().ok();
-    }
-
-    bool convertStringCharset(std::string &str, const char* from, const char* to)
-    {
-        if (0 == strcmp(from, to)) return true; // nothing to do
-#if defined EXV_HAVE_ICONV
-        bool ret = true;
-        iconv_t cd;
-        cd = iconv_open(to, from);
-        if (cd == (iconv_t)(-1)) {
-#ifndef SUPPRESS_WARNINGS
-            std::cerr << "Warning: iconv_open: " << Exiv2::strError() << "\n";
-#endif
-            return false;
-        }
-        std::string outstr;
-        EXV_ICONV_CONST char *inptr = const_cast<char *>(str.c_str());
-        size_t inbytesleft = str.length();
-
-        while (inbytesleft) {
-            char outbuf[100];
-            char *outptr = outbuf;
-            size_t outbytesleft = sizeof(outbuf) - 1;
-            size_t rc = iconv(cd,
-                              &inptr,
-                              &inbytesleft,
-                              &outptr,
-                              &outbytesleft);
-            if (rc == size_t(-1) && errno != E2BIG) {
-#ifndef SUPPRESS_WARNINGS
-                std::cerr << "Warning: iconv: "
-                          << Exiv2::strError()
-                          << " inbytesleft = " << inbytesleft << "\n";
-#endif
-                ret = false;
-                break;
-            }
-            *outptr = '\0';
-            outstr.append(outbuf);
-        }
-        if (cd != (iconv_t)(-1)) {
-            iconv_close(cd);
-        }
-
-        if (ret) str = outstr;
-        return ret;
-#else // !EXV_HAVE_ICONV
-        return false;
-#endif // EXV_HAVE_ICONV
     }
 
 }

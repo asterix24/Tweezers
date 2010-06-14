@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,17 +20,17 @@
  */
 /*
   File:      olympusmn.cpp
-  Version:   $Rev: 1750 $
+  Version:   $Rev: 2109 $
   Author(s): Will Stokes (wuz) <wstokes@gmail.com>
              Andreas Huggel (ahu) <ahuggel@gmx.net>
-             Gilles Caulier (gc) <caulier.gilles@kdemail.net>
+             Gilles Caulier (gc) <caulier dot gilles at gmail dot com>
   History:   10-Mar-05, wuz: created
   Credits:   See header file.
  */
 
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: olympusmn.cpp 1750 2009-02-16 14:30:51Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: olympusmn.cpp 2109 2010-04-19 13:17:17Z cgilles $")
 
 // *****************************************************************************
 // included header files

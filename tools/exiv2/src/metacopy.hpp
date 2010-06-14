@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    metacopy.hpp
   @brief   Defines class Params, used for the command line handling
-  @version $Rev: 1750 $
+  @version $Rev: 2091 $
   @author  Brad Schick (brad) <brad@robotbattle.com>
   @date    13-Jul-04, brad: created
  */
@@ -40,6 +40,7 @@ public:
     bool iptc_;                    //!< Iptc option flag.
     bool exif_;                    //!< Exif option flag.
     bool comment_;                 //!< JPEG comment option flag.
+    bool xmp_;                     //!< XMP option flag.
     bool preserve_;                //!< Preserve existing metadata option flag.
     std::string read_;             //!< Source file
     std::string write_;            //!< Destination file
@@ -54,6 +55,7 @@ public:
                iptc_(false),
                exif_(false),
                comment_(false),
+               xmp_(false),
                preserve_(false)
         {}
 

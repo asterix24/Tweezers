@@ -1,5 +1,5 @@
 // ***************************************************************** -*- C++ -*-
-// exifprint.cpp, $Rev: 1757 $
+// exifprint.cpp, $Rev: 2014 $
 // Sample program to print the Exif metadata of an image
 
 #include <exiv2/image.hpp>
@@ -44,7 +44,9 @@ try {
 
     return 0;
 }
-catch (Exiv2::AnyError& e) {
-    std::cout << "Caught Exiv2 exception '" << e << "'\n";
+//catch (std::exception& e) {
+//catch (Exiv2::AnyError& e) {
+catch (Exiv2::Error& e) {
+    std::cout << "Caught Exiv2 exception '" << e.what() << "'\n";
     return -1;
 }

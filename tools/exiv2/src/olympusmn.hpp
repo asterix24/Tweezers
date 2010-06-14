@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -25,13 +25,13 @@
            [2] <a href="http://www.sno.phy.queensu.ca/~phil/exiftool/">ExifTool</a> by Phil Harvey<br>
            [3] <a href="http://www.ozhiker.com/electronics/pjmt/jpeg_info/olympus_mn.html">Olympus Makernote Format Specification</a> by Evan Hunter<br>
            [4] email communication with <a href="mailto:wstokes@gmail.com">Will Stokes</a>
-  @version $Rev: 1750 $
+  @version $Rev: 2109 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @author  Will Stokes (wuz)
            <a href="mailto:wstokes@gmail.com">wstokes@gmail.com</a>
   @author  Gilles Caulier (gc)
-           <a href="mailto:caulier dot gilles at kdemail dot net">caulier dot gilles at kdemail dot net</a>
+           <a href="mailto:caulier dot gilles at gmail dot com">caulier dot gilles at gmail dot com</a>
   @date    10-Mar-05, wuz: created
  */
 #ifndef OLYMPUSMN_HPP_

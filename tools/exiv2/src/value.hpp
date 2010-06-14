@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    value.hpp
   @brief   Value interface and concrete subclasses
-  @version $Rev: 1937 $
+  @version $Rev: 2073 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    09-Jan-04, ahu: created
@@ -529,7 +529,7 @@ namespace Exiv2 {
             const char* code_;                      //!< Code of the charset
         }; // struct CharsetTable
         //! Charset information lookup functions. Implemented as a static class.
-        class CharsetInfo {
+        class EXIV2API CharsetInfo {
             //! Prevent construction: not implemented.
             CharsetInfo() {}
             //! Prevent copy-construction: not implemented.
@@ -566,7 +566,6 @@ namespace Exiv2 {
 
         //! @name Manipulators
         //@{
-        using StringValueBase::read;
         /*!
           @brief Read the value from a comment
 
@@ -580,25 +579,57 @@ namespace Exiv2 {
                   1 if an invalid character set is encountered
         */
         int read(const std::string& comment);
+        /*!
+          @brief Read the comment from a byte buffer.
+         */
+        int read(const byte* buf, long len, ByteOrder byteOrder);
         //@}
 
         //! @name Accessors
         //@{
         AutoPtr clone() const { return AutoPtr(clone_()); }
+        long copy(byte* buf, ByteOrder byteOrder) const;
         /*!
           @brief Write the comment in a format which can be read by
           read(const std::string& comment).
          */
         std::ostream& write(std::ostream& os) const;
-        //! Return the comment (without a charset="..." prefix)
-        std::string comment() const;
-        //! Return the charset id of the comment
+        /*!
+          @brief Return the comment (without a charset="..." prefix)
+
+          The comment is decoded to UTF-8. For Exif UNICODE comments, the
+          function makes an attempt to correctly determine the character
+          encoding of the value. Alternatively, the optional \em encoding
+          parameter can be used to specify it.
+
+          @param encoding Optional argument to specify the character encoding
+              that the comment is encoded in, as an iconv(3) name. Only used
+              for Exif UNICODE comments.
+
+          @return A string containing the comment converted to UTF-8.
+         */
+        std::string comment(const char* encoding =0) const;
+        /*!
+          @brief Determine the character encoding that was used to encode the
+              UNICODE comment value as an iconv(3) name.
+
+          If the comment \em c starts with a BOM, the BOM is interpreted and
+          removed from the string.
+
+          Todo: Implement rules to guess if the comment is UTF-8 encoded.
+         */
+        const char* detectCharset(std::string& c) const;
+        //! Return the Exif charset id of the comment
         CharsetId charsetId() const;
         //@}
 
     private:
         //! Internal virtual copy constructor.
         EXV_DLLLOCAL virtual CommentValue* clone_() const;
+
+    public:
+        // DATA
+        ByteOrder byteOrder_;      //!< Byte order of the comment string that was read
 
     }; // class CommentValue
 
@@ -1484,12 +1515,13 @@ namespace Exiv2 {
     {
         std::istringstream is(buf);
         T tmp;
-        value_.clear();
+        ValueList val;
         while (!(is.eof())) {
             is >> tmp;
             if (is.fail()) return 1;
-            value_.push_back(tmp);
+            val.push_back(tmp);
         }
+        value_.swap(val);
         return 0;
     }
 

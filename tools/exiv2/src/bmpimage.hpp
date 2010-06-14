@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    bmpimage.hpp
   @brief   Windows Bitmap (BMP) image
-  @version $Rev: 1937 $
+  @version $Rev: 2045 $
   @author  Marco Piovanelli, Ovolab (marco)
            <a href="mailto:marco.piovanelli@pobox.com">marco.piovanelli@pobox.com</a>
   @date    05-Mar-2007, marco: created

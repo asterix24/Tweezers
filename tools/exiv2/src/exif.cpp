@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      exif.cpp
-  Version:   $Rev: 1977 $
+  Version:   $Rev: 2239 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   26-Jan-04, ahu: created
              11-Feb-04, ahu: isolated as a component
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: exif.cpp 1977 2009-12-28 14:47:58Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: exif.cpp 2239 2010-05-25 14:53:56Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -75,7 +75,7 @@ namespace {
         }
 
     private:
-        std::string key_;
+        const std::string& key_;
 
     }; // class FindExifdatumByKey
 
@@ -601,12 +601,12 @@ namespace Exiv2 {
 
     void ExifData::sortByKey()
     {
-        std::sort(exifMetadata_.begin(), exifMetadata_.end(), cmpMetadataByKey);
+        exifMetadata_.sort(cmpMetadataByKey);
     }
 
     void ExifData::sortByTag()
     {
-        std::sort(exifMetadata_.begin(), exifMetadata_.end(), cmpMetadataByTag);
+        exifMetadata_.sort(cmpMetadataByTag);
     }
 
     ExifData::iterator ExifData::erase(ExifData::iterator beg, ExifData::iterator end)
@@ -688,6 +688,11 @@ namespace Exiv2 {
             subImage2Id,
             subImage3Id,
             subImage4Id,
+            subImage5Id,
+            subImage6Id,
+            subImage7Id,
+            subImage8Id,
+            subImage9Id,
             panaRawIfdId,
             ifd2Id,
             ifd3Id
@@ -700,12 +705,12 @@ namespace Exiv2 {
         }
 
         // IPTC and XMP are stored elsewhere, not in the Exif APP1 segment.
-        const IptcData emptyIptc;
-        const XmpData  emptyXmp;
+        IptcData emptyIptc;
+        XmpData  emptyXmp;
 
         // Encode and check if the result fits into a JPEG Exif APP1 segment
         MemIo mio1;
-        std::auto_ptr<TiffHeaderBase> header(new TiffHeader(byteOrder));
+        std::auto_ptr<TiffHeaderBase> header(new TiffHeader(byteOrder, 0x00000008, false));
         WriteMethod wm = TiffParserWorker::encode(mio1,
                                                   pData,
                                                   size,
@@ -886,8 +891,8 @@ namespace {
         }
 
         Exiv2::MemIo io;
-        const Exiv2::IptcData emptyIptc;
-        const Exiv2::XmpData  emptyXmp;
+        Exiv2::IptcData emptyIptc;
+        Exiv2::XmpData  emptyXmp;
         Exiv2::TiffParser::encode(io, 0, 0, Exiv2::littleEndian, thumb, emptyIptc, emptyXmp);
         return io.read(io.size());
     }

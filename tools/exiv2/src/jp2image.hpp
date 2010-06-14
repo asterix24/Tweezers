@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -22,7 +22,7 @@
   @file    jp2image.hpp
   @brief   JPEG-2000 image, implemented using the following references:
            <a href="http://jpeg.org/public/fcd15444-6.pdf">ISO/IEC JTC 1/SC 29/WG1 N2401: JPEG 2000 Part 6 FCD 15444-6</a><br>
-  @version $Rev: 1937 $
+  @version $Rev: 2045 $
   @author  Gilles Caulier (cgilles)
            <a href="mailto:caulier dot gilles at gmail dot com">caulier dot gilles at gmail dot com</a>
   @author  Marco Piovanelli, Ovolab (marco)

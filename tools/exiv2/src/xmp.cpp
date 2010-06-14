@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,13 +20,13 @@
  */
 /*
   File:      xmp.cpp
-  Version:   $Rev: 1937 $
+  Version:   $Rev: 2049 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   13-July-07, ahu: created
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: xmp.cpp 1937 2009-11-27 05:59:23Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: xmp.cpp 2049 2010-04-06 13:32:22Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -382,9 +382,12 @@ namespace Exiv2 {
 #ifdef EXV_HAVE_XMP_TOOLKIT
             initialized_ = SXMPMeta::Initialize();
             SXMPMeta::RegisterNamespace("http://www.digikam.org/ns/1.0/", "digiKam", 0);
+            SXMPMeta::RegisterNamespace("http://www.digikam.org/ns/kipi/1.0/", "kipi", 0);
             SXMPMeta::RegisterNamespace("http://ns.microsoft.com/photo/1.0/", "MicrosoftPhoto", 0);
             SXMPMeta::RegisterNamespace("http://iptc.org/std/Iptc4xmpExt/2008-02-29/", "iptcExt", 0);
             SXMPMeta::RegisterNamespace("http://ns.useplus.org/ldf/xmp/1.0/", "plus", 0);
+            SXMPMeta::RegisterNamespace("http://ns.iview-multimedia.com/mediapro/1.0/", "mediapro", 0);
+            SXMPMeta::RegisterNamespace("http://ns.microsoft.com/expressionmedia/1.0/", "expressionmedia", 0);
 #else
             initialized_ = true;
 #endif
@@ -563,13 +566,19 @@ namespace Exiv2 {
 
         return 0;
     }
-    catch (const XMP_Error& e) {
 #ifndef SUPPRESS_WARNINGS
+    catch (const XMP_Error& e) {
         std::cerr << Error(40, e.GetID(), e.GetErrMsg()) << "\n";
-#endif
         xmpData.clear();
         return 3;
-    }} // XmpParser::decode
+    }
+#else
+    catch (const XMP_Error&) {
+        xmpData.clear();
+        return 3;
+    }
+#endif // SUPPRESS_WARNINGS
+    } // XmpParser::decode
 #else
     int XmpParser::decode(      XmpData&     xmpData,
                           const std::string& xmpPacket)
@@ -678,12 +687,17 @@ namespace Exiv2 {
 
         return 0;
     }
-    catch (const XMP_Error& e) {
 #ifndef SUPPRESS_WARNINGS
+    catch (const XMP_Error& e) {
         std::cerr << Error(40, e.GetID(), e.GetErrMsg()) << "\n";
-#endif
         return 3;
-    }} // XmpParser::decode
+    }
+#else
+    catch (const XMP_Error&) {
+        return 3;
+    }
+#endif // SUPPRESS_WARNINGS
+    } // XmpParser::decode
 #else
     int XmpParser::encode(      std::string& /*xmpPacket*/,
                           const XmpData&     xmpData,
