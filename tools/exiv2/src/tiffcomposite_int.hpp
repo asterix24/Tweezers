@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    tiffcomposite_int.hpp
   @brief   Internal classes used in a TIFF composite structure
-  @version $Rev: 1986 $
+  @version $Rev: 2239 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    11-Apr-06, ahu: created
@@ -97,6 +97,12 @@ namespace Exiv2 {
         const uint16_t subimg2 =   9; //!< 2nd TIFF SubIFD in IFD0
         const uint16_t subimg3 =  10; //!< 3rd TIFF SubIFD in IFD0
         const uint16_t subimg4 =  11; //!< 4th TIFF SubIFD in IFD0
+        const uint16_t subimg5 =  12; //!< 5th TIFF SubIFD in IFD0
+        const uint16_t subimg6 =  13; //!< 6th TIFF SubIFD in IFD0
+        const uint16_t subimg7 =  14; //!< 7th TIFF SubIFD in IFD0
+        const uint16_t subimg8 =  15; //!< 8th TIFF SubIFD in IFD0
+        const uint16_t subimg9 =  16; //!< 9th TIFF SubIFD in IFD0
+        const uint16_t subimgX =  17; //!< End of SubIFD list marker, not a valid group
         const uint16_t panaraw =  64; //!< IFD0 of Panasonic RAW images
         const uint16_t mn      = 256; //!< Makernote
         const uint16_t ignr    = 511; //!< Read but do not decode
@@ -224,10 +230,15 @@ namespace Exiv2 {
           @param tag      The tag of the new entry
           @param tiffPath A path from the TIFF root element to a TIFF entry.
           @param pRoot    Pointer to the root component of the TIFF composite.
+          @param object   TIFF component to add. If 0, the correct entry will be
+                          created.
 
           @return A pointer to the newly added TIFF entry.
          */
-        TiffComponent* addPath(uint16_t tag, TiffPath& tiffPath, TiffComponent* const pRoot);
+        TiffComponent* addPath(uint16_t tag,
+                               TiffPath& tiffPath,
+                               TiffComponent* const pRoot,
+                               AutoPtr object =AutoPtr(0));
         /*!
           @brief Add a child to the component. Default is to do nothing.
           @param tiffComponent Auto pointer to the component to add.
@@ -285,6 +296,12 @@ namespace Exiv2 {
         //! Return a pointer to the start of the binary representation of the component
         byte* start()                         const { return pStart_; }
         /*!
+          @brief Return an auto-pointer to a copy of itself (deep copy, but
+                 without any children). The caller owns this copy and the
+                 auto-pointer ensures that it will be deleted.
+         */
+        AutoPtr clone() const;
+        /*!
           @brief Write the IFD data of this component to a binary image.
                  Return the number of bytes written. Components derived from
                  TiffEntryBase implement this method if needed.
@@ -336,7 +353,10 @@ namespace Exiv2 {
         //! @name Protected Manipulators
         //@{
         //! Implements addPath(). The default implementation does nothing.
-        virtual TiffComponent* doAddPath(uint16_t  tag, TiffPath& tiffPath, TiffComponent* const pRoot);
+        virtual TiffComponent* doAddPath(uint16_t  tag,
+                                         TiffPath& tiffPath,
+                                         TiffComponent* const pRoot,
+                                         TiffComponent::AutoPtr object);
         //! Implements addChild(). The default implementation does nothing.
         virtual TiffComponent* doAddChild(AutoPtr tiffComponent);
         //! Implements addNext(). The default implementation does nothing.
@@ -354,6 +374,8 @@ namespace Exiv2 {
 
         //! @name Protected Accessors
         //@{
+        //! Internal virtual copy constructor, implements clone().
+        virtual TiffComponent* doClone() const =0;
         //! Implements writeData().
         virtual uint32_t doWriteData(IoWrapper& ioWrapper,
                                      ByteOrder byteOrder,
@@ -431,7 +453,7 @@ namespace Exiv2 {
     public:
         //! @name Creators
         //@{
-        //! Default constructor
+        //! Default constructor.
         TiffEntryBase(uint16_t tag, uint16_t group, TiffType tiffType =ttUndefined);
         //! Virtual destructor.
         virtual ~TiffEntryBase();
@@ -490,6 +512,12 @@ namespace Exiv2 {
         //@}
 
     protected:
+        //! @name Protected Creators
+        //@{
+        //! Copy constructor (used to implement clone()).
+        TiffEntryBase(const TiffEntryBase& rhs);
+        //@}
+
         //! @name Protected Manipulators
         //@{
         //! Implements encode().
@@ -545,6 +573,12 @@ namespace Exiv2 {
                                     ByteOrder byteOrder);
 
     private:
+        //! @name NOT implemented
+        //@{
+        //! Assignment operator.
+        TiffEntryBase& operator=(const TiffEntryBase& rhs);
+        //@}
+
         // DATA
         TiffType tiffType_;   //!< Field TIFF type
         uint32_t count_;      //!< The number of values of the indicated type
@@ -579,6 +613,11 @@ namespace Exiv2 {
         //@{
         virtual void doAccept(TiffVisitor& visitor);
         virtual void doEncode(TiffEncoder& encoder, const Exifdatum* datum);
+        //@}
+
+        //! @name Protected Accessors
+        //@{
+        virtual TiffEntry* doClone() const;
         //@}
 
     }; // class TiffEntry
@@ -693,6 +732,7 @@ namespace Exiv2 {
 
         //! @name Protected Accessors
         //@{
+        virtual TiffDataEntry* doClone() const;
         /*!
           @brief Implements writeData(). Write the data area to the \em ioWrapper.
                  Return the number of bytes written.
@@ -768,6 +808,7 @@ namespace Exiv2 {
 
         //! @name Protected Accessors
         //@{
+        virtual TiffImageEntry* doClone() const;
         /*!
           @brief Implements writeData(). Write the image data area to the \em ioWrapper.
                  Return the number of bytes written.
@@ -836,6 +877,11 @@ namespace Exiv2 {
         virtual void doEncode(TiffEncoder& encoder, const Exifdatum* datum);
         //@}
 
+        //! @name Protected Accessors
+        //@{
+        virtual TiffSizeEntry* doClone() const;
+        //@}
+
     private:
         // DATA
         const uint16_t dtTag_;        //!< Tag of the entry with the data area
@@ -866,9 +912,18 @@ namespace Exiv2 {
         //@}
 
     protected:
+        //! @name Protected Creators
+        //@{
+        //! Copy constructor (used to implement clone()).
+        TiffDirectory(const TiffDirectory& rhs);
+        //@}
+
         //! @name Protected Manipulators
         //@{
-        virtual TiffComponent* doAddPath(uint16_t tag, TiffPath& tiffPath, TiffComponent* const pRoot);
+        virtual TiffComponent* doAddPath(uint16_t tag,
+                                         TiffPath& tiffPath,
+                                         TiffComponent* const pRoot,
+                                         TiffComponent::AutoPtr object);
         virtual TiffComponent* doAddChild(TiffComponent::AutoPtr tiffComponent);
         virtual TiffComponent* doAddNext(TiffComponent::AutoPtr tiffComponent);
         virtual void doAccept(TiffVisitor& visitor);
@@ -887,6 +942,7 @@ namespace Exiv2 {
 
         //! @name Protected Accessors
         //@{
+        virtual TiffDirectory* doClone() const;
         /*!
           @brief This class does not really implement writeData(), it only has
                  write(). This method must not be called; it commits suicide.
@@ -927,6 +983,12 @@ namespace Exiv2 {
         //@}
 
     private:
+        //! @name NOT implemented
+        //@{
+        //! Assignment operator.
+        TiffDirectory& operator=(const TiffDirectory& rhs);
+        //@}
+
         //! @name Private Accessors
         //@{
         //! Write a binary directory entry for a TIFF component.
@@ -966,9 +1028,18 @@ namespace Exiv2 {
         //@}
 
     protected:
+        //! @name Protected Creators
+        //@{
+        //! Copy constructor (used to implement clone()).
+        TiffSubIfd(const TiffSubIfd& rhs);
+        //@}
+
         //! @name Protected Manipulators
         //@{
-        virtual TiffComponent* doAddPath(uint16_t tag, TiffPath& tiffPath, TiffComponent* const pRoot);
+        virtual TiffComponent* doAddPath(uint16_t tag,
+                                         TiffPath& tiffPath,
+                                         TiffComponent* const pRoot,
+                                         TiffComponent::AutoPtr object);
         virtual TiffComponent* doAddChild(TiffComponent::AutoPtr tiffComponent);
         virtual void doAccept(TiffVisitor& visitor);
         virtual void doEncode(TiffEncoder& encoder, const Exifdatum* datum);
@@ -987,6 +1058,7 @@ namespace Exiv2 {
 
         //! @name Protected Accessors
         //@{
+        virtual TiffSubIfd* doClone() const;
         /*!
           @brief Implements writeData(). Write the sub-IFDs to the \em ioWrapper.
                  Return the number of bytes written.
@@ -1011,6 +1083,12 @@ namespace Exiv2 {
         //@}
 
     private:
+        //! @name NOT implemented
+        //@{
+        //! Assignment operator.
+        TiffSubIfd& operator=(const TiffSubIfd& rhs);
+        //@}
+
         //! A collection of TIFF directories (IFDs)
         typedef std::vector<TiffDirectory*> Ifds;
 
@@ -1043,7 +1121,10 @@ namespace Exiv2 {
     protected:
         //! @name Protected Manipulators
         //@{
-        virtual TiffComponent* doAddPath(uint16_t tag, TiffPath& tiffPath, TiffComponent* const pRoot);
+        virtual TiffComponent* doAddPath(uint16_t tag,
+                                         TiffPath& tiffPath,
+                                         TiffComponent* const pRoot,
+                                         TiffComponent::AutoPtr object);
         virtual TiffComponent* doAddChild(TiffComponent::AutoPtr tiffComponent);
         virtual TiffComponent* doAddNext(TiffComponent::AutoPtr tiffComponent);
         virtual void doAccept(TiffVisitor& visitor);
@@ -1062,6 +1143,7 @@ namespace Exiv2 {
 
         //! @name Protected Accessors
         //@{
+        virtual TiffMnEntry* doClone() const;
         //! Implements count(). Return number of components in the entry.
         virtual uint32_t doCount() const;
         // Using doWriteData from base class
@@ -1076,6 +1158,14 @@ namespace Exiv2 {
         //@}
 
     private:
+        //! @name NOT implemented
+        //@{
+        //! Copy constructor.
+        TiffMnEntry(const TiffMnEntry& rhs);
+        //! Assignment operator.
+        TiffMnEntry& operator=(const TiffMnEntry& rhs);
+        //@}
+
         // DATA
         uint16_t       mnGroup_;             //!< New group for concrete mn
         TiffComponent* mn_;                  //!< The Makernote
@@ -1163,7 +1253,10 @@ namespace Exiv2 {
     protected:
         //! @name Protected Manipulators
         //@{
-        virtual TiffComponent* doAddPath(uint16_t tag, TiffPath& tiffPath, TiffComponent* const pRoot);
+        virtual TiffComponent* doAddPath(uint16_t tag,
+                                         TiffPath& tiffPath,
+                                         TiffComponent* const pRoot,
+                                         TiffComponent::AutoPtr object);
         virtual TiffComponent* doAddChild(TiffComponent::AutoPtr tiffComponent);
         virtual TiffComponent* doAddNext(TiffComponent::AutoPtr tiffComponent);
         virtual void doAccept(TiffVisitor& visitor);
@@ -1182,6 +1275,7 @@ namespace Exiv2 {
 
         //! @name Protected Accessors
         //@{
+        virtual TiffIfdMakernote* doClone() const;
         /*!
           @brief This class does not really implement writeData(), it only has
                  write(). This method must not be called; it commits suicide.
@@ -1221,6 +1315,20 @@ namespace Exiv2 {
         //@}
 
     private:
+        /*!
+          @name NOT implemented
+
+          Implementing the copy constructor and assignment operator will require
+          cloning the header, i.e., clone() functionality on the MnHeader
+          hierarchy.
+         */
+        //@{
+        //! Copy constructor.
+        TiffIfdMakernote(const TiffIfdMakernote& rhs);
+        //! Assignment operator.
+        TiffIfdMakernote& operator=(const TiffIfdMakernote& rhs);
+        //@}
+
         // DATA
         MnHeader*     pHeader_;                 //!< Makernote header
         TiffDirectory ifd_;                     //!< Makernote IFD
@@ -1264,6 +1372,7 @@ namespace Exiv2 {
         CryptFct    cryptFct_;     //!< Crypt function, 0 if not used
         bool        hasSize_;      //!< If true, first tag is the size element
         bool        hasFillers_;   //!< If true, write all defined tags
+        bool        concat_;       //!< If true, concatenate gaps between defined tags to single tags
         ArrayDef    elDefaultDef_; //!< Default element
     };
 
@@ -1302,7 +1411,7 @@ namespace Exiv2 {
         //! @name Manipulators
         //@{
         //! Add an element to the binary array, return the size of the element
-        uint32_t addElement(uint32_t idx, const ArrayDef* def);
+        uint32_t addElement(uint32_t idx, const ArrayDef& def);
         /*!
           @brief Setup cfg and def for the component, in case of a complex binary array.
                  Else do nothing. Return true if the initialization succeeded, else false.
@@ -1343,12 +1452,21 @@ namespace Exiv2 {
         //@}
 
     protected:
+        //! @name Protected Creators
+        //@{
+        //! Copy constructor (used to implement clone()).
+        TiffBinaryArray(const TiffBinaryArray& rhs);
+        //@}
+
         //! @name Protected Manipulators
         //@{
         /*!
           @brief Implements addPath(). Todo: Document it!
          */
-        virtual TiffComponent* doAddPath(uint16_t tag, TiffPath& tiffPath, TiffComponent* const pRoot);
+        virtual TiffComponent* doAddPath(uint16_t tag,
+                                         TiffPath& tiffPath,
+                                         TiffComponent* const pRoot,
+                                         TiffComponent::AutoPtr object);
         /*!
           @brief Implements addChild(). Todo: Document it!
          */
@@ -1368,6 +1486,7 @@ namespace Exiv2 {
 
         //! @name Protected Accessors
         //@{
+        virtual TiffBinaryArray* doClone() const;
         //! Implements count(). Todo: Document it!
         virtual uint32_t doCount() const;
         // Using doWriteData from base class
@@ -1381,6 +1500,12 @@ namespace Exiv2 {
         //@}
 
     private:
+        //! @name NOT implemented
+        //@{
+        //! Assignment operator.
+        TiffBinaryArray& operator=(const TiffBinaryArray& rhs);
+        //@}
+
         // DATA
         const CfgSelFct cfgSelFct_; //!< Pointer to a function to determine which cfg to use (may be 0)
         const ArraySet* arraySet_;  //!< Pointer to the array set, if any (may be 0)
@@ -1413,7 +1538,7 @@ namespace Exiv2 {
         /*!
           @brief Set the array definition for this element.
          */
-        void setElDef(const ArrayDef* def) { elDef_ = def; }
+        void setElDef(const ArrayDef& def) { elDef_ = def; }
         /*!
           @brief Set the byte order of this element.
          */
@@ -1425,7 +1550,7 @@ namespace Exiv2 {
         /*!
           @brief Return the array definition of this element.
          */
-        const ArrayDef* elDef()       const { return elDef_; }
+        const ArrayDef* elDef()       const { return &elDef_; }
         /*!
           @brief Return the byte order of this element.
          */
@@ -1450,6 +1575,7 @@ namespace Exiv2 {
 
         //! @name Protected Accessors
         //@{
+        virtual TiffBinaryElement* doClone() const;
         /*!
           @brief Implements count(). Returns the count from the element definition.
          */
@@ -1467,7 +1593,7 @@ namespace Exiv2 {
 
     private:
         // DATA
-        const ArrayDef* elDef_;  //!< Pointer to the array element definition
+        ArrayDef  elDef_;        //!< The array element definition
         ByteOrder elByteOrder_;  //!< Byte order to read/write the element
 
     }; // class TiffBinaryElement
@@ -1480,6 +1606,12 @@ namespace Exiv2 {
              of component lhs is less than that of rhs.
      */
     bool cmpTagLt(TiffComponent const* lhs, TiffComponent const* rhs);
+
+    /*!
+      @brief Compare two TIFF component pointers by group. Return true if the
+             group of component lhs is less than that of rhs.
+     */
+    bool cmpGroupLt(TiffComponent const* lhs, TiffComponent const* rhs);
 
     //! Return the group name for a group
     const char* tiffGroupName(uint16_t group);

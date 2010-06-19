@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    types.hpp
   @brief   Type definitions for %Exiv2 and related functionality
-  @version $Rev: 1983 $
+  @version $Rev: 2239 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    09-Jan-04, ahu: created<BR>
@@ -158,6 +158,11 @@ namespace Exiv2 {
         subImage2Id,
         subImage3Id,
         subImage4Id,
+        subImage5Id,
+        subImage6Id,
+        subImage7Id,
+        subImage8Id,
+        subImage9Id,
         mnIfdId,
         canonIfdId,
         canonCsIfdId,
@@ -181,6 +186,12 @@ namespace Exiv2 {
         nikonWtIfdId,
         nikonIiIfdId,
         nikonAfIfdId,
+        nikonAf2IfdId,
+        nikonFiIfdId,
+        nikonMeIfdId,
+        nikonFl1IfdId,
+        nikonFl2IfdId,
+        nikonFl3IfdId,
         nikonSi1IfdId,
         nikonSi2IfdId,
         nikonSi3IfdId,
@@ -218,7 +229,17 @@ namespace Exiv2 {
         panaRawIfdId,
         pentaxIfdId,
         sigmaIfdId,
-        sonyIfdId,
+        sony1IfdId,
+        sony2IfdId,
+        sonyMltIfdId,
+        sony1CsIfdId,
+        sony1Cs2IfdId,
+        sony2CsIfdId,
+        sony2Cs2IfdId,
+        sony1MltCs7DIfdId,
+        sony1MltCsOldIfdId,
+        sony1MltCsNewIfdId,
+        sony1MltCsA100IfdId,
         lastIfdId
     };
 

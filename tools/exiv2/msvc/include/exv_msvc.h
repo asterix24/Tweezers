@@ -2,7 +2,7 @@
 /*!
   @file    exv_msvc.h
   @brief   Configuration settings for MSVC
-  @version $Rev: 1981 $
+  @version $Rev: 2245 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    07-Feb-04, ahu: created
@@ -23,13 +23,13 @@
 #define EXV_PACKAGE_NAME "exiv2"
 
 /* Define to the full name and version of this package. */
-#define EXV_PACKAGE_STRING "exiv2 0.19"
+#define EXV_PACKAGE_STRING "exiv2 0.20"
 
 /* Define to the one symbol short name of this package. */
 #define EXV_PACKAGE_TARNAME "exiv2"
 
 /* Define to the version of this package. */
-#define EXV_PACKAGE_VERSION "0.19"
+#define EXV_PACKAGE_VERSION "0.20"
 
 /* Define to `int' if <sys/types.h> does not define pid_t. */
 typedef int pid_t;

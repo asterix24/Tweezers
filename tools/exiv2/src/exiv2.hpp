@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    exiv2.hpp
   @brief   Defines class Params, used for the command line handling of exiv2
-  @version $Rev: 1952 $
+  @version $Rev: 2045 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    08-Dec-03, ahu: created
@@ -116,6 +116,8 @@ public:
     typedef std::vector<std::string> Files;
     //! Container for preview image numbers
     typedef std::set<int> PreviewNumbers;
+    //! Container for keys
+    typedef std::vector<std::string> Keys;
 
     /*!
       @brief Controls all access to the global Params instance.
@@ -202,6 +204,8 @@ public:
     std::string suffix_;                //!< File extension of the file to insert
     Files files_;                       //!< List of non-option arguments.
     PreviewNumbers previewNumbers_;     //!< List of preview numbers
+    Keys keys_;                         //!< List of keys to 'grep' from the metadata
+    std::string charset_;               //!< Charset to use for UNICODE Exif user comment
 
 private:
     //! Pointer to the global Params object.
@@ -216,7 +220,7 @@ private:
       @brief Default constructor. Note that optstring_ is initialized here.
              The c'tor is private to force instantiation through instance().
      */
-    Params() : optstring_(":hVvfbuktTFa:Y:O:D:r:p:P:d:e:i:c:m:M:l:S:"),
+    Params() : optstring_(":hVvfbuktTFa:Y:O:D:r:p:P:d:e:i:c:m:M:l:S:g:n:"),
                help_(false),
                version_(false),
                verbose_(false),

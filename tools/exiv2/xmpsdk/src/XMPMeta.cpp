@@ -30,10 +30,12 @@
 using namespace std;
 
 #if XMP_WinBuild
+#ifdef _MSC_VER
 	#pragma warning ( disable : 4533 )	// initialization of '...' is skipped by 'goto ...'
 	#pragma warning ( disable : 4702 )	// unreachable code
 	#pragma warning ( disable : 4800 )	// forcing value to bool 'true' or 'false' (performance warning)
 	#pragma warning ( disable : 4996 )	// '...' was declared deprecated
+#endif
 #endif
 
 
@@ -741,7 +743,8 @@ XMPMeta::Initialize()
 	XMP_Assert ( sizeof(XMP_Uns64) == 8 );
 	
 	XMP_Assert ( sizeof(XMP_OptionBits) == 4 );	// Check that option masking work on all 32 bits.
-	XMP_OptionBits flag = ~0UL;
+	XMP_OptionBits flag;
+    flag = ~0UL;
 	XMP_Assert ( flag == (XMP_OptionBits)(-1L) );
 	XMP_Assert ( (flag ^ kXMP_PropHasLang) == 0xFFFFFFBFUL );
 	XMP_Assert ( (flag & ~kXMP_PropHasLang) == 0xFFFFFFBFUL );

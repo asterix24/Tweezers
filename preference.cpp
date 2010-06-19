@@ -40,13 +40,6 @@ Preference::Preference(QWidget *parent) :
     createActions();
     readSettings();
 
-    m_ui->formatList->clear();
-    m_ui->formatList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-    m_ui->formatList->horizontalHeader()->setVisible(false);
-    m_ui->formatList->verticalHeader()->setVisible(false);
-    m_ui->formatList->setColumnCount(1);
-    m_ui->formatList->setRowCount(0);
-
     m_ui->categoryList->clear();
     m_ui->categoryList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
     m_ui->categoryList->horizontalHeader()->setVisible(false);
@@ -54,16 +47,8 @@ Preference::Preference(QWidget *parent) :
     m_ui->categoryList->setColumnCount(1);
     m_ui->categoryList->setRowCount(0);
 
-
-
-    QStringList date_fmt_lst;
-    QStringList time_fmt_lst;
-
-	date_fmt_lst << date_fmt << "dddd MMMM yyyy" << "d/m/yy" << "dd-mm-yy";
-	time_fmt_lst << time_fmt << "hh:MM:ss" << "h:M" << "hh-MM-ss";
-
-    category["Date"] = date_fmt_lst;
-    category["Time"] = time_fmt_lst;
+    category["Date"] = DEFAULT_DATE_FMT;
+    category["Time"] = DEFAULT_TIME_FMT;
 
     fillCategory();
 }
@@ -108,24 +93,30 @@ void Preference::readSettings()
 	curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
 	last_expr = settings.value("expr", DEFAULT_EXPR).toString();
 
-	//Format settings
-	time_fmt = settings.value("time", DEFAULT_TIME_FMT).toString();
-	date_fmt = settings.value("date", DEFAULT_DATE_FMT).toString();
+    // Last directory
+    curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
+    last_expr = settings.value("expr", DEFAULT_EXPR).toString();
+
+    // Format
+    curr_date_fmt = settings.value("date_fmt", DEFAULT_DATE_FMT).toString();
+    curr_time_fmt = settings.value("time_fmt", DEFAULT_TIME_FMT).toString();
 }
 
 void Preference::writeSettings()
 {
-	QSettings settings("Asterix", "Tweezers application");
-	settings.setValue("pos", pos);
-	settings.setValue("size", size);
+     QSettings settings("Asterix", "Tweezers application");
 
-	//Path settings and expression
-	settings.setValue("curr_path", curr_path);
-	settings.setValue("expr", last_expr);
+     // Windows settings.
+     settings.setValue("pos", pos);
+     settings.setValue("size", size);
 
-	//Format settings
-	settings.setValue("time", time_fmt);
-	settings.setValue("date", date_fmt);
+     // Last directory
+     settings.setValue("curr_path", curr_path);
+     settings.setValue("expr", last_expr);
+
+     // Formats
+     settings.setValue("date_fmt", curr_date_fmt);
+     settings.setValue("time_fmt", curr_time_fmt);
 }
 
 void Preference::fillCategory()
@@ -136,7 +127,7 @@ void Preference::fillCategory()
 
 
     int j = 0;
-    QHashIterator<QString, QStringList> i(category);
+    QHashIterator<QString, QString> i(category);
     while (i.hasNext())
     {
        i.next();
@@ -146,70 +137,22 @@ void Preference::fillCategory()
     }
 }
 
-void Preference::fillFormat(QTableWidgetItem *item)
+void Preference::preview(QTableWidgetItem *item)
 {
     if (category.contains(item->text()))
     {
-        QStringList list = category[item->text()];
-
-		//Ugly..
-		m_ui->label_3->setText(item->text());
-		if ((item->text() == "Date"))
-		{
-			upDatePreview(date_fmt);
-		}
-		else if ((item->text() == "Time"))
-		{
-			upDatePreview(time_fmt);
-		}
-		qDebug() << "Update " << item->text();
-
-        // Some view adjustment
-        m_ui->formatList->setRowCount(list.size());
-        m_ui->formatList->resizeRowsToContents();
-        m_ui->formatList->resizeColumnsToContents();
-
-        // Mark all item whit its category.
-        QVariant v(item->text());
-
-        for (int i = 0; i < list.size(); i++)
-        {
-            QTableWidgetItem *_item = new QTableWidgetItem(list[i]);
-            _item->setData(Qt::UserRole, v);
-            m_ui->formatList->setItem(i, 0, _item);
-        }
+        QString fmt = category[item->text()];
+        m_ui->customFormat->setText(fmt);
+        upDatePreview(fmt);
     }
 
-}
-
-void Preference::fillCustomFmt(QTableWidgetItem *item)
-{
-    QVariant d = item->data(Qt::UserRole);
-    m_ui->label_3->setText(d.toString());
-    qDebug() << d.toString();
-    upDatePreview(item->text());
 }
 
 void Preference::upDatePreview(QString str)
 {
+    // Controllare quando la stringa non vale nulla..
     QDateTime now = QDateTime::currentDateTime();
-
-    if ((m_ui->label_3->text() == "Date"))
-	{
-		date_fmt = str;
-		m_ui->customFormat->setText(date_fmt);
-        m_ui->preview->setText(now.toString(date_fmt));
-	}
-	else if ((m_ui->label_3->text() == "Time"))
-    {
-		time_fmt = str;
-		m_ui->customFormat->setText(time_fmt);
-		m_ui->preview->setText(now.toString(time_fmt));
-    }
-    else
-    {
-        m_ui->preview->setText("");
-    }
+    m_ui->preview->setText(now.toString(str));
 }
 
 void Preference::createActions()
@@ -219,8 +162,7 @@ void Preference::createActions()
     connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancel()));
 
     // Manage tag list signals
-    connect(m_ui->categoryList, SIGNAL(itemPressed (QTableWidgetItem *)), this, SLOT(fillFormat(QTableWidgetItem *)));
-    connect(m_ui->formatList, SIGNAL(itemPressed (QTableWidgetItem *)), this, SLOT(fillCustomFmt(QTableWidgetItem *)));
+    connect(m_ui->categoryList, SIGNAL(itemPressed (QTableWidgetItem *)), this, SLOT(preview(QTableWidgetItem *)));
 
     // Manage preview signals
     connect(m_ui->customFormat, SIGNAL(textChanged(const QString)), this, SLOT(upDatePreview(QString)));

@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      xmpsidecar.cpp
-  Version:   $Rev: 1937 $
+  Version:   $Rev: 2045 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   07-Mar-08, ahu: created
   Credits:   See header file
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: xmpsidecar.cpp 1937 2009-11-27 05:59:23Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: xmpsidecar.cpp 2045 2010-04-03 07:53:30Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -168,21 +168,26 @@ namespace Exiv2 {
 
         // Todo: Proper implementation
 
-        const int32_t len = 10;
+        const int32_t len = 13;
         byte buf[len];
         iIo.read(buf, len);
         if (iIo.error() || iIo.eof()) {
             return false;
         }
+        // Skip leading BOM
+        int32_t start = 0;
+        if (0 == strncmp(reinterpret_cast<const char*>(buf), "\xef\xbb\xbf", 3)) {
+            start = 3;
+        }
         bool rc = false;
-        const std::string head(reinterpret_cast<const char*>(buf), len);
+        const std::string head(reinterpret_cast<const char*>(buf + start), len - start);
         if (   head.substr(0, 5)  == "<?xml"
             || head.substr(0, 9)  == "<?xpacket"
             || head.substr(0, 10) == "<x:xmpmeta") {
             rc = true;
         }
         if (!advance || !rc) {
-            iIo.seek(-len, BasicIo::cur);
+            iIo.seek(-(len - start), BasicIo::cur); // Swallow the BOM
         }
         return rc;
 

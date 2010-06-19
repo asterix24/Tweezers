@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      datasets.cpp
-  Version:   $Rev: 1937 $
+  Version:   $Rev: 2109 $
   Author(s): Brad Schick (brad) <brad@robotbattle.com>
-             Gilles Caulier (gc) <caulier.gilles@kdemail.net>
+             Gilles Caulier (gc) <caulier dot gilles at gmail dot com>
   History:   24-Jul-04, brad: created
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: datasets.cpp 1937 2009-11-27 05:59:23Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: datasets.cpp 2109 2010-04-19 13:17:17Z cgilles $")
 
 // *****************************************************************************
 // included header files

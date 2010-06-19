@@ -34,4 +34,6 @@ FORMS += tweezers.ui \
 LIBS += -Llib/lib \
     -lexiv2
 
-INCLUDEPATH += lib/include
+CONFIG += qt warn_on static
+
+INCLUDEPATH += lib/include lib/lib

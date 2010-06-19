@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,13 +20,13 @@
  */
 /*
   File:      makernote.cpp
-  Version:   $Rev: 1977 $
+  Version:   $Rev: 2240 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   11-Apr-06, ahu: created
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: makernote.cpp 1977 2009-12-28 14:47:58Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: makernote.cpp 2240 2010-05-25 15:04:16Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -48,6 +48,9 @@ EXIV2_RCSID("@(#) $Id: makernote.cpp 1977 2009-12-28 14:47:58Z ahuggel $")
 
 // *****************************************************************************
 namespace {
+    // Todo: Can be generalized further - get any tag as a string/long/...
+    //! Get the model name from tag Exif.Image.Model
+    std::string getExifModel(Exiv2::Internal::TiffComponent* const pRoot);
     //! Nikon en/decryption function
     void ncrypt(Exiv2::byte* pData, uint32_t size, uint32_t count, uint32_t serial);
 }
@@ -823,13 +826,19 @@ namespace Exiv2 {
         { 0x0097, "0207",    0, 3, 284 },
         { 0x0097, "0208",    0, 3, 284 },
         { 0x0097, "0209",    0, 5, 284 },
+        { 0x0097, "02",      0, 3, 284 },
         // NikonLd
         { 0x0098, "0100",    0, 0,  NA },
         { 0x0098, "0101",    0, 1,  NA },
         { 0x0098, "0201",    0, 1,   4 },
         { 0x0098, "0202",    0, 1,   4 },
         { 0x0098, "0203",    0, 1,   4 },
-        { 0x0098, "0204",    0, 2,   4 }
+        { 0x0098, "0204",    0, 2,   4 },
+        // NikonFl
+        { 0x00a8, "0100",    0, 0,  NA },
+        { 0x00a8, "0101",    0, 0,  NA },
+        { 0x00a8, "0102",    0, 1,  NA },
+        { 0x00a8, "0103",    0, 2,  NA },
     };
 
     int nikonSelector(uint16_t tag, const byte* pData, uint32_t size, TiffComponent* const /*pRoot*/)
@@ -862,12 +871,8 @@ namespace Exiv2 {
         bool ok(false);
         uint32_t serial = stringTo<uint32_t>(te->pValue()->toString(), ok);
         if (!ok) {
-            // Find Exif.Image.Model
-            finder.init(0x0110, Group::ifd0);
-            pRoot->accept(finder);
-            te = dynamic_cast<TiffEntryBase*>(finder.result());
-            if (!te || !te->pValue() || te->pValue()->count() == 0) return buf;
-            std::string model = te->pValue()->toString();
+            std::string model = getExifModel(pRoot);
+            if (model.empty()) return buf;
             if (model.find("D50") != std::string::npos) {
                 serial = 0x22;
             }
@@ -881,11 +886,31 @@ namespace Exiv2 {
         return buf;
     }
 
+    int sonyCsSelector(uint16_t /*tag*/, const byte* /*pData*/, uint32_t /*size*/, TiffComponent* const pRoot)
+    {
+        std::string model = getExifModel(pRoot);
+        if (model.empty()) return -1;
+        int idx = 0;
+        if (   model.find("DSLR-A330") != std::string::npos
+            || model.find("DSLR-A380") != std::string::npos) {
+            idx = 1;
+        }
+        return idx;
+    }
 }}                                      // namespace Internal, Exiv2
 
 // *****************************************************************************
 // local definitions
 namespace {
+    std::string getExifModel(Exiv2::Internal::TiffComponent* const pRoot)
+    {
+        Exiv2::Internal::TiffFinder finder(0x0110, Exiv2::Internal::Group::ifd0); // Exif.Image.Model
+        pRoot->accept(finder);
+        Exiv2::Internal::TiffEntryBase* te = dynamic_cast<Exiv2::Internal::TiffEntryBase*>(finder.result());
+        if (!te || !te->pValue() || te->pValue()->count() == 0) return std::string();
+        return te->pValue()->toString();
+    }
+
     void ncrypt(Exiv2::byte* pData, uint32_t size, uint32_t count, uint32_t serial)
     {
         static const Exiv2::byte xlat[2][256] = {

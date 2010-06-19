@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,7 +20,7 @@
  */
 /*
   File:      value.cpp
-  Version:   $Rev: 1937 $
+  Version:   $Rev: 2090 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   26-Jan-04, ahu: created
              11-Feb-04, ahu: isolated as a component
@@ -28,13 +28,14 @@
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: value.cpp 1937 2009-11-27 05:59:23Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: value.cpp 2090 2010-04-14 16:17:55Z ahuggel $")
 
 // *****************************************************************************
 // included header files
 #include "value.hpp"
 #include "types.hpp"
 #include "error.hpp"
+#include "convert.hpp"
 
 // + standard includes
 #include <iostream>
@@ -160,7 +161,7 @@ namespace Exiv2 {
     DataBuf Value::dataArea() const
     {
         return DataBuf(0, 0);
-    };
+    }
 
     DataValue::DataValue(TypeId typeId) : Value(typeId)
     {
@@ -193,12 +194,13 @@ namespace Exiv2 {
     {
         std::istringstream is(buf);
         int tmp;
-        value_.clear();
+        ValueType val;
         while (!(is.eof())) {
             is >> tmp;
             if (is.fail()) return 1;
-            value_.push_back(static_cast<byte>(tmp));
+            val.push_back(static_cast<byte>(tmp));
         }
+        value_.swap(val);
         return 0;
     }
 
@@ -440,12 +442,12 @@ namespace Exiv2 {
     }
 
     CommentValue::CommentValue()
-        : StringValueBase(Exiv2::undefined)
+        : StringValueBase(Exiv2::undefined), byteOrder_(littleEndian)
     {
     }
 
     CommentValue::CommentValue(const std::string& comment)
-        : StringValueBase(Exiv2::undefined)
+        : StringValueBase(Exiv2::undefined), byteOrder_(littleEndian)
     {
         read(comment);
     }
@@ -474,23 +476,62 @@ namespace Exiv2 {
             c.clear();
             if (pos != std::string::npos) c = comment.substr(pos+1);
         }
+        if (charsetId == unicode) {
+            const char* to = byteOrder_ == littleEndian ? "UCS-2LE" : "UCS-2BE";
+            convertStringCharset(c, "UTF-8", to);
+        }
         const std::string code(CharsetInfo::code(charsetId), 8);
         return StringValueBase::read(code + c);
     }
 
+    int CommentValue::read(const byte* buf, long len, ByteOrder byteOrder)
+    {
+        byteOrder_ = byteOrder;
+        return StringValueBase::read(buf, len, byteOrder);
+    }
+
+    long CommentValue::copy(byte* buf, ByteOrder byteOrder) const
+    {
+        std::string c = value_;
+        if (charsetId() == unicode) {
+            c = value_.substr(8);
+            std::string::size_type sz = c.size();
+            if (byteOrder_ == littleEndian && byteOrder == bigEndian) {
+                convertStringCharset(c, "UCS-2LE", "UCS-2BE");
+                assert(c.size() == sz);
+            }
+            else if (byteOrder_ == bigEndian && byteOrder == littleEndian) {
+                convertStringCharset(c, "UCS-2BE", "UCS-2LE");
+                assert(c.size() == sz);
+            }
+            c = value_.substr(0, 8) + c;
+        }
+        if (c.size() == 0) return 0;
+        assert(buf != 0);
+        return static_cast<long>(c.copy(reinterpret_cast<char*>(buf), c.size()));
+    }
+
     std::ostream& CommentValue::write(std::ostream& os) const
     {
-        CharsetId charsetId = this->charsetId();
-        if (charsetId != undefined) {
-            os << "charset=\"" << CharsetInfo::name(charsetId) << "\" ";
+        CharsetId csId = charsetId();
+        if (csId != undefined) {
+            os << "charset=\"" << CharsetInfo::name(csId) << "\" ";
         }
         return os << comment();
     }
 
-    std::string CommentValue::comment() const
+    std::string CommentValue::comment(const char* encoding) const
     {
-        if (value_.length() >= 8) return value_.substr(8);
-        return "";
+        std::string c;
+        if (value_.length() < 8) {
+            return c;
+        }
+        c = value_.substr(8);
+        if (charsetId() == unicode) {
+            const char* from = encoding == 0 || *encoding == '\0' ? detectCharset(c) : encoding;
+            convertStringCharset(c, from, "UTF-8");
+        }
+        return c;
     }
 
     CommentValue::CharsetId CommentValue::charsetId() const
@@ -501,6 +542,27 @@ namespace Exiv2 {
             charsetId = CharsetInfo::charsetIdByCode(code);
         }
         return charsetId;
+    }
+
+    const char* CommentValue::detectCharset(std::string& c) const
+    {
+        // Interpret a BOM if there is one
+        if (0 == strncmp(c.data(), "\xef\xbb\xbf", 3)) {
+            c = c.substr(3);
+            return "UTF-8";
+        }
+        if (0 == strncmp(c.data(), "\xff\xfe", 2)) {
+            c = c.substr(2);
+            return "UCS-2LE";
+        }
+        if (0 == strncmp(c.data(), "\xfe\xff", 2)) {
+            c = c.substr(2);
+            return "UCS-2BE";
+        }
+
+        // Todo: Add logic to guess if the comment is encoded in UTF-8
+
+        return byteOrder_ == littleEndian ? "UCS-2LE" : "UCS-2BE";
     }
 
     CommentValue* CommentValue::clone_() const

@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,15 +20,15 @@
  */
 /*
   File:      panasonicmn.cpp
-  Version:   $Rev: 1750 $
+  Version:   $Rev: 2109 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
-             Gilles Caulier (gc) <caulier.gilles@kdemail.net>
+             Gilles Caulier (gc) <caulier dot gilles at gmail dot com>
   History:   11-Jun-04, ahu: created
   Credits:   See header file
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: panasonicmn.cpp 1750 2009-02-16 14:30:51Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: panasonicmn.cpp 2109 2010-04-19 13:17:17Z cgilles $")
 
 // *****************************************************************************
 // included header files
@@ -270,7 +270,7 @@ namespace Exiv2 {
         TagInfo(0x0051, "LensType", N_("Lens Type"), N_("Lens type"), panasonicIfdId, makerTags, asciiString, printValue),
         TagInfo(0x0052, "LensSerialNumber", N_("Lens Serial Number"), N_("Lens serial number"), panasonicIfdId, makerTags, asciiString, printValue),
         TagInfo(0x0053, "AccessoryType", N_("Accessory Type"), N_("Accessory type"), panasonicIfdId, makerTags, asciiString, printValue),
-        TagInfo(0x0e00, "PrintIM", N_("Print IM"), N_("PrintIM information"), minoltaIfdId, makerTags, undefined, printValue),
+        TagInfo(0x0e00, "PrintIM", N_("Print IM"), N_("PrintIM information"), panasonicIfdId, makerTags, undefined, printValue),
         TagInfo(0x4449, "0x4449", "0x4449", N_("Unknown"), panasonicIfdId, makerTags, undefined, printValue),
         TagInfo(0x8000, "MakerNoteVersion", N_("MakerNote Version"), N_("MakerNote version"), panasonicIfdId, makerTags, undefined, printExifVersion),
         TagInfo(0x8001, "SceneMode", N_("Scene Mode"), N_("Scene mode"), panasonicIfdId, makerTags, unsignedShort, EXV_PRINT_TAG(panasonicShootingMode)),

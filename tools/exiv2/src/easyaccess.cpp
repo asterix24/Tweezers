@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      easyaccess.cpp
-  Version:   $Rev: 1960 $
+  Version:   $Rev: 2214 $
   Author(s): Carsten Pfeiffer <pfeiffer@kde.org>
              Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   28-Feb-09, gis: created
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: easyaccess.cpp 1960 2009-12-20 23:54:11Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: easyaccess.cpp 2214 2010-05-09 16:00:30Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -87,8 +87,8 @@ namespace Exiv2 {
             "Exif.Nikon3.ISOSpeed",
             "Exif.NikonIi.ISO",
             "Exif.NikonIi.ISO2",
-            "Exif.MinoltaCsNew.ISOSpeed",
-            "Exif.MinoltaCsOld.ISOSpeed",
+            "Exif.MinoltaCsNew.ISOSetting",
+            "Exif.MinoltaCsOld.ISOSetting",
             "Exif.MinoltaCs5D.ISOSpeed",
             "Exif.MinoltaCs7D.ISOSpeed",
             "Exif.Pentax.ISO",
@@ -284,4 +284,94 @@ namespace Exiv2 {
         };
         return findMetadatum(ed, keys, EXV_COUNTOF(keys));
     }
+
+    ExifData::const_iterator meteringMode(const ExifData& ed)
+    {
+        static const char* keys[] = {
+            "Exif.Photo.MeteringMode",
+            "Exif.Image.MeteringMode",
+            "Exif.CanonCs.MeteringMode"
+        };
+        return findMetadatum(ed, keys, EXV_COUNTOF(keys));
+    }
+
+    ExifData::const_iterator make(const ExifData& ed)
+    {
+        static const char* keys[] = {
+            "Exif.Image.Make"
+        };
+        return findMetadatum(ed, keys, EXV_COUNTOF(keys));
+    }
+
+    ExifData::const_iterator model(const ExifData& ed)
+    {
+        static const char* keys[] = {
+            "Exif.Image.Model"
+        };
+        return findMetadatum(ed, keys, EXV_COUNTOF(keys));
+    }
+
+    ExifData::const_iterator exposureTime(const ExifData& ed)
+    {
+        static const char* keys[] = {
+            "Exif.Photo.ExposureTime",
+            "Exif.Image.ExposureTime"
+        };
+        return findMetadatum(ed, keys, EXV_COUNTOF(keys));
+    }
+
+    ExifData::const_iterator fNumber(const ExifData& ed)
+    {
+        static const char* keys[] = {
+            "Exif.Photo.FNumber",
+            "Exif.Image.FNumber"
+        };
+        return findMetadatum(ed, keys, EXV_COUNTOF(keys));
+    }
+
+    ExifData::const_iterator subjectDistance(const ExifData& ed)
+    {
+        static const char* keys[] = {
+            "Exif.Photo.SubjectDistance",
+            "Exif.Image.SubjectDistance",
+            "Exif.CanonSi.SubjectDistance",
+            "Exif.MinoltaCsNew.FocusDistance",
+            "Exif.Nikon1.FocusDistance",
+            "Exif.Nikon3.FocusDistance",
+            "Exif.NikonLd2.FocusDistance",
+            "Exif.NikonLd3.FocusDistance",
+            "Exif.Olympus.FocusDistance",
+            "Exif.OlympusFi.FocusDistance"
+        };
+        return findMetadatum(ed, keys, EXV_COUNTOF(keys));
+    }
+
+    ExifData::const_iterator serialNumber(const ExifData& ed)
+    {
+        static const char* keys[] = {
+            "Exif.Image.CameraSerialNumber",
+            "Exif.Canon.SerialNumber",
+            "Exif.Nikon3.SerialNumber",
+            "Exif.Nikon3.SerialNO",
+            "Exif.Fujifilm.SerialNumber",
+            "Exif.Olympus.SerialNumber",
+            "Exif.Sigma.SerialNumber"
+        };
+        return findMetadatum(ed, keys, EXV_COUNTOF(keys));
+    }
+
+    ExifData::const_iterator focalLength(const ExifData& ed)
+    {
+        static const char* keys[] = {
+            "Exif.Photo.FocalLength",
+            "Exif.Image.FocalLength",
+            "Exif.Canon.FocalLength",
+            "Exif.NikonLd2.FocalLength",
+            "Exif.NikonLd3.FocalLength",
+            "Exif.MinoltaCsNew.FocalLength",
+            "Exif.Pentax.FocalLength"
+        };
+        return findMetadatum(ed, keys, EXV_COUNTOF(keys));
+    }
+
 }                                       // namespace Exiv2

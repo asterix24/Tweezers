@@ -3,7 +3,7 @@
   Abstract : ExifData write unit tests for Exif data created from scratch
 
   File     : write2-test.cpp
-  Version  : $Rev: 1937 $
+  Version  : $Rev: 2156 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History  : 26-Jun-04, ahu: created
 
@@ -140,11 +140,11 @@ try {
     write(file, edMn8);
     print(file);
 
-    std::cout <<"\n----- One Sony MakerNote tag\n";
+    std::cout <<"\n----- One Sony1 MakerNote tag\n";
     Exiv2::ExifData edMn9;
     edMn9["Exif.Image.Make"]      = "SONY";
     edMn9["Exif.Image.Model"]     = "DSC-W7";
-    edMn9["Exif.Sony.0x2000"] = "0 1 2 3 4 5";
+    edMn9["Exif.Sony1.0x2000"] = "0 1 2 3 4 5";
     write(file, edMn9);
     print(file);
 

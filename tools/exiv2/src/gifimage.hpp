@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -22,7 +22,7 @@
   @file    gifimage.hpp
   @brief   GIF image, implemented using the following references:
            <a href="http://www.w3.org/Graphics/GIF/spec-gif89a.txt">GIF89 specification</a> by W3C<br>
-  @version $Rev: 1937 $
+  @version $Rev: 2045 $
   @author  Marco Piovanelli, Ovolab (marco)
            <a href="mailto:marco.piovanelli@pobox.com">marco.piovanelli@pobox.com</a>
   @date    26-Feb-2007, marco: created

@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:      psdimage.cpp
-  Version:   $Rev: 1977 $
+  Version:   $Rev: 2092 $
   Author(s): Marco Piovanelli, Ovolab (marco)
              Michael Ulbrich (mul)
   History:   05-Mar-2007, marco: created
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: psdimage.cpp 1977 2009-12-28 14:47:58Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: psdimage.cpp 2092 2010-04-14 16:33:38Z ahuggel $")
 
 //#define DEBUG 1
 
@@ -363,7 +363,7 @@ namespace Exiv2 {
         long toRead = 0;
         while (readTotal < colorDataLength) {
             toRead =   static_cast<long>(colorDataLength - readTotal) < lbuf.size_
-                     ? colorDataLength - readTotal : lbuf.size_;
+                     ? static_cast<long>(colorDataLength - readTotal) : lbuf.size_;
             if (io_->read(lbuf.pData_, toRead) != toRead) throw Error(3, "Photoshop");
             readTotal += toRead;
             if (outIo.write(lbuf.pData_, toRead) != toRead) throw Error(21);
@@ -470,7 +470,7 @@ namespace Exiv2 {
                 resourceSize = (resourceSize + 1) & ~1;        // pad to even
                 while (readTotal < resourceSize) {
                     toRead =   static_cast<long>(resourceSize - readTotal) < lbuf.size_
-                             ? resourceSize - readTotal : lbuf.size_;
+                             ? static_cast<long>(resourceSize - readTotal) : lbuf.size_;
                     if (io_->read(lbuf.pData_, toRead) != toRead) {
                         throw Error(3, "Photoshop");
                     }

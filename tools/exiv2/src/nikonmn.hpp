@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -30,11 +30,13 @@
   [6] Email communication with Roger Larsson<BR>
   [7] <a href="http://www.cybercom.net/~dcoffin/dcraw/">Decoding raw digital photos in Linux</a> by Dave Coffin<br>
 
-  @version $Rev: 1953 $
+  @version $Rev: 2224 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @author  Gilles Caulier (gc)
-           <a href="mailto:caulier dot gilles at kdemail dot net">caulier dot gilles at kdemail dot net</a>
+           <a href="mailto:caulier dot gilles at gmail dot com">caulier dot gilles at gmail dot com</a>
+  @author  Jens Mueller (jm)
+           <a href="mailto:tschensinger at web dot de">tschensinger at web dot de</a>
   @date    17-May-04, ahu: created<BR>
            25-May-04, ahu: combined all Nikon formats in one component
  */
@@ -120,6 +122,18 @@ namespace Exiv2 {
         static const TagInfo* tagListIi();
         //! Return read-only list of built-in Auto Focus tags
         static const TagInfo* tagListAf();
+        //! Return read-only list of built-in Auto Focus 2 tags
+        static const TagInfo* tagListAf2();
+        //! Return read-only list of built-in File Info tags
+        static const TagInfo* tagListFi();
+        //! Return read-only list of built-in Multi Exposure tags
+        static const TagInfo* tagListMe();
+        //! Return read-only list of built-in Flash Info 1 tags
+        static const TagInfo* tagListFl1();
+        //! Return read-only list of built-in Flash Info 2 tags
+        static const TagInfo* tagListFl2();
+        //! Return read-only list of built-in Flash Info 3 tags
+        static const TagInfo* tagListFl3();
         //! Return read-only list of built-in Shot Info D80 tags
         static const TagInfo* tagListSi1();
         //! Return read-only list of built-in Shot Info D40 tags
@@ -171,19 +185,37 @@ namespace Exiv2 {
         static std::ostream& print0x008b(std::ostream& os, const Value& value, const ExifData*);
         //! Print AF Points In Focus
         static std::ostream& printAfPointsInFocus(std::ostream& os, const Value& value, const ExifData* metadata);
-
         //! Print lens name
         static std::ostream& printLensId(std::ostream& os, const Value& value, const ExifData* metadata, const std::string& group);
         static std::ostream& printLensId1(std::ostream& os, const Value& value, const ExifData* metadata);
         static std::ostream& printLensId2(std::ostream& os, const Value& value, const ExifData* metadata);
         static std::ostream& printLensId3(std::ostream& os, const Value& value, const ExifData* metadata);
-
+        //! Print focus distance
+        static std::ostream& printFocusDistance(std::ostream& os, const Value& value, const ExifData*);
+        //! Print lens aperture value
+        static std::ostream& printAperture(std::ostream& os, const Value& value, const ExifData*);
+        //! Print lens focal length
+        static std::ostream& printFocal(std::ostream& os, const Value& value, const ExifData*);
+        //! Print lens f-stops
+        static std::ostream& printFStops(std::ostream& os, const Value& value, const ExifData*);
+        //! Print exit pupil position
+        static std::ostream& printExitPupilPosition(std::ostream& os, const Value& value, const ExifData*);
         //! Print sensor pixel size
         static std::ostream& print0x009a(std::ostream& os, const Value& value, const ExifData*);
         //! Print retouch history
         static std::ostream& print0x009e(std::ostream& os, const Value& value, const ExifData*);
         //! Print Exif.NikonIi.ISO(2)
         static std::ostream& printIiIso(std::ostream& os, const Value& value, const ExifData*);
+        //! Print flash focal length
+        static std::ostream& printFlashFocalLength(std::ostream& os, const Value& value, const ExifData*);
+        //! Print repeating flash rate
+        static std::ostream& printRepeatingFlashRate(std::ostream& os, const Value& value, const ExifData*);
+        //! Print repeating flash count
+        static std::ostream& printRepeatingFlashCount(std::ostream& os, const Value& value, const ExifData*);
+        //! Print time zone
+        static std::ostream& printTimeZone(std::ostream& os, const Value& value, const ExifData*);
+        //! Print picture control value
+        static std::ostream& printPictureControl(std::ostream& os, const Value& value, const ExifData*);
         //@}
 
     private:
@@ -199,6 +231,18 @@ namespace Exiv2 {
         static const TagInfo tagInfoIi_[];
         //! Auto Focus tag information
         static const TagInfo tagInfoAf_[];
+        //! Auto Focus tag 2 information
+        static const TagInfo tagInfoAf2_[];
+        //! File Info tag information
+        static const TagInfo tagInfoFi_[];
+        //! Multi Exposure tag information
+        static const TagInfo tagInfoMe_[];
+        //! Flash Info 1 tag information
+        static const TagInfo tagInfoFl1_[];
+        //! Flash Info 2 tag information
+        static const TagInfo tagInfoFl2_[];
+        //! Flash Info 3 tag information
+        static const TagInfo tagInfoFl3_[];
         //! Shot Info D80 tag information
         static const TagInfo tagInfoSi1_[];
         //! Shot Info D40 tag information

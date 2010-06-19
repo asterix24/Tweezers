@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,13 +20,13 @@
  */
 /*
   File:      error.cpp
-  Version:   $Rev: 1957 $
+  Version:   $Rev: 2045 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
   History:   02-Apr-05, ahu: created
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: error.cpp 1957 2009-12-13 10:27:43Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: error.cpp 2045 2010-04-03 07:53:30Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -41,12 +41,16 @@ namespace {
 
     //! Helper structure defining an error message.
     struct ErrMsg {
+        //! Comparison operator
+        bool operator==(int code) const { return code_ == code; }
+
         int code_;                              //!< Error code
         const char* message_;                   //!< Error message
     };
 
-    const ErrMsg errMsg[] = {
-        { -1, N_("Error %0: arg1=%1, arg2=%2, arg3=%3.") },
+    //! Complete list of Exiv2 exception error messages
+    const ErrMsg errList[] = {
+        { -1, N_("Error %0: arg2=%2, arg3=%3, arg1=%1.") },
         {  0, N_("Success") },
         {  1, "%1" }, // %1=error message
         {  2, "%1: Call to `%3' failed: %2" }, // %1=path, %2=strerror, %3=function that failed
@@ -63,7 +67,7 @@ namespace {
         { 13, N_("Image type %1 is not supported") }, // %1=image type
         { 14, N_("Failed to read image data") },
         { 15, N_("This does not look like a JPEG image") },
-//      { 16, N_("") }, -- currently not used
+        { 16, N_("%1: Failed to map file for reading and writing: %2") }, // %1=path, %2=strerror
         { 17, N_("%1: Failed to rename file to %2: %3") }, // %1=old path, %2=new path, %3=strerror
         { 18, N_("%1: Transfer failed: %2") }, // %1=path, %2=strerror
         { 19, N_("Memory transfer failed: %1") }, // %1=strerror
@@ -98,9 +102,7 @@ namespace {
         { 48, N_("Invalid XmpText type `%1'") }, // %1=type
         { 49, N_("TIFF directory %1 has too many entries") }, // %1=TIFF directory name
         { 50, N_("Multiple TIFF array element tags %1 in one directory") }, // %1=tag number
-        { 51, N_("TIFF array element tag %1 has wrong type") }, // %1=tag number
-        // Last error message (message is not used)
-        { -2, N_("(Unknown Error)") }
+        { 51, N_("TIFF array element tag %1 has wrong type") } // %1=tag number
     };
 
 }
@@ -113,62 +115,79 @@ namespace Exiv2 {
     {
     }
 
-    Error::Error(int code)
-        : code_(code), count_(0)
+    //! @cond IGNORE
+    template<>
+    void BasicError<char>::setMsg()
     {
-        setMsg();
-    }
-
-    Error::~Error() throw()
-    {
-    }
-
-    int Error::code() const throw()
-    {
-        return code_;
-    }
-
-    const char* Error::what() const throw()
-    {
-        return msg_.c_str();
-    }
-
-    int Error::errorIdx(int code)
-    {
-        int idx;
-        for (idx = 0; errMsg[idx].code_ != code; ++idx) {
-            if (errMsg[idx].code_ == -2) return 0;
-        }
-        return idx;
-    }
-
-    void Error::setMsg()
-    {
-        int idx = errorIdx(code_);
-        msg_ = std::string(_(errMsg[idx].message_));
+        std::string msg = _(errMsg(code_));
         std::string::size_type pos;
-        pos = msg_.find("%0");
+        pos = msg.find("%0");
         if (pos != std::string::npos) {
-            msg_.replace(pos, 2, toString(code_));
+            msg.replace(pos, 2, toString(code_));
         }
         if (count_ > 0) {
-            pos = msg_.find("%1");
+            pos = msg.find("%1");
             if (pos != std::string::npos) {
-                msg_.replace(pos, 2, arg1_);
+                msg.replace(pos, 2, arg1_);
             }
         }
         if (count_ > 1) {
-            pos = msg_.find("%2");
+            pos = msg.find("%2");
             if (pos != std::string::npos) {
-                msg_.replace(pos, 2, arg2_);
+                msg.replace(pos, 2, arg2_);
             }
         }
         if (count_ > 2) {
-            pos = msg_.find("%3");
+            pos = msg.find("%3");
             if (pos != std::string::npos) {
-                msg_.replace(pos, 2, arg3_);
+                msg.replace(pos, 2, arg3_);
             }
         }
+        msg_ = msg;
+#ifdef EXV_UNICODE_PATH
+        wmsg_ = s2ws(msg);
+#endif
+    }
+    //! @endcond
+
+#ifdef EXV_UNICODE_PATH
+    template<>
+    void BasicError<wchar_t>::setMsg()
+    {
+        std::string s = _(errMsg(code_));
+        std::wstring wmsg(s.begin(), s.end());
+        std::wstring::size_type pos;
+        pos = wmsg.find(L"%0");
+        if (pos != std::wstring::npos) {
+            wmsg.replace(pos, 2, toBasicString<wchar_t>(code_));
+        }
+        if (count_ > 0) {
+            pos = wmsg.find(L"%1");
+            if (pos != std::wstring::npos) {
+                wmsg.replace(pos, 2, arg1_);
+            }
+        }
+        if (count_ > 1) {
+            pos = wmsg.find(L"%2");
+            if (pos != std::wstring::npos) {
+                wmsg.replace(pos, 2, arg2_);
+            }
+        }
+        if (count_ > 2) {
+            pos = wmsg.find(L"%3");
+            if (pos != std::wstring::npos) {
+                wmsg.replace(pos, 2, arg3_);
+            }
+        }
+        wmsg_ = wmsg;
+        msg_ = ws2s(wmsg);
+    }
+#endif
+
+    const char* errMsg(int code)
+    {
+        const ErrMsg* em = find(errList, code);
+        return em ? em->message_ : "";
     }
 
 }                                       // namespace Exiv2

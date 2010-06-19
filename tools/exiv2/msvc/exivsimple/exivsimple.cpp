@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  * 
  * This program is part of the Exiv2 distribution.
  *
@@ -20,7 +20,7 @@
  */
 /*
   File:      exivsimple.cpp
-  Version:   $Rev: 1750 $
+  Version:   $Rev: 2045 $
   Author(s): Brad Schick <brad@robotbattle.com>
              Christian Kuster <christian@kusti.ch>
   History:   12-Nov-04, brad: created

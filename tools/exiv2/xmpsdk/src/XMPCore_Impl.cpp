@@ -18,8 +18,10 @@
 using namespace std;
 
 #if XMP_WinBuild
-	#pragma warning ( disable : 4290 )	// C++ exception specification ignored except ... not __declspec(nothrow)
-	#pragma warning ( disable : 4800 )	// forcing value to bool 'true' or 'false' (performance warning)
+    #ifdef _MSC_VER
+        #pragma warning ( disable : 4290 )	// C++ exception specification ignored except ... not __declspec(nothrow)
+        #pragma warning ( disable : 4800 )	// forcing value to bool 'true' or 'false' (performance warning)
+    #endif
 #endif
 
 // *** Add debug codegen checks, e.g. that typical masking operations really work
@@ -843,7 +845,8 @@ FindSchemaNode	( XMP_Node *		xmpTree,
 		schemaNode = new XMP_Node ( xmpTree, nsURI, (kXMP_SchemaNode | kXMP_NewImplicitNode) );
 		XMP_StringPtr prefixPtr;
 		XMP_StringLen prefixLen;
-		bool found = XMPMeta::GetNamespacePrefix ( nsURI, &prefixPtr, &prefixLen );	// *** Use map directly?
+        bool found = false;
+        found = XMPMeta::GetNamespacePrefix ( nsURI, &prefixPtr, &prefixLen );	// *** Use map directly?
 		XMP_Assert ( found );
 
 		schemaNode->value.assign ( prefixPtr, prefixLen );

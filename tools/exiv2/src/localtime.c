@@ -1,7 +1,7 @@
 /*!
   @file    localtime.c
   @brief   This file is from the tz distribution at ftp://elsie.nci.nih.gov/pub/
-  @version $Rev: 1800 $
+  @version $Rev: 2069 $
 */
 
 #ifdef _MSC_VER

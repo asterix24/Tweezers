@@ -1,6 +1,6 @@
 /* **************************************************************** -*- C -*- */
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*
   File:      i18n.h
   Brief:     i18n definitions. Do not use. This is an Exiv2 internal header.
-  Version:   $Rev: 1750 $
+  Version:   $Rev: 2045 $
   Author(s): Gilles Caulier (gc) <caulier.gilles@kdemail.net>
   History:   01-Nov-06, gc: created
  */

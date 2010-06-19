@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -21,7 +21,7 @@
 /*!
   @file    convert.hpp
   @brief   Exif and IPTC conversions to and from XMP
-  @version $Rev: 1937 $
+  @version $Rev: 2045 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a><BR>
            Vladimir Nadvornik (vn)
@@ -41,6 +41,7 @@
 #endif
 
 // + standard includes
+#include <string>
 
 // *****************************************************************************
 // namespace extensions
@@ -77,6 +78,9 @@ namespace Exiv2 {
     EXIV2API void copyXmpToIptc(const XmpData& xmpData, IptcData& iptcData);
     //! Convert (move) XMP properties to IPTC tags, remove converted XMP properties.
     EXIV2API void moveXmpToIptc(XmpData& xmpData, IptcData& iptcData);
+
+    //! Convert string charset with iconv.
+    EXIV2API bool convertStringCharset(std::string& str, const char* from, const char* to);
 
 }                                       // namespace Exiv2
 

@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -26,7 +26,7 @@
   This is a simplified version of the ACE_RCSID macro that is used in the
   <a href="http://www.cs.wustl.edu/~schmidt/ACE.html">ACE(TM)</a> distribution.
 
-  @version $Rev: 1750 $
+  @version $Rev: 2045 $
   @author  Andreas Huggel (ahu)
            <a href="mailto:ahuggel@gmx.net">ahuggel@gmx.net</a>
   @date    02-Feb-04, ahu: created

@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,7 +20,7 @@
  */
 /*
   File:      jpgimage.cpp
-  Version:   $Rev: 1976 $
+  Version:   $Rev: 2206 $
   Author(s): Andreas Huggel (ahu) <ahuggel@gmx.net>
              Brad Schick (brad) <brad@robotbattle.com>
              Volker Grabsch (vog) <vog@notjusthosting.com>
@@ -29,7 +29,7 @@
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: jpgimage.cpp 1976 2009-12-28 14:11:23Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: jpgimage.cpp 2206 2010-04-28 15:20:01Z ahuggel $")
 
 // *****************************************************************************
 // included header files
@@ -696,7 +696,7 @@ namespace Exiv2 {
                     }
                 }
                 if (writeXmpFromPacket() == false) {
-                    if (XmpParser::encode(xmpPacket_, xmpData_) > 1) {
+                    if (XmpParser::encode(xmpPacket_, xmpData_, XmpParser::useCompactFormat | XmpParser::omitAllFormatting) > 1) {
 #ifndef SUPPRESS_WARNINGS
                         std::cerr << "Error: Failed to encode XMP metadata.\n";
 #endif

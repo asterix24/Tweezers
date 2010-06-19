@@ -1,6 +1,6 @@
 // ***************************************************************** -*- C++ -*-
 /*
- * Copyright (C) 2004-2009 Andreas Huggel <ahuggel@gmx.net>
+ * Copyright (C) 2004-2010 Andreas Huggel <ahuggel@gmx.net>
  *
  * This program is part of the Exiv2 distribution.
  *
@@ -20,14 +20,14 @@
  */
 /*
   File:    pngchunk.cpp
-  Version: $Rev: 1978 $
+  Version: $Rev: 2045 $
   Author(s): Gilles Caulier (cgilles) <caulier dot gilles at gmail dot com>
   History: 12-Jun-06, gc: submitted
   Credits: See header file
  */
 // *****************************************************************************
 #include "rcsid.hpp"
-EXIV2_RCSID("@(#) $Id: pngchunk.cpp 1978 2009-12-29 10:45:39Z ahuggel $")
+EXIV2_RCSID("@(#) $Id: pngchunk.cpp 2045 2010-04-03 07:53:30Z ahuggel $")
 
 // *****************************************************************************
 // included header files
