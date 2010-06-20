@@ -33,8 +33,8 @@
 #include <QDebug>
 
 Preference::Preference(QWidget *parent) :
-    QWidget(parent),
-    m_ui(new Ui::Preference)
+        QWidget(parent),
+        m_ui(new Ui::Preference)
 {
     m_ui->setupUi(this);
     createActions();
@@ -85,13 +85,13 @@ void Preference::cancel(void)
 
 void Preference::readSettings()
 {
-	QSettings settings("Asterix", "Tweezers application");
-	pos = settings.value("pos", QPoint(200, 200)).toPoint();
-	size = settings.value("size", QSize(400, 400)).toSize();
+    QSettings settings("Asterix", "Tweezers application");
+    pos = settings.value("pos", QPoint(200, 200)).toPoint();
+    size = settings.value("size", QSize(400, 400)).toSize();
 
-	// Last directory
-	curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
-	last_expr = settings.value("expr", DEFAULT_EXPR).toString();
+    // Last directory
+    curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
+    last_expr = settings.value("expr", DEFAULT_EXPR).toString();
 
     // Last directory
     curr_path = settings.value("curr_path", QDir::home().absolutePath()).toString();
@@ -104,19 +104,19 @@ void Preference::readSettings()
 
 void Preference::writeSettings()
 {
-     QSettings settings("Asterix", "Tweezers application");
+    QSettings settings("Asterix", "Tweezers application");
 
-     // Windows settings.
-     settings.setValue("pos", pos);
-     settings.setValue("size", size);
+    // Windows settings.
+    settings.setValue("pos", pos);
+    settings.setValue("size", size);
 
-     // Last directory
-     settings.setValue("curr_path", curr_path);
-     settings.setValue("expr", last_expr);
+    // Last directory
+    settings.setValue("curr_path", curr_path);
+    settings.setValue("expr", last_expr);
 
-     // Formats
-     settings.setValue("date_fmt", curr_date_fmt);
-     settings.setValue("time_fmt", curr_time_fmt);
+    // Formats
+    settings.setValue("date_fmt", curr_date_fmt);
+    settings.setValue("time_fmt", curr_time_fmt);
 }
 
 void Preference::fillCategory()
@@ -130,10 +130,10 @@ void Preference::fillCategory()
     QHashIterator<QString, QString> i(category);
     while (i.hasNext())
     {
-       i.next();
-       QTableWidgetItem *item = new QTableWidgetItem(i.key());
-       m_ui->categoryList->setItem(j, 0, item);
-       j++;
+        i.next();
+        QTableWidgetItem *item = new QTableWidgetItem(i.key());
+        m_ui->categoryList->setItem(j, 0, item);
+        j++;
     }
 }
 

@@ -301,7 +301,11 @@ void Tweezers::createActions()
     connect(openAct, SIGNAL(triggered()), this, SLOT(openDir()));
 
     exitAct = new QAction(tr("E&xit"), this);
+#ifdef Q_WS_MAC
     exitAct->setShortcuts(QKeySequence::Quit);
+#else
+    exitAct->setShortcuts(QKeySequence::Close);
+#endif
     exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -328,12 +332,12 @@ void Tweezers::createActions()
 void Tweezers::createMenus()
 {
      fileMenu = menuBar()->addMenu(tr("&File"));
-     fileMenu->addAction(preferenceAct);
      fileMenu->addAction(openAct);
      fileMenu->addSeparator();
      fileMenu->addAction(exitAct);
 
      editMenu = menuBar()->addMenu(tr("&Edit"));
+     editMenu->addAction(preferenceAct);
 
      menuBar()->addSeparator();
 
