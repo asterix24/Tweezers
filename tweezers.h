@@ -78,6 +78,8 @@ private:
     // Application Actions
     QAction *preferenceAct;
     QAction *aboutAct;
+    QAction *openAct;
+    QAction *exitAct;
 
     QMenu *fileMenu;
     QMenu *editMenu;

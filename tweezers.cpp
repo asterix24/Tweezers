@@ -295,6 +295,16 @@ void Tweezers::createActions()
     aboutAct->setStatusTip(tr("Show the application's About box"));
     connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
+    openAct = new QAction(tr("&Open..."), this);
+    openAct->setShortcuts(QKeySequence::Open);
+    openAct->setStatusTip(tr("Open an existing file"));
+    connect(openAct, SIGNAL(triggered()), this, SLOT(openDir()));
+
+    exitAct = new QAction(tr("E&xit"), this);
+    exitAct->setShortcuts(QKeySequence::Quit);
+    exitAct->setStatusTip(tr("Exit the application"));
+    connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+
     // Manage all directory widget signals
     connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDir()));
     connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(loadFiles()));
@@ -319,7 +329,9 @@ void Tweezers::createMenus()
 {
      fileMenu = menuBar()->addMenu(tr("&File"));
      fileMenu->addAction(preferenceAct);
+     fileMenu->addAction(openAct);
      fileMenu->addSeparator();
+     fileMenu->addAction(exitAct);
 
      editMenu = menuBar()->addMenu(tr("&Edit"));
 
