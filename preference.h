@@ -50,8 +50,8 @@ public:
     void setPos(QPoint p) { pos = p; }
     void setSize(QSize s) { size = s; }
 
-	QString getTimeFmt() { return time_fmt; }
-	QString getDateFmt() { return date_fmt; }
+	QString getTimeFmt() { return curr_time_fmt; }
+	QString getDateFmt() { return curr_date_fmt; }
 
     Preference(QWidget *parent = 0);
     ~Preference();
