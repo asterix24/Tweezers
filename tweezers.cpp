@@ -38,13 +38,15 @@
 
 Tweezers::Tweezers(QWidget *parent) :
     QMainWindow(parent),
-    tag(),
     ui(new Ui::Tweezers)
 {
     preference_window = new Preference;
+    tag = new TagConverter(preference_window);
 
+    // Read settings
     resize(preference_window->getSize());
     move(preference_window->getPos());
+
     curr_path = preference_window->getPath();
     last_expr = preference_window->getLastExp();
 
@@ -52,7 +54,7 @@ Tweezers::Tweezers(QWidget *parent) :
     ui->selectDir->setText(curr_path);
     ui->globSelect->setText("*.*");
     ui->expField->setText(last_expr);
-    ui->expList->addItems(tag.getTagDesc());
+    ui->expList->addItems(tag->getTagDesc());
 
     createActions();
     createMenus();
@@ -68,6 +70,7 @@ Tweezers::Tweezers(QWidget *parent) :
 
 Tweezers::~Tweezers()
 {
+    delete tag;
     delete preference_window;
     delete ui;
 }
@@ -190,7 +193,7 @@ void Tweezers::preview()
     // Update the table view
     for (int i = 0; i < ui->fileList->rowCount(); i++)
     {
-        QString value = tag.fill_tags(curr_path, ui->fileList->item(i, FILE_COL)->text(), ui->expField->text(),
+        QString value = tag->fill_tags(curr_path, ui->fileList->item(i, FILE_COL)->text(), ui->expField->text(),
                                       tag_list);
         ui->fileList->item(i, PREVIEW_COL)->setText(value);
     }

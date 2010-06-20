@@ -68,7 +68,6 @@ private slots:
     void about();
 
 private:
-    TagConverter tag;
     QString curr_path;
     QString last_expr;
     QStringList glob_exp;
@@ -94,7 +93,9 @@ private:
     void createToolBars();
     void createStatusBar();
 
+    // External class pointers
     Preference *preference_window;
+    TagConverter *tag;
     Ui::Tweezers *ui;
 };
 
