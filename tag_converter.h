@@ -27,20 +27,24 @@
 #ifndef TAG_CONVERTER_H
 #define TAG_CONVERTER_H
 
+#include "preference.h"
+
 #include <QString>
 #include <QHash>
 
-typedef QString (*tag_callback)(QString path, QString item);
+typedef QString (*tag_callback)(QString path, QString item, Preference *p);
 class TagConverter
 {
 public:
     QString fill_tags(QString path, QString item, QString exp, QList<QString> tag_list);
     QList<QString> getTagDesc();
-    TagConverter();
+    TagConverter(Preference *pref);
     ~TagConverter();
 private:
     QHash<QString, tag_callback> callback_table;
     QList<QString> descr_table;
+
+    Preference *preference;
 };
 
 

@@ -32,6 +32,7 @@
 #include <QDir>
 #include <QHash>
 #include <QDebug>
+#include <QDate>
 
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
@@ -69,7 +70,7 @@ QString getExif(QString path, QString item, QString exif_tag)
     }
 }
 
-QString getExifdate(QString path, QString item)
+QString getExifdate(QString path, QString item, Preference *p)
 {
     QString data_str = getExif(path, item, "Exif.Image.DateTime");
 
@@ -77,22 +78,47 @@ QString getExifdate(QString path, QString item)
         return "";
 
     QStringList data_list = data_str.split(" ");
+    QString str = "";
 
-    return data_list[0];
+    if (!data_list.isEmpty())
+    {
+        data_list = data_list[0].split(":");
+
+        if (data_list.length() >= 3)
+        {
+            QDate date(data_list[0].toInt(), data_list[1].toInt(), data_list[2].toInt());
+            str = date.toString(p->getDateFmt());
+        }
+    }
+
+    return str;
 }
 
-QString getExiftime(QString path, QString item)
+QString getExiftime(QString path, QString item, Preference *p)
 {
     QString time_str = getExif(path, item, "Exif.Image.DateTime");
-    QStringList time_list = time_str.split(" ");
 
     if (time_str.isEmpty())
         return "";
 
-    return time_list[1];
+    QString str = "";
+    QStringList time_list = time_str.split(" ");
+
+    if (!time_list.isEmpty())
+    {
+        time_list = time_list[1].split(":");
+
+        if (time_list.length() >= 3)
+        {
+            QTime time(time_list[0].toInt(), time_list[1].toInt(), time_list[2].toInt());
+            str = time.toString(p->getTimeFmt());
+        }
+    }
+
+    return str;
 }
 
-QString getExt(QString path, QString item)
+QString getExt(QString path, QString item, Preference *p)
 {
     QString name = path + QDir::separator () + item;
     QFileInfo fi(name);
@@ -110,7 +136,7 @@ QString TagConverter::fill_tags(QString path, QString item, QString exp, QList<Q
             tag_callback f = callback_table[tag_list[i].toLower()];
 
             // Call the right function to convert tag
-            QString  tag_value = f(path, item);
+            QString  tag_value = f(path, item, preference);
             exp = exp.replace(tag_list[i], tag_value);
         }
     }
@@ -122,8 +148,9 @@ QList<QString> TagConverter::getTagDesc()
     return descr_table;
 }
 
-TagConverter::TagConverter()
+TagConverter::TagConverter(Preference *pref)
 {
+    preference = pref;
     descr_table << "Elenco dei tag..";
 
     callback_table["<exiftime>"] = getExiftime;
