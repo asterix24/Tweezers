@@ -32,6 +32,32 @@
 #include <QDate>
 #include <QDebug>
 
+#define CATEGORY               1
+
+enum
+{
+    DATE_FMT,
+    TIME_FMT,
+
+    CAT_CNT
+};
+
+typedef struct Category
+{
+    int index;
+    QString label;
+    QString fmt;
+} Category;
+
+
+Category cat[CAT_CNT] =
+{
+    { DATE_FMT, "Date", DEFAULT_DATE_FMT },
+    { TIME_FMT, "Time", DEFAULT_TIME_FMT }
+};
+
+
+
 Preference::Preference(QWidget *parent) :
         QWidget(parent),
         m_ui(new Ui::Preference)
@@ -46,9 +72,6 @@ Preference::Preference(QWidget *parent) :
     m_ui->categoryList->verticalHeader()->setVisible(false);
     m_ui->categoryList->setColumnCount(1);
     m_ui->categoryList->setRowCount(0);
-
-    category["Date"] = DEFAULT_DATE_FMT;
-    category["Time"] = DEFAULT_TIME_FMT;
 
     fillCategory();
 }
@@ -121,37 +144,39 @@ void Preference::writeSettings()
 
 void Preference::fillCategory()
 {
-    m_ui->categoryList->setRowCount(category.size());
+    m_ui->categoryList->setRowCount(CAT_CNT);
     m_ui->categoryList->resizeRowsToContents();
     m_ui->categoryList->resizeColumnsToContents();
 
-
-    int j = 0;
-    QHashIterator<QString, QString> i(category);
-    while (i.hasNext())
+    for (int i = 0; i < CAT_CNT; i++)
     {
-        i.next();
-        QTableWidgetItem *item = new QTableWidgetItem(i.key());
-        m_ui->categoryList->setItem(j, 0, item);
-        j++;
+        QTableWidgetItem *item = new QTableWidgetItem(cat[i].label);
+        QVariant d(cat[i].index);
+        item->setData(CATEGORY, d);
+
+        m_ui->categoryList->setItem(i, 0, item);
     }
 }
 
 void Preference::preview(QTableWidgetItem *item)
 {
-    if (category.contains(item->text()))
-    {
-        QString fmt = category[item->text()];
-        m_ui->customFormat->setText(fmt);
-        upDatePreview(fmt);
-    }
-
+    QVariant index = item->data(CATEGORY);
+    curr_fmt = index.toInt();
+    QString fmt = cat[index.toInt()].fmt;
+    m_ui->customFormat->setText(fmt);
+    upDatePreview(fmt);
 }
 
 void Preference::upDatePreview(QString str)
 {
     // Controllare quando la stringa non vale nulla..
     QDateTime now = QDateTime::currentDateTime();
+
+    if (curr_fmt == DATE_FMT)
+        curr_date_fmt = str;
+    if (curr_fmt == TIME_FMT)
+        curr_time_fmt = str;
+
     m_ui->preview->setText(now.toString(str));
 }
 
@@ -162,7 +187,7 @@ void Preference::createActions()
     connect(m_ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancel()));
 
     // Manage tag list signals
-    connect(m_ui->categoryList, SIGNAL(itemPressed (QTableWidgetItem *)), this, SLOT(preview(QTableWidgetItem *)));
+    connect(m_ui->categoryList, SIGNAL(itemPressed(QTableWidgetItem *)), this, SLOT(preview(QTableWidgetItem *)));
 
     // Manage preview signals
     connect(m_ui->customFormat, SIGNAL(textChanged(const QString)), this, SLOT(upDatePreview(QString)));

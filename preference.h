@@ -28,7 +28,6 @@
 
 #include <QtGui>
 #include <QtGui/QWidget>
-#include <QHash>
 
 namespace Ui {
     class Preference;
@@ -75,8 +74,7 @@ private:
     QSize size;
 
     //Default format
-    QHash<QString, QString> category;
-
+    int curr_fmt;
     QString curr_date_fmt;
     QString curr_time_fmt;
 
