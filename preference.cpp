@@ -121,8 +121,8 @@ void Preference::readSettings()
     last_expr = settings.value("expr", DEFAULT_EXPR).toString();
 
     // Format
-    curr_date_fmt = settings.value("date_fmt", DEFAULT_DATE_FMT).toString();
-    curr_time_fmt = settings.value("time_fmt", DEFAULT_TIME_FMT).toString();
+    cat[DATE_FMT].fmt = settings.value("date_fmt", DEFAULT_DATE_FMT).toString();
+    cat[TIME_FMT].fmt = settings.value("time_fmt", DEFAULT_TIME_FMT).toString();
 }
 
 void Preference::writeSettings()
@@ -138,8 +138,8 @@ void Preference::writeSettings()
     settings.setValue("expr", last_expr);
 
     // Formats
-    settings.setValue("date_fmt", curr_date_fmt);
-    settings.setValue("time_fmt", curr_time_fmt);
+    settings.setValue("date_fmt", cat[DATE_FMT].fmt);
+    settings.setValue("time_fmt", cat[TIME_FMT].fmt);
 }
 
 void Preference::fillCategory()
@@ -172,12 +172,18 @@ void Preference::upDatePreview(QString str)
     // Controllare quando la stringa non vale nulla..
     QDateTime now = QDateTime::currentDateTime();
 
-    if (curr_fmt == DATE_FMT)
-        curr_date_fmt = str;
-    if (curr_fmt == TIME_FMT)
-        curr_time_fmt = str;
-
+    cat[curr_fmt].fmt = str;
     m_ui->preview->setText(now.toString(str));
+}
+
+QString Preference::getTimeFmt()
+{
+    return cat[TIME_FMT].fmt;
+}
+
+QString Preference::getDateFmt()
+{
+    return cat[DATE_FMT].fmt;
 }
 
 void Preference::createActions()

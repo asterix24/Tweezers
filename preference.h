@@ -49,8 +49,8 @@ public:
     void setPos(QPoint p) { pos = p; }
     void setSize(QSize s) { size = s; }
 
-	QString getTimeFmt() { return curr_time_fmt; }
-	QString getDateFmt() { return curr_date_fmt; }
+    QString getTimeFmt();
+    QString getDateFmt();
 
     Preference(QWidget *parent = 0);
     ~Preference();
@@ -75,8 +75,6 @@ private:
 
     //Default format
     int curr_fmt;
-    QString curr_date_fmt;
-    QString curr_time_fmt;
 
     void fillCategory();
 
