@@ -48,12 +48,11 @@ Tweezers::Tweezers(QWidget *parent) :
     move(preference_window->getPos());
 
     curr_path = preference_window->getPath();
-    last_expr = preference_window->getLastExp();
 
     ui->setupUi(this);
     ui->selectDir->setText(curr_path);
     ui->globSelect->setText("*.*");
-    ui->expField->setText(last_expr);
+    ui->expField->setText(preference_window->getLastExp());
     ui->expList->addItems(tag->getTagDesc());
 
     createActions();
@@ -99,7 +98,7 @@ void Tweezers::changeEvent(QEvent *e)
         preference_window->setSize(size());
         preference_window->setPos(pos());
         preference_window->setPath(curr_path);
-        preference_window->setLastExp(last_expr);
+        preference_window->setLastExp(ui->expField->text());
 
         e->accept();
     }

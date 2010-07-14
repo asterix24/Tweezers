@@ -69,7 +69,6 @@ private slots:
 
 private:
     QString curr_path;
-    QString last_expr;
     QStringList glob_exp;
 
     QHash<QString, QString> backup;

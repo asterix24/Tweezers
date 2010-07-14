@@ -152,7 +152,7 @@ QString getName(QString path, QString item, Preference *p)
     QString name = path + QDir::separator () + item;
     QFileInfo fi(name);
 
-    return fi.baseName();
+    return fi.completeBaseName();
 }
 
 QString getNameLow(QString path, QString item, Preference *p)
