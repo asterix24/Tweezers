@@ -16,24 +16,24 @@
 # \brief Tweezers project.
 # \author Daniele Basile <asterix@develer.com>
 TARGET = tweezers
-
 TEMPLATE = app
-
 SOURCES += main.cpp \
     tweezers.cpp \
     preference.cpp \
     tag_converter.cpp
-
 HEADERS += tweezers.h \
     tag_converter.h \
     preference.h
-
 FORMS += tweezers.ui \
     preference.ui
-
 LIBS += -Llib/lib \
     -lexiv2
-
-CONFIG += qt warn_on static
-
-INCLUDEPATH += lib/include lib/lib
+CONFIG += qt \
+    warn_on \
+    static
+INCLUDEPATH += lib/include \
+    lib/lib
+RESOURCES += tweezers_res.qrc
+OTHER_FILES += images/warning.png \
+    images/ok.png \
+    images/error.png

@@ -148,7 +148,8 @@ void Tweezers::loadFiles(void)
 
     ui->fileList->clear();
     ui->fileList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-    ui->fileList->horizontalHeader()->setVisible(true);
+    ui->fileList->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->fileList->horizontalHeader()->setVisible(false);
     ui->fileList->verticalHeader()->setVisible(false);
     ui->fileList->resizeColumnsToContents();
     ui->fileList->resizeRowsToContents();
@@ -224,14 +225,23 @@ void Tweezers::renameAll()
 
         QFile origin_filename(origin);
 
+        // The are two file with same name, we skip it.
         if (backup.contains(renamed))
+        {
+            ui->fileList->item(i, FILE_COL)->setIcon(QIcon("./images/warning.png"));
             continue;
+        }
 
         if (origin_filename.rename(renamed))
         {
             backup[renamed] = origin;
+            ui->fileList->item(i, FILE_COL)->setIcon(QIcon("./images/ok.png"));
             ui->fileList->item(i, FILE_COL)->setText(ui->fileList->item(i, PREVIEW_COL)->text());
             ui->fileList->item(i, PREVIEW_COL)->setText("");
+        }
+        else /* Rename fail, set warning in the layout */
+        {
+            ui->fileList->item(i, FILE_COL)->setIcon(QIcon("./images/error.png"));
         }
     }
 }
