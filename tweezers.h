@@ -67,6 +67,8 @@ private slots:
     void preferences();
     void about();
 
+    void exprTextMod();
+
 private:
     QString curr_path;
     QStringList glob_exp;
@@ -85,6 +87,10 @@ private:
 
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
+
+    QTimer *timer;
+
+    bool expr_changed;
 
     // Init the application menu and actions
     void createActions();

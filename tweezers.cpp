@@ -55,6 +55,9 @@ Tweezers::Tweezers(QWidget *parent) :
     ui->expField->setText(preference_window->getLastExp());
     ui->expList->addItems(tag->getTagDesc());
 
+
+    timer = new QTimer(this);
+
     createActions();
     createMenus();
     createToolBars();
@@ -64,6 +67,8 @@ Tweezers::Tweezers(QWidget *parent) :
 
     // Some init actions
     loadFiles();
+    // Update the preview only every 500ms
+    timer->start(500);
 
 }
 
@@ -161,12 +166,22 @@ void Tweezers::loadFiles(void)
 
     // Update preview if there is already written the expression into its field.
     if (!ui->expField->text().isEmpty())
+    {
+        expr_changed = true;;
         preview();
+    }
 }
+
+void Tweezers::exprTextMod()
+{
+    expr_changed = true;
+};
 
 void Tweezers::preview()
 {
-    //
+    if (!expr_changed)
+        return;
+
     QRegExp rx(TAG_PATTEN);
     QList<QString> tag_list;
     QString exp = ui->expField->text();
@@ -196,6 +211,8 @@ void Tweezers::preview()
                                       tag_list);
         ui->fileList->item(i, PREVIEW_COL)->setText(value);
     }
+
+    expr_changed = false;
 }
 
 void Tweezers::renameAll()
@@ -237,6 +254,7 @@ void Tweezers::undoRename()
     }
     backup.clear();
     loadFiles();
+    expr_changed = true;
     preview();
 }
 
@@ -317,7 +335,8 @@ void Tweezers::createActions()
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
 
     // Manage all expression field signals
-    connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(preview()));
+    connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(exprTextMod()));
+        connect(timer, SIGNAL(timeout()), this, SLOT(preview()));
 
     // Manage the rename action signals
     connect(ui->doRename, SIGNAL(clicked()), this, SLOT(renameAll()));
