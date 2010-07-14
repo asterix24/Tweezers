@@ -126,6 +126,55 @@ QString getExt(QString path, QString item, Preference *p)
     return fi.suffix();
 }
 
+QString getExtLow(QString path, QString item, Preference *p)
+{
+    QString str = getExt(path, item, p);
+
+    if (str.isEmpty())
+        return "";
+
+    return str.toLower();
+}
+
+QString getExtUp(QString path, QString item, Preference *p)
+{
+    QString str = getExt(path, item, p);
+
+    if (str.isEmpty())
+        return "";
+
+    return str.toUpper();
+}
+
+
+QString getName(QString path, QString item, Preference *p)
+{
+    QString name = path + QDir::separator () + item;
+    QFileInfo fi(name);
+
+    return fi.baseName();
+}
+
+QString getNameLow(QString path, QString item, Preference *p)
+{
+    QString str = getName(path, item, p);
+
+    if (str.isEmpty())
+        return "";
+
+    return str.toLower();
+}
+
+QString getNameUp(QString path, QString item, Preference *p)
+{
+    QString str = getName(path, item, p);
+
+    if (str.isEmpty())
+        return "";
+
+    return str.toUpper();
+}
+
 QString TagConverter::fill_tags(QString path, QString item, QString exp, QList<QString> tag_list)
 {
     for (int i = 0; i < tag_list.length(); ++i)
@@ -161,6 +210,21 @@ TagConverter::TagConverter(Preference *pref)
 
     callback_table["<ext>"] = getExt;
     descr_table << "<EXT>: Ritorna l'estensione del file";
+
+    callback_table["<ext_low>"] = getExtLow;
+    descr_table << "<EXT_LOW>: Ritorna l'estensione del file lowercase";
+
+    callback_table["<ext_up>"] = getExtUp;
+    descr_table << "<EXT_UP>: Ritorna l'estensione del file uppercase";
+
+    callback_table["<name>"] = getName;
+    descr_table << "<NAME>: Ritorna il nome del file senza estensione";
+
+    callback_table["<name_low>"] = getNameLow;
+    descr_table << "<NAME_LOW>: Ritorna il nome del file senza estensione lowercase";
+
+    callback_table["<name_up>"] = getNameUp;
+    descr_table << "<NAME_UP>: Ritorna il nome del file senza estensione uppercase";
 }
 
 TagConverter::~TagConverter()
