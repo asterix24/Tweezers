@@ -218,6 +218,10 @@ void Tweezers::preview()
 
 void Tweezers::renameAll()
 {
+    int count_renamed = 0;
+    int count_warning = 0;
+    int count_error = 0;
+
     for (int i = 0; i < ui->fileList->rowCount(); i++)
     {
         QString origin = curr_path + QDir::separator () + ui->fileList->item(i, FILE_COL)->text();
@@ -229,6 +233,7 @@ void Tweezers::renameAll()
         if (backup.contains(renamed))
         {
             ui->fileList->item(i, FILE_COL)->setIcon(QIcon("./images/warning.png"));
+            count_warning++;
             continue;
         }
 
@@ -238,12 +243,17 @@ void Tweezers::renameAll()
             ui->fileList->item(i, FILE_COL)->setIcon(QIcon("./images/ok.png"));
             ui->fileList->item(i, FILE_COL)->setText(ui->fileList->item(i, PREVIEW_COL)->text());
             ui->fileList->item(i, PREVIEW_COL)->setText("");
+            count_renamed++;
         }
         else /* Rename fail, set warning in the layout */
         {
             ui->fileList->item(i, FILE_COL)->setIcon(QIcon("./images/error.png"));
+            count_error++;
         }
     }
+    statusBar()->showMessage("Renamed: " + QString::number(count_renamed) +
+                             " Warning: " +  QString::number(count_warning) +
+                             " Error: " + QString::number(count_error));
 }
 
 void Tweezers::renameSelection()
@@ -266,6 +276,7 @@ void Tweezers::undoRename()
     loadFiles();
     expr_changed = true;
     preview();
+    statusBar()->showMessage("Ready");
 }
 
 /*
