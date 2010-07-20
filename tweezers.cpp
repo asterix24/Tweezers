@@ -36,6 +36,88 @@
 
 #include <QtGui>
 
+
+void ListView::clean()
+{
+    table->clear();
+    table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    table->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setVisible(false);
+    table->verticalHeader()->setVisible(false);
+    table->resizeColumnsToContents();
+    table->resizeRowsToContents();
+    table->setColumnCount(0);
+    table->setRowCount(0);
+}
+
+void ListView::fill(QStringList col_a, QStringList col_b)
+{
+
+    clean();
+
+    int row_num = qMax(col_a.size(), col_b.size());
+
+    table->setColumnCount(2);
+    table->setRowCount(row_num);
+
+    for (int i = 0; i < row_num; i++)
+    {
+        QTableWidgetItem *item0;
+        QTableWidgetItem *item1;
+
+        if (i < col_a.size())
+            item0 = new QTableWidgetItem(col_a[i]);
+        else
+            item0 = new QTableWidgetItem("");
+
+        if (i < col_b.size())
+            item1 = new QTableWidgetItem(col_b[i]);
+        else
+            item1 = new QTableWidgetItem("");
+
+        table->setItem(i, FILE_COL, item0);
+        table->setItem(i, PREVIEW_COL, item1);
+    }
+
+}
+
+
+void ListView::fill(QStringList col)
+{
+
+    clean();
+
+    if (col.empty())
+        return;
+
+    table->setColumnCount(2);
+    table->setRowCount(col.length());
+
+    for (int i = 0; i < col.length(); i++)
+    {
+        QTableWidgetItem *item0 = new QTableWidgetItem(col[i]);
+        QTableWidgetItem *item1 = new QTableWidgetItem("");
+
+        table->setItem(i, FILE_COL, item0);
+        table->setItem(i, PREVIEW_COL, item1);
+    }
+}
+
+
+ListView::ListView(QTableWidget *t)
+{
+    table = t;
+
+    clean();
+};
+
+ListView::~ListView()
+{
+}
+
+
+
+
 Tweezers::Tweezers(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Tweezers)
@@ -55,7 +137,7 @@ Tweezers::Tweezers(QWidget *parent) :
     ui->expField->setText(preference_window->getLastExp());
     ui->expList->addItems(tag->getTagDesc());
 
-
+    table = new ListView(ui->fileList);
     timer = new QTimer(this);
 
     createActions();
@@ -69,6 +151,8 @@ Tweezers::Tweezers(QWidget *parent) :
     loadFiles();
     // Update the preview only every 500ms
     timer->start(500);
+
+
 
 }
 
@@ -140,35 +224,12 @@ void Tweezers::loadFiles(void)
     QStringList file_list;
     file_list = dir.entryList(glob_exp, QDir::Files);
 
-    if(!file_list.length())
-    {
-        cleanTable();
-        return;
-    }
-
-    ui->fileList->clear();
-    ui->fileList->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-    ui->fileList->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->fileList->horizontalHeader()->setVisible(false);
-    ui->fileList->verticalHeader()->setVisible(false);
-    ui->fileList->resizeColumnsToContents();
-    ui->fileList->resizeRowsToContents();
-
-    ui->fileList->setColumnCount(2);
-    ui->fileList->setRowCount(file_list.length());
-
-    for (int i = 0; i < file_list.length(); i++)
-    {
-        QTableWidgetItem *item0 = new QTableWidgetItem(file_list[i]);
-        QTableWidgetItem *item1 = new QTableWidgetItem("");
-        ui->fileList->setItem(i, FILE_COL, item0);
-        ui->fileList->setItem(i, PREVIEW_COL, item1);
-    }
+    table->fill(file_list);
 
     // Update preview if there is already written the expression into its field.
     if (!ui->expField->text().isEmpty())
     {
-        expr_changed = true;;
+        expr_changed = true;
         preview();
     }
 }
@@ -216,6 +277,12 @@ void Tweezers::preview()
     expr_changed = false;
 }
 
+
+void Tweezers::renameList(QList<QTableWidgetItem *>items)
+{
+
+}
+
 void Tweezers::renameAll()
 {
     for (int i = 0; i < ui->fileList->rowCount(); i++)
@@ -248,6 +315,13 @@ void Tweezers::renameAll()
 
 void Tweezers::renameSelection()
 {
+    QList<QTableWidgetItem *> list;
+    list = ui->fileList->selectedItems();
+
+    for (int i = 0; i < list.size(); i++)
+    {
+        qDebug() << list[i]->text();
+    }
 }
 
 /*
@@ -281,17 +355,6 @@ void Tweezers::selExpCombo(int index)
 
     if (!list.isEmpty())
         ui->expField->insert(list.at(0));
-}
-
-/*
- * Clean all table widget
- */
-void Tweezers::cleanTable()
-{
-    ui->fileList->clear();
-    ui->fileList->horizontalHeader()->setVisible(false);
-    ui->fileList->setColumnCount(0);
-    ui->fileList->setRowCount(0);
 }
 
 void Tweezers::preferences()
@@ -356,8 +419,7 @@ void Tweezers::createActions()
     connect(ui->expList, SIGNAL(activated(int)), this, SLOT(selExpCombo(int)));
 
     // Manage list file to rename
-    // TODO: Complicare la struttura dei data contenuti nella tabella.
-    //connect(ui->fileList, SIGNAL(itemActivated (QTableWidgetItem)), this, SLOT());
+    connect(ui->fileList, SIGNAL(itemSelectionChanged()), this, SLOT(renameSelection()));
 }
 
 void Tweezers::createMenus()

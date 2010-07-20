@@ -40,6 +40,22 @@ namespace Ui {
     class Tweezers;
 }
 
+class ListView
+{
+private:
+    QTableWidget *table;
+
+public:
+    void clean();
+    void fill(QStringList col);
+    void fill(QStringList col_a, QStringList col_b);
+
+    ListView(QTableWidget *t);
+    ~ListView();
+};
+
+
+
 class Tweezers : public QMainWindow {
     Q_OBJECT
 public:
@@ -52,7 +68,6 @@ protected:
 
 private slots:
     void preview();
-    void cleanTable();
 
     void openDir();
     void loadFiles(void);
@@ -70,6 +85,7 @@ private slots:
     void exprTextMod();
 
 private:
+    ListView *table;
     QString curr_path;
     QStringList glob_exp;
 
@@ -91,6 +107,9 @@ private:
     QTimer *timer;
 
     bool expr_changed;
+
+
+    void renameList(QList<QTableWidgetItem *>items);
 
     // Init the application menu and actions
     void createActions();
