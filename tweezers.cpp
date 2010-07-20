@@ -103,11 +103,36 @@ void ListView::fill(QStringList col)
     }
 }
 
+void ListView::initIterator()
+{
+    count = 0;
+}
+
+bool ListView::hasNext()
+{
+    return (count < table->rowCount());
+}
+
+void ListView::next()
+{
+    count++;
+}
+
+void ListView::setFilePreview(QString text)
+{
+    table->item(count, PREVIEW_COL)->setText(text);
+}
+
+QString ListView::getFile(void)
+{
+    QString file = table->item(count, FILE_COL)->text();
+    return file;
+}
+
 
 ListView::ListView(QTableWidget *t)
 {
     table = t;
-
     clean();
 };
 
@@ -267,11 +292,12 @@ void Tweezers::preview()
     }
 
     // Update the table view
-    for (int i = 0; i < ui->fileList->rowCount(); i++)
+    table->initIterator();
+    while(table->hasNext())
     {
-        QString value = tag->fill_tags(curr_path, ui->fileList->item(i, FILE_COL)->text(), ui->expField->text(),
-                                      tag_list);
-        ui->fileList->item(i, PREVIEW_COL)->setText(value);
+        QString value = tag->fill_tags(curr_path, table->getFile(), ui->expField->text(), tag_list);
+        table->setFilePreview(value);
+        table->next();
     }
 
     expr_changed = false;

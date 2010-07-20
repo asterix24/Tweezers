@@ -44,11 +44,18 @@ class ListView
 {
 private:
     QTableWidget *table;
+    int count;
 
 public:
     void clean();
     void fill(QStringList col);
     void fill(QStringList col_a, QStringList col_b);
+
+    void initIterator();
+    bool hasNext();
+    void next();
+    void setFilePreview(QString text);
+    QString getFile(void);
 
     ListView(QTableWidget *t);
     ~ListView();
