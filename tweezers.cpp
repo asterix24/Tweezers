@@ -41,18 +41,15 @@ void ListView::clean()
 {
     table->clear();
     table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-    table->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     table->horizontalHeader()->setVisible(false);
+    table->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     table->verticalHeader()->setVisible(false);
-    table->resizeColumnsToContents();
-    table->resizeRowsToContents();
     table->setColumnCount(0);
     table->setRowCount(0);
 }
 
 void ListView::fill(QStringList col_a, QStringList col_b)
 {
-
     clean();
 
     int row_num = qMax(col_a.size(), col_b.size());
