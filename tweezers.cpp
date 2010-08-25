@@ -48,40 +48,38 @@ void ListView::clean()
     table->setRowCount(0);
 }
 
-void ListView::fill(QStringList col_a, QStringList col_b)
+void ListView::fill(QStringList col_file, QStringList col_prev)
 {
     clean();
 
-    int row_num = qMax(col_a.size(), col_b.size());
+    int row_num = qMax(col_file.size(), col_prev.size());
 
     table->setColumnCount(2);
     table->setRowCount(row_num);
 
     for (int i = 0; i < row_num; i++)
     {
-        QTableWidgetItem *item0;
-        QTableWidgetItem *item1;
+        QTableWidgetItem *item_file;
+        QTableWidgetItem *item_prev;
 
-        if (i < col_a.size())
-            item0 = new QTableWidgetItem(col_a[i]);
+        if (i < col_file.size())
+            item_file = new QTableWidgetItem(col_file[i]);
         else
-            item0 = new QTableWidgetItem("");
+            item_file = new QTableWidgetItem("");
 
-        if (i < col_b.size())
-            item1 = new QTableWidgetItem(col_b[i]);
+        if (i < col_prev.size())
+            item_prev = new QTableWidgetItem(col_prev[i]);
         else
-            item1 = new QTableWidgetItem("");
+            item_prev = new QTableWidgetItem("");
 
-        table->setItem(i, FILE_COL, item0);
-        table->setItem(i, PREVIEW_COL, item1);
+        table->setItem(i, FILE_COL, item_file);
+        table->setItem(i, PREVIEW_COL, item_prev);
     }
-
 }
 
 
 void ListView::fill(QStringList col)
 {
-
     clean();
 
     if (col.empty())
@@ -120,12 +118,41 @@ void ListView::setFilePreview(QString text)
     table->item(count, PREVIEW_COL)->setText(text);
 }
 
+void ListView::setFile(QString text)
+{
+    table->item(count, FILE_COL)->setText(text);
+}
+
 QString ListView::getFile(void)
 {
     QString file = table->item(count, FILE_COL)->text();
     return file;
 }
 
+QString ListView::getFilePreview(void)
+{
+    QString file = table->item(count, PREVIEW_COL)->text();
+    return file;
+}
+
+void ListView::setRenamedOk(void)
+{
+    table->item(count, FILE_COL)->setIcon(QIcon("./images/ok.png"));
+    table->item(count, FILE_COL)->setText(table->item(count, PREVIEW_COL)->text());
+    table->item(count, PREVIEW_COL)->setText("");
+}
+
+
+void ListView::setRenamedWarning(void)
+{
+    table->item(count, FILE_COL)->setIcon(QIcon("./images/warning.png"));
+}
+
+
+void ListView::setRenamedError(void)
+{
+    table->item(count, FILE_COL)->setIcon(QIcon("./images/error.png"));
+}
 
 ListView::ListView(QTableWidget *t)
 {
@@ -136,8 +163,6 @@ ListView::ListView(QTableWidget *t)
 ListView::~ListView()
 {
 }
-
-
 
 
 Tweezers::Tweezers(QWidget *parent) :
@@ -173,9 +198,6 @@ Tweezers::Tweezers(QWidget *parent) :
     loadFiles();
     // Update the preview only every 500ms
     timer->start(500);
-
-
-
 }
 
 Tweezers::~Tweezers()
@@ -259,7 +281,7 @@ void Tweezers::loadFiles(void)
 void Tweezers::exprTextMod()
 {
     expr_changed = true;
-};
+}
 
 void Tweezers::preview()
 {
@@ -312,17 +334,20 @@ void Tweezers::renameAll()
     int count_warning = 0;
     int count_error = 0;
 
-    for (int i = 0; i < ui->fileList->rowCount(); i++)
+
+    table->initIterator();
+    while(table->hasNext())
     {
-        QString origin = curr_path + QDir::separator () + ui->fileList->item(i, FILE_COL)->text();
-        QString renamed = curr_path + QDir::separator () + ui->fileList->item(i, PREVIEW_COL)->text();
+        QString origin = curr_path + QDir::separator () + table->getFile();
+        QString renamed = curr_path + QDir::separator () + table->getFilePreview();
 
         QFile origin_filename(origin);
 
         // The are two file with same name, we skip it.
         if (backup.contains(renamed))
         {
-            ui->fileList->item(i, FILE_COL)->setIcon(QIcon("./images/warning.png"));
+            table->setRenamedWarning();
+            table->next();
             count_warning++;
             continue;
         }
@@ -330,20 +355,22 @@ void Tweezers::renameAll()
         if (origin_filename.rename(renamed))
         {
             backup[renamed] = origin;
-            ui->fileList->item(i, FILE_COL)->setIcon(QIcon("./images/ok.png"));
-            ui->fileList->item(i, FILE_COL)->setText(ui->fileList->item(i, PREVIEW_COL)->text());
-            ui->fileList->item(i, PREVIEW_COL)->setText("");
+            table->setRenamedOk();
             count_renamed++;
         }
         else /* Rename fail, set warning in the layout */
         {
-            ui->fileList->item(i, FILE_COL)->setIcon(QIcon("./images/error.png"));
+            table->setRenamedError();
             count_error++;
         }
+
+        statusBar()->showMessage(tr("Renamed: ") + QString::number(count_renamed) +
+                                 tr(" Warning: ") +  QString::number(count_warning) +
+                                 tr(" Error: ") + QString::number(count_error));
+        table->next();
     }
-    statusBar()->showMessage("Renamed: " + QString::number(count_renamed) +
-                             " Warning: " +  QString::number(count_warning) +
-                             " Error: " + QString::number(count_error));
+
+    expr_changed = false;
 }
 
 void Tweezers::renameSelection()
@@ -381,7 +408,6 @@ void Tweezers::undoRename()
  */
 void Tweezers::selExpCombo(int index)
 {
-
     if (!index)
         return;
 

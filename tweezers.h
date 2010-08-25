@@ -55,7 +55,13 @@ public:
     bool hasNext();
     void next();
     void setFilePreview(QString text);
-    QString getFile(void);
+    void setFile(QString text);
+    QString getFile();
+    QString getFilePreview();
+
+    void setRenamedOk();
+    void setRenamedWarning();
+    void setRenamedError();
 
     ListView(QTableWidget *t);
     ~ListView();
