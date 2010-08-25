@@ -113,6 +113,20 @@ void ListView::next()
     count++;
 }
 
+bool ListView::currItemNotSelected(void)
+{
+    return !table->item(count, FILE_COL)->isSelected();
+}
+
+bool ListView::areItemsSelected(void)
+{
+    QList<QTableWidgetItem *> list;
+    list = table->selectedItems();
+
+    qDebug() << list.size();
+    return list.size();
+}
+
 void ListView::setFilePreview(QString text)
 {
     table->item(count, PREVIEW_COL)->setText(text);
@@ -198,6 +212,10 @@ Tweezers::Tweezers(QWidget *parent) :
     loadFiles();
     // Update the preview only every 500ms
     timer->start(500);
+
+    // Init flags
+    rename_selected_only = false;
+    expr_changed = false;
 }
 
 Tweezers::~Tweezers()
@@ -323,21 +341,21 @@ void Tweezers::preview()
 }
 
 
-void Tweezers::renameList(QList<QTableWidgetItem *>items)
-{
-
-}
-
-void Tweezers::renameAll()
+void Tweezers::rename()
 {
     int count_renamed = 0;
     int count_warning = 0;
     int count_error = 0;
 
-
     table->initIterator();
     while(table->hasNext())
     {
+        if (rename_selected_only && table->currItemNotSelected())
+        {
+            table->next();
+            continue;
+        }
+
         QString origin = curr_path + QDir::separator () + table->getFile();
         QString renamed = curr_path + QDir::separator () + table->getFilePreview();
 
@@ -375,13 +393,7 @@ void Tweezers::renameAll()
 
 void Tweezers::renameSelection()
 {
-    QList<QTableWidgetItem *> list;
-    list = ui->fileList->selectedItems();
-
-    for (int i = 0; i < list.size(); i++)
-    {
-        qDebug() << list[i]->text();
-    }
+    rename_selected_only = table->areItemsSelected();
 }
 
 /*
@@ -400,7 +412,7 @@ void Tweezers::undoRename()
     loadFiles();
     expr_changed = true;
     preview();
-    statusBar()->showMessage("Ready");
+    statusBar()->showMessage(tr("Ready"));
 }
 
 /*
@@ -472,7 +484,7 @@ void Tweezers::createActions()
         connect(timer, SIGNAL(timeout()), this, SLOT(preview()));
 
     // Manage the rename action signals
-    connect(ui->doRename, SIGNAL(clicked()), this, SLOT(renameAll()));
+    connect(ui->doRename, SIGNAL(clicked()), this, SLOT(rename()));
     connect(ui->undoRename, SIGNAL(clicked()), this, SLOT(undoRename()));
 
     // Manage tag list signals

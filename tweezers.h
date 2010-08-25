@@ -54,6 +54,8 @@ public:
     void initIterator();
     bool hasNext();
     void next();
+    bool currItemNotSelected();
+    bool areItemsSelected();
     void setFilePreview(QString text);
     void setFile(QString text);
     QString getFile();
@@ -88,7 +90,7 @@ private slots:
 
     void selExpCombo(int index);
 
-    void renameAll();
+    void rename();
     void renameSelection();
     void undoRename();
 
@@ -120,9 +122,7 @@ private:
     QTimer *timer;
 
     bool expr_changed;
-
-
-    void renameList(QList<QTableWidgetItem *>items);
+    bool rename_selected_only;
 
     // Init the application menu and actions
     void createActions();
