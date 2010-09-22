@@ -36,7 +36,6 @@
 
 #include <QtGui>
 
-
 void ListView::clean()
 {
     table->clear();
@@ -85,7 +84,9 @@ void ListView::fill(QStringList col)
     if (col.empty())
         return;
 
+	table->hide();
     table->setColumnCount(2);
+	table->setSortingEnabled(false);
     table->setRowCount(col.length());
 
     for (int i = 0; i < col.length(); i++)
@@ -96,6 +97,9 @@ void ListView::fill(QStringList col)
         table->setItem(i, FILE_COL, item0);
         table->setItem(i, PREVIEW_COL, item1);
     }
+	table->show();
+	int t1 = clock();
+	qApp->processEvents();
 }
 
 void ListView::initIterator()
@@ -105,8 +109,20 @@ void ListView::initIterator()
 
 bool ListView::hasNext()
 {
-    return (count < table->rowCount());
+	return (count < table->rowCount());
 }
+
+
+void ListView::hide()
+{
+	table->hide();
+}
+
+void ListView::show()
+{
+	table->show();
+}
+
 
 void ListView::next()
 {
@@ -329,6 +345,7 @@ void Tweezers::preview()
     }
 
     // Update the table view
+	table->hide();
     table->initIterator();
     while(table->hasNext())
     {
@@ -336,6 +353,7 @@ void Tweezers::preview()
         table->setFilePreview(value);
         table->next();
     }
+	table->show();
 
     expr_changed = false;
 }

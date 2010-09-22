@@ -51,6 +51,8 @@ public:
     void fill(QStringList col);
     void fill(QStringList col_a, QStringList col_b);
 
+	void hide();
+	void show();
     void initIterator();
     bool hasNext();
     void next();
