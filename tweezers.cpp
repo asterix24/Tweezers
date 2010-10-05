@@ -98,7 +98,6 @@ void ListView::fill(QStringList col)
         table->setItem(i, PREVIEW_COL, item1);
     }
 	table->show();
-	int t1 = clock();
 	qApp->processEvents();
 }
 
@@ -287,7 +286,7 @@ void Tweezers::selectDirectory()
 {
     curr_path = ui->selectDir->text();
 
-    if (! curr_path.isEmpty())
+    if (!curr_path.isEmpty())
         loadFiles();
 }
 
@@ -300,6 +299,22 @@ void Tweezers::loadFiles(void)
         glob_exp << ui->globSelect->text();
 
     QStringList file_list;
+    file_list = dir.entryList(glob_exp, QDir::Files);
+
+    QHash<QString, int>ext;
+    ui->expSelect->clear();
+    for (int i = 0; i < file_list.length(); i++)
+    {
+        QFileInfo fi(file_list[i]);
+        ext[fi.suffix()] = 0;
+    }
+    ui->expSelect->insertItems(1, ext.keys());
+    ui->expSelect->insertItem(0, "*");
+
+
+	// Reload with new patten
+    glob_exp.clear();
+    glob_exp << ui->globSelect->text();
     file_list = dir.entryList(glob_exp, QDir::Files);
 
     table->fill(file_list);
@@ -365,6 +380,7 @@ void Tweezers::rename()
     int count_warning = 0;
     int count_error = 0;
 
+	table->hide();
     table->initIterator();
     while(table->hasNext())
     {
@@ -405,6 +421,7 @@ void Tweezers::rename()
                                  tr(" Error: ") + QString::number(count_error));
         table->next();
     }
+	table->show();
 
     expr_changed = false;
 }
@@ -445,6 +462,11 @@ void Tweezers::selExpCombo(int index)
 
     if (!list.isEmpty())
         ui->expField->insert(list.at(0));
+}
+
+void Tweezers::selExtCombo(int index)
+{
+    ui->globSelect->setText("*." + ui->expSelect->itemText(index));
 }
 
 void Tweezers::preferences()
@@ -499,7 +521,7 @@ void Tweezers::createActions()
 
     // Manage all expression field signals
     connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(exprTextMod()));
-        connect(timer, SIGNAL(timeout()), this, SLOT(preview()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(preview()));
 
     // Manage the rename action signals
     connect(ui->doRename, SIGNAL(clicked()), this, SLOT(rename()));
@@ -510,6 +532,9 @@ void Tweezers::createActions()
 
     // Manage list file to rename
     connect(ui->fileList, SIGNAL(itemSelectionChanged()), this, SLOT(renameSelection()));
+
+    // Manage ext selector
+    connect(ui->expSelect, SIGNAL(activated(int)), this, SLOT(selExtCombo(int)));
 }
 
 void Tweezers::createMenus()
@@ -531,7 +556,6 @@ void Tweezers::createMenus()
  void Tweezers::createToolBars()
  {
      fileToolBar = addToolBar(tr("File"));
-
      editToolBar = addToolBar(tr("Edit"));
  }
 

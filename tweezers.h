@@ -91,6 +91,7 @@ private slots:
     void selectDirectory();
 
     void selExpCombo(int index);
+    void selExtCombo(int index);
 
     void rename();
     void renameSelection();
