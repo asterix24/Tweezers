@@ -36,164 +36,6 @@
 
 #include <QtGui>
 
-void ListView::clean()
-{
-    table->clear();
-    table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-    table->horizontalHeader()->setVisible(false);
-    table->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    table->verticalHeader()->setVisible(false);
-    table->setColumnCount(0);
-    table->setRowCount(0);
-}
-
-void ListView::fill(QStringList col_file, QStringList col_prev)
-{
-    clean();
-
-    int row_num = qMax(col_file.size(), col_prev.size());
-
-    table->setColumnCount(2);
-    table->setRowCount(row_num);
-
-    for (int i = 0; i < row_num; i++)
-    {
-        QTableWidgetItem *item_file;
-        QTableWidgetItem *item_prev;
-
-        if (i < col_file.size())
-            item_file = new QTableWidgetItem(col_file[i]);
-        else
-            item_file = new QTableWidgetItem("");
-
-        if (i < col_prev.size())
-            item_prev = new QTableWidgetItem(col_prev[i]);
-        else
-            item_prev = new QTableWidgetItem("");
-
-        table->setItem(i, FILE_COL, item_file);
-        table->setItem(i, PREVIEW_COL, item_prev);
-    }
-}
-
-
-void ListView::fill(QStringList col)
-{
-    clean();
-
-    if (col.empty())
-        return;
-
-	table->hide();
-    table->setColumnCount(2);
-	table->setSortingEnabled(false);
-    table->setRowCount(col.length());
-
-    for (int i = 0; i < col.length(); i++)
-    {
-        QTableWidgetItem *item0 = new QTableWidgetItem(col[i]);
-        QTableWidgetItem *item1 = new QTableWidgetItem("");
-
-        table->setItem(i, FILE_COL, item0);
-        table->setItem(i, PREVIEW_COL, item1);
-    }
-	table->show();
-	qApp->processEvents();
-}
-
-void ListView::initIterator()
-{
-    count = 0;
-}
-
-bool ListView::hasNext()
-{
-	return (count < table->rowCount());
-}
-
-
-void ListView::hide()
-{
-	table->hide();
-}
-
-void ListView::show()
-{
-	table->show();
-}
-
-
-void ListView::next()
-{
-    count++;
-}
-
-bool ListView::currItemNotSelected(void)
-{
-    return !table->item(count, FILE_COL)->isSelected();
-}
-
-bool ListView::areItemsSelected(void)
-{
-    QList<QTableWidgetItem *> list;
-    list = table->selectedItems();
-
-    qDebug() << list.size();
-    return list.size();
-}
-
-void ListView::setFilePreview(QString text)
-{
-    table->item(count, PREVIEW_COL)->setText(text);
-}
-
-void ListView::setFile(QString text)
-{
-    table->item(count, FILE_COL)->setText(text);
-}
-
-QString ListView::getFile(void)
-{
-    QString file = table->item(count, FILE_COL)->text();
-    return file;
-}
-
-QString ListView::getFilePreview(void)
-{
-    QString file = table->item(count, PREVIEW_COL)->text();
-    return file;
-}
-
-void ListView::setRenamedOk(void)
-{
-    table->item(count, FILE_COL)->setIcon(QIcon("./images/ok.png"));
-    table->item(count, FILE_COL)->setText(table->item(count, PREVIEW_COL)->text());
-    table->item(count, PREVIEW_COL)->setText("");
-}
-
-
-void ListView::setRenamedWarning(void)
-{
-    table->item(count, FILE_COL)->setIcon(QIcon("./images/warning.png"));
-}
-
-
-void ListView::setRenamedError(void)
-{
-    table->item(count, FILE_COL)->setIcon(QIcon("./images/error.png"));
-}
-
-ListView::ListView(QTableWidget *t)
-{
-    table = t;
-    clean();
-};
-
-ListView::~ListView()
-{
-}
-
-
 Tweezers::Tweezers(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Tweezers)
@@ -311,8 +153,7 @@ void Tweezers::loadFiles(void)
     ui->expSelect->insertItems(1, ext.keys());
     ui->expSelect->insertItem(0, "*");
 
-
-	// Reload with new patten
+    // Reload with new patten
     glob_exp.clear();
     glob_exp << ui->globSelect->text();
     file_list = dir.entryList(glob_exp, QDir::Files);
@@ -360,7 +201,7 @@ void Tweezers::preview()
     }
 
     // Update the table view
-	table->hide();
+    table->hide();
     table->initIterator();
     while(table->hasNext())
     {

@@ -29,9 +29,7 @@
 
 #include "tag_converter.h"
 #include "preference.h"
-
-#define FILE_COL       0
-#define PREVIEW_COL    1
+#include "list_view.h"
 
 #include <QMainWindow>
 #include <QFile>
@@ -39,38 +37,6 @@
 namespace Ui {
     class Tweezers;
 }
-
-class ListView
-{
-private:
-    QTableWidget *table;
-    int count;
-
-public:
-    void clean();
-    void fill(QStringList col);
-    void fill(QStringList col_a, QStringList col_b);
-
-	void hide();
-	void show();
-    void initIterator();
-    bool hasNext();
-    void next();
-    bool currItemNotSelected();
-    bool areItemsSelected();
-    void setFilePreview(QString text);
-    void setFile(QString text);
-    QString getFile();
-    QString getFilePreview();
-
-    void setRenamedOk();
-    void setRenamedWarning();
-    void setRenamedError();
-
-    ListView(QTableWidget *t);
-    ~ListView();
-};
-
 
 
 class Tweezers : public QMainWindow {

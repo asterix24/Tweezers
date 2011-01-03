@@ -20,10 +20,12 @@ TEMPLATE = app
 SOURCES += main.cpp \
     tweezers.cpp \
     preference.cpp \
-    tag_converter.cpp
+    tag_converter.cpp \
+    list_view.cpp
 HEADERS += tweezers.h \
     tag_converter.h \
-    preference.h
+    preference.h \
+    list_view.h
 FORMS += tweezers.ui \
     preference.ui
 LIBS += -Llib/lib \
