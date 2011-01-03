@@ -70,24 +70,18 @@ void ListView::fill(QStringList col)
 void ListView::initIterator()
 {
     count = 0;
+    table->hide();
 }
 
 bool ListView::hasNext()
 {
-        return (count < table->rowCount());
-}
-
-
-void ListView::hide()
-{
-        table->hide();
-}
-
-void ListView::show()
-{
+    if (count >= table->rowCount())
+    {
         table->show();
+        return false;
+    }
+    return true;
 }
-
 
 void ListView::next()
 {
@@ -120,14 +114,12 @@ void ListView::setFile(QString text)
 
 QString ListView::getFile(void)
 {
-    QString file = table->item(count, FILE_COL)->text();
-    return file;
+    return table->item(count, FILE_COL)->text();
 }
 
 QString ListView::getFilePreview(void)
 {
-    QString file = table->item(count, PREVIEW_COL)->text();
-    return file;
+    return table->item(count, PREVIEW_COL)->text();
 }
 
 void ListView::setRenamedOk(void)
@@ -136,7 +128,6 @@ void ListView::setRenamedOk(void)
     table->item(count, FILE_COL)->setText(table->item(count, PREVIEW_COL)->text());
     table->item(count, PREVIEW_COL)->setText("");
 }
-
 
 void ListView::setRenamedWarning(void)
 {

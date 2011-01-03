@@ -201,7 +201,6 @@ void Tweezers::preview()
     }
 
     // Update the table view
-    table->hide();
     table->initIterator();
     while(table->hasNext())
     {
@@ -209,7 +208,6 @@ void Tweezers::preview()
         table->setFilePreview(value);
         table->next();
     }
-	table->show();
 
     expr_changed = false;
 }
@@ -221,7 +219,6 @@ void Tweezers::rename()
     int count_warning = 0;
     int count_error = 0;
 
-	table->hide();
     table->initIterator();
     while(table->hasNext())
     {
@@ -262,7 +259,6 @@ void Tweezers::rename()
                                  tr(" Error: ") + QString::number(count_error));
         table->next();
     }
-	table->show();
 
     expr_changed = false;
 }

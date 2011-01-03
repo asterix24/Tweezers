@@ -40,9 +40,6 @@ public:
 
     void fill(QStringList col);
 
-    void hide();
-    void show();
-
     void initIterator();
     bool hasNext();
     void next();
