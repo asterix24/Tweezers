@@ -47,12 +47,18 @@ void ListView::clean()
 
 void ListView::addFiles(QStringList files)
 {
+
+    all_file_list.clear();
+    file_list.clear();
+
     for (QStringList::iterator f = files.begin();
             f != files.end(); f++)
     {
         QFileInfo fi(*f);
-        file_list[fi.suffix().toLower()] = *f;
+        file_list[fi.suffix().toLower()].append(*f);
+        qDebug() << fi.suffix().toLower() << " " << *f;
     }
+    all_file_list = files;
 }
 
 QStringList ListView::getGlobs()
@@ -60,7 +66,21 @@ QStringList ListView::getGlobs()
     return file_list.keys();
 }
 
-void ListView::fill(QStringList col)
+void ListView::showFiles(QString glob)
+{
+    if(glob == "*.*")
+    {
+        fill(all_file_list);
+        qDebug() << all_file_list;
+    }
+    else
+    {
+        fill(file_list[glob]);
+        qDebug() << file_list[glob];
+    }
+}
+
+void ListView::fill(const QStringList col)
 {
     clean();
 

@@ -67,6 +67,7 @@ Tweezers::Tweezers(QWidget *parent) :
 
     // Some init actions
     loadFiles();
+    table->showFiles("*.*");
     // Update the preview only every 500ms
     timer->start(200);
 
@@ -132,6 +133,10 @@ void Tweezers::selectDirectory()
         loadFiles();
 }
 
+void Tweezers::filterView(void)
+{
+    table->showFiles(ui->globSelect->text());
+}
 
 void Tweezers::loadFiles(void)
 {
@@ -140,7 +145,6 @@ void Tweezers::loadFiles(void)
     glob_exp.clear();
     glob_exp << ui->globSelect->text();
 
-    //table->fill(file_list);
     table->addFiles(dir.entryList(glob_exp, QDir::Files));
 
     ui->expSelect->clear();
@@ -289,7 +293,8 @@ void Tweezers::selExpCombo(int index)
 
 void Tweezers::selExtCombo(int index)
 {
-    ui->globSelect->setText("*." + ui->expSelect->itemText(index));
+    ui->globSelect->setText(ui->expSelect->itemText(index));
+    table->showFiles(ui->expSelect->itemText(index));
 }
 
 void Tweezers::preferences()
@@ -339,7 +344,7 @@ void Tweezers::createActions()
 
     // Manage all directory widget signals
     connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDir()));
-    connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(loadFiles()));
+    connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(filterView()));
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
 
     // Manage all expression field signals

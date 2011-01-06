@@ -56,6 +56,8 @@ private slots:
     void loadFiles(void);
     void selectDirectory();
 
+    void filterView();
+
     void selExpCombo(int index);
     void selExtCombo(int index);
 

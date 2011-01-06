@@ -33,7 +33,8 @@ class ListView
 {
 private:
     QTableWidget *table;
-    QHash<QString, QString> file_list;
+    QHash<QString, QStringList> file_list;
+    QStringList all_file_list;
     int count;
 
 public:
@@ -42,7 +43,8 @@ public:
     void addFiles(QStringList files);
     QStringList getGlobs();
 
-    void fill(QStringList col);
+    void showFiles(QString glob);
+    void fill(const QStringList col);
 
     void initIterator();
     bool hasNext();
