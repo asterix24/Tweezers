@@ -66,12 +66,13 @@ private slots:
     void preferences();
     void about();
 
-    void exprTextMod();
+    void exprChanged();
 
 private:
     ListView *table;
     QString curr_path;
     QStringList glob_exp;
+    QList<QString> tag_list;
 
     QHash<QString, QString> backup;
 
@@ -103,6 +104,8 @@ private:
     Preference *preference_window;
     TagConverter *tag;
     Ui::Tweezers *ui;
+
+    void updateTaglist();
 };
 
 #endif // TWEEZERS_H

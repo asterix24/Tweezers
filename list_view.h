@@ -33,10 +33,14 @@ class ListView
 {
 private:
     QTableWidget *table;
+    QHash<QString, QString> file_list;
     int count;
 
 public:
     void clean();
+
+    void addFiles(QStringList files);
+    QStringList getGlobs();
 
     void fill(QStringList col);
 

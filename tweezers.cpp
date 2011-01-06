@@ -68,7 +68,7 @@ Tweezers::Tweezers(QWidget *parent) :
     // Some init actions
     loadFiles();
     // Update the preview only every 500ms
-    timer->start(500);
+    timer->start(200);
 
     // Init flags
     rename_selected_only = false;
@@ -132,33 +132,20 @@ void Tweezers::selectDirectory()
         loadFiles();
 }
 
+
 void Tweezers::loadFiles(void)
 {
     QDir dir(curr_path);
 
     glob_exp.clear();
-    if (ui->globSelect->isModified())
-        glob_exp << ui->globSelect->text();
-
-    QStringList file_list;
-    file_list = dir.entryList(glob_exp, QDir::Files);
-
-    QHash<QString, int>ext;
-    ui->expSelect->clear();
-    for (int i = 0; i < file_list.length(); i++)
-    {
-        QFileInfo fi(file_list[i]);
-        ext[fi.suffix()] = 0;
-    }
-    ui->expSelect->insertItems(1, ext.keys());
-    ui->expSelect->insertItem(0, "*");
-
-    // Reload with new patten
-    glob_exp.clear();
     glob_exp << ui->globSelect->text();
-    file_list = dir.entryList(glob_exp, QDir::Files);
 
-    table->fill(file_list);
+    //table->fill(file_list);
+    table->addFiles(dir.entryList(glob_exp, QDir::Files));
+
+    ui->expSelect->clear();
+    ui->expSelect->addItem("*.*");
+    ui->expSelect->addItems(table->getGlobs());
 
     // Update preview if there is already written the expression into its field.
     if (!ui->expField->text().isEmpty())
@@ -168,9 +155,28 @@ void Tweezers::loadFiles(void)
     }
 }
 
-void Tweezers::exprTextMod()
+void Tweezers::exprChanged()
 {
     expr_changed = true;
+}
+
+void Tweezers::updateTaglist()
+{
+    QRegExp rx(TAG_PATTEN);
+
+    QString exp = ui->expField->text();
+
+    int pos = 0;
+    while (1)
+    {
+        pos = rx.indexIn(exp, pos);
+        if (pos < 0)
+            break;
+
+        //we find the tag, make it lower case and save into list
+        tag_list << rx.cap(1);
+        pos += rx.matchedLength();
+    }
 }
 
 void Tweezers::preview()
@@ -178,27 +184,7 @@ void Tweezers::preview()
     if (!expr_changed)
         return;
 
-    QRegExp rx(TAG_PATTEN);
-    QList<QString> tag_list;
-    QString exp = ui->expField->text();
-    int pos = 0;
-
-    while (1)
-    {
-        pos = rx.indexIn(exp, pos);
-
-        // No more tags we exit.
-        if (pos < 0)
-            break;
-
-        /*
-         *  we find the tag, make it lower case and save into list
-         */
-        tag_list << rx.cap(1);
-
-        // search forward into expr string
-        pos += rx.matchedLength();
-    }
+    updateTaglist();
 
     // Update the table view
     table->initIterator();
@@ -357,7 +343,7 @@ void Tweezers::createActions()
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
 
     // Manage all expression field signals
-    connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(exprTextMod()));
+    connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(exprChanged()));
     connect(timer, SIGNAL(timeout()), this, SLOT(preview()));
 
     // Manage the rename action signals

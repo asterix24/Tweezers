@@ -29,6 +29,8 @@
 
 #include <cfg/cfg_tweezers.h>
 
+#include <QDebug>
+
 #define FILE_COL       0
 #define PREVIEW_COL    1
 
@@ -41,6 +43,21 @@ void ListView::clean()
     table->verticalHeader()->setVisible(false);
     table->setColumnCount(0);
     table->setRowCount(0);
+}
+
+void ListView::addFiles(QStringList files)
+{
+    for (QStringList::iterator f = files.begin();
+            f != files.end(); f++)
+    {
+        QFileInfo fi(*f);
+        file_list[fi.suffix().toLower()] = *f;
+    }
+}
+
+QStringList ListView::getGlobs()
+{
+    return file_list.keys();
 }
 
 void ListView::fill(QStringList col)
