@@ -45,39 +45,47 @@ void ListView::clean()
     table->setRowCount(0);
 }
 
-void ListView::addFiles(QStringList files)
+void ListView::addFiles(QString path, QStringList files)
 {
-
-    all_file_list.clear();
-    file_list.clear();
+    glob_list.clear();
+    items.clear();
 
     for (QStringList::iterator f = files.begin();
             f != files.end(); f++)
     {
         QFileInfo fi(*f);
-        file_list[fi.suffix().toLower()].append(*f);
-        qDebug() << fi.suffix().toLower() << " " << *f;
+        QString suff = fi.suffix().toLower();
+        ItemNode item(path, *f, suff);
+        glob_list[suff] = 0;
+        items.append(item);
     }
-    all_file_list = files;
 }
 
 QStringList ListView::getGlobs()
 {
-    return file_list.keys();
+    return glob_list.keys();
 }
 
 void ListView::showFiles(QString glob)
 {
-    if(glob == "*.*")
+    int len = items.length();
+
+    clean();
+    table->hide();
+    table->setColumnCount(2);
+    table->setSortingEnabled(false);
+    table->setRowCount(len);
+
+    for (int i = 0; i < len; i++)
     {
-        fill(all_file_list);
-        qDebug() << all_file_list;
+        QTableWidgetItem *item0 = new QTableWidgetItem(items[i].origin);
+        QTableWidgetItem *item1 = new QTableWidgetItem("");
+
+        table->setItem(i, FILE_COL, item0);
+        table->setItem(i, PREVIEW_COL, item1);
     }
-    else
-    {
-        fill(file_list[glob]);
-        qDebug() << file_list[glob];
-    }
+    table->show();
+    qApp->processEvents();
 }
 
 void ListView::fill(const QStringList col)

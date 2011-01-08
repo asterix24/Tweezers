@@ -29,18 +29,35 @@
 
 #include <QtGui>
 
+struct ItemNode
+{
+    QString origin;
+    QString expression;
+    QString path;
+    QString suffix;
+    bool renamed;
+
+    ItemNode(QString _path, QString _origin, QString _suffix)
+    {
+        path = _path;
+        origin = _origin;
+        suffix = _suffix;
+    }
+};
+
+
 class ListView
 {
 private:
     QTableWidget *table;
-    QHash<QString, QStringList> file_list;
-    QStringList all_file_list;
+    QList<ItemNode> items;
+    QHash<QString, int> glob_list;
     int count;
 
 public:
     void clean();
 
-    void addFiles(QStringList files);
+    void addFiles(QString path, QStringList files);
     QStringList getGlobs();
 
     void showFiles(QString glob);

@@ -48,12 +48,13 @@ public:
 protected:
     void changeEvent(QEvent *e);
     void closeEvent(QCloseEvent *e);
+    void loadFiles(void);
 
 private slots:
     void preview();
 
     void openDir();
-    void loadFiles(void);
+    void updateFiles(void);
     void selectDirectory();
 
     void filterView();
@@ -73,7 +74,6 @@ private slots:
 private:
     ListView *table;
     QString curr_path;
-    QStringList glob_exp;
     QList<QString> tag_list;
 
     QHash<QString, QString> backup;

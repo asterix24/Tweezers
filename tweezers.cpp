@@ -130,26 +130,43 @@ void Tweezers::selectDirectory()
     curr_path = ui->selectDir->text();
 
     if (!curr_path.isEmpty())
-        loadFiles();
+        updateFiles();
 }
 
 void Tweezers::filterView(void)
 {
     table->showFiles(ui->globSelect->text());
+    preview();
 }
 
 void Tweezers::loadFiles(void)
 {
     QDir dir(curr_path);
 
-    glob_exp.clear();
-    glob_exp << ui->globSelect->text();
-
-    table->addFiles(dir.entryList(glob_exp, QDir::Files));
+    table->addFiles(curr_path, dir.entryList(QDir::Files,QDir::Name));
+    table->showFiles("*.*");
 
     ui->expSelect->clear();
     ui->expSelect->addItem("*.*");
     ui->expSelect->addItems(table->getGlobs());
+}
+
+void Tweezers::updateFiles()
+{
+    QDir dir(curr_path);
+
+    QString glob = ui->globSelect->text();
+    QStringList glob_list;
+
+    if (glob.isEmpty())
+        glob_list << "*.*";
+    else
+        glob_list << glob;
+
+
+    qDebug() << glob_list;
+    table->addFiles(curr_path, dir.entryList(glob_list, QDir::Files));
+    table->showFiles("*.*");
 
     // Update preview if there is already written the expression into its field.
     if (!ui->expField->text().isEmpty())
@@ -271,7 +288,7 @@ void Tweezers::undoRename()
         renamed_filename.rename(i.value());
     }
     backup.clear();
-    loadFiles();
+    updateFiles();
     expr_changed = true;
     preview();
     statusBar()->showMessage(tr("Ready"));
@@ -293,8 +310,11 @@ void Tweezers::selExpCombo(int index)
 
 void Tweezers::selExtCombo(int index)
 {
-    ui->globSelect->setText(ui->expSelect->itemText(index));
-    table->showFiles(ui->expSelect->itemText(index));
+    if (ui->expSelect->itemText(index) != "*.*")
+        ui->globSelect->setText("*." + ui->expSelect->itemText(index));
+    else
+        ui->globSelect->setText("*.*");
+    updateFiles();
 }
 
 void Tweezers::preferences()
