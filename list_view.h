@@ -66,12 +66,8 @@ public:
 
     void showFiles();
     void rename();
-    void setExpression(QString expression);
+    void setExpression(QString exp);
     void preview();
-
-    void initIterator();
-    bool hasNext();
-    void next();
 
     bool currItemNotSelected();
     bool areItemsSelected();

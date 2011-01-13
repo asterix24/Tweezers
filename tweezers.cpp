@@ -70,9 +70,10 @@ Tweezers::Tweezers(QWidget *parent) :
     table->setExpression(ui->expField->text());
     table->preview();
     table->showFiles();
+
+
     // Update the preview only every 500ms
     timer->start(200);
-
     // Init flags
     rename_selected_only = false;
     expr_changed = false;

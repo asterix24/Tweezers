@@ -92,33 +92,13 @@ void ListView::showFiles()
     qApp->processEvents();
 }
 
-void ListView::initIterator()
-{
-    count = 0;
-    table->hide();
-}
-
-bool ListView::hasNext()
-{
-    if (count >= table->rowCount())
-    {
-        table->show();
-        return false;
-    }
-    return true;
-}
-
-void ListView::next()
-{
-    count++;
-}
-
-void ListView::setExpression(QString expression)
+void ListView::setExpression(QString exp)
 {
     QRegExp rx(TAG_PATTEN);
 
     int pos = 0;
     tag_list.clear();
+    expression = exp;
 
     while (1)
     {
@@ -133,12 +113,11 @@ void ListView::setExpression(QString expression)
 
 void ListView::preview()
 {
-    qDebug() << expression;
     for (QList<ItemNode>::iterator it = items.begin();
         it != items.end(); it++)
     {
         (*it).expression = expression;
-        (*it).new_name = tag_converter->fill_tags((*it).path, (*it).new_name, (*it).expression, tag_list);
+        (*it).new_name = tag_converter->fill_tags((*it).path, (*it).origin_name, (*it).expression, tag_list);
     }
 }
 
