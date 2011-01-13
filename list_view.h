@@ -56,13 +56,14 @@ private:
     QHash<QString, int> glob_list;
     QList<QString> tag_list;
     QString expression;
-    int count;
+    int index;
 
 public:
     void clean();
 
     void addFiles(QString path, QStringList files);
     QStringList getGlobs();
+    int getLoadedItems() { return index; }
 
     void showFiles();
     void rename();

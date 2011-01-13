@@ -70,6 +70,7 @@ Tweezers::Tweezers(QWidget *parent) :
     table->setExpression(ui->expField->text());
     table->preview();
     table->showFiles();
+    statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
 
 
     // Update the preview only every 500ms
@@ -141,6 +142,7 @@ void Tweezers::filterView(void)
     table->setExpression(ui->expField->text());
     table->preview();
     table->showFiles();
+    statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
 }
 
 void Tweezers::loadFiles(void)
@@ -149,6 +151,7 @@ void Tweezers::loadFiles(void)
 
     table->addFiles(curr_path, dir.entryList(QDir::Files,QDir::Name));
     table->showFiles();
+    statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
 
     ui->expSelect->clear();
     ui->expSelect->addItem("*.*");
@@ -170,15 +173,17 @@ void Tweezers::updateFiles()
 
     qDebug() << glob_list;
     table->addFiles(curr_path, dir.entryList(glob_list, QDir::Files));
-    table->showFiles();
 
     // Update preview if there is already written the expression into its field.
     if (!ui->expField->text().isEmpty())
     {
         expr_changed = true;
         table->preview();
-        table->showFiles();
     }
+
+    table->showFiles();
+    statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
+
 }
 
 void Tweezers::exprChanged()

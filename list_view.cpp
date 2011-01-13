@@ -69,7 +69,7 @@ QStringList ListView::getGlobs()
 void ListView::showFiles()
 {
     int len = items.length();
-    int index = 0;
+    index = 0;
 
     clean();
     table->hide();
@@ -177,7 +177,7 @@ void ListView::rename()
 
 bool ListView::currItemNotSelected(void)
 {
-    return !table->item(count, FILE_COL)->isSelected();
+    return 0; //!table->item(count, FILE_COL)->isSelected();
 }
 
 bool ListView::areItemsSelected(void)
