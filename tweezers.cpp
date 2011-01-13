@@ -139,6 +139,7 @@ void Tweezers::selectDirectory()
 
 void Tweezers::filterView(void)
 {
+    updateFiles();
     table->setExpression(ui->expField->text());
     table->preview();
     table->showFiles();
