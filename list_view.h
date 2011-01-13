@@ -29,20 +29,20 @@
 
 #include <QtGui>
 
+#include "tag_converter.h"
+
 struct ItemNode
 {
-    QString origin;
-    QString expression;
     QString path;
+    QString origin_name;
+    QString new_name;
+    QString expression;
     QString suffix;
     bool renamed;
 
-    ItemNode(QString _path, QString _origin, QString _suffix)
-    {
-        path = _path;
-        origin = _origin;
-        suffix = _suffix;
-    }
+    ItemNode(QString _path, QString _origin_name, QString _new_name, QString _suffix):
+        path(_path), origin_name(_origin_name), new_name(_new_name), suffix(_suffix)
+    {}
 };
 
 
@@ -50,8 +50,12 @@ class ListView
 {
 private:
     QTableWidget *table;
+    TagConverter *tag_converter;
     QList<ItemNode> items;
+    QHash<QString, QString> backup;
     QHash<QString, int> glob_list;
+    QList<QString> tag_list;
+    QString expression;
     int count;
 
 public:
@@ -60,8 +64,10 @@ public:
     void addFiles(QString path, QStringList files);
     QStringList getGlobs();
 
-    void showFiles(QString glob);
-    void fill(const QStringList col);
+    void showFiles();
+    void rename();
+    void setExpression(QString expression);
+    void preview();
 
     void initIterator();
     bool hasNext();
@@ -69,17 +75,8 @@ public:
 
     bool currItemNotSelected();
     bool areItemsSelected();
-    void setFilePreview(QString text);
-    void setFile(QString text);
 
-    QString getFile();
-    QString getFilePreview();
-
-    void setRenamedOk();
-    void setRenamedWarning();
-    void setRenamedError();
-
-    ListView(QTableWidget *t);
+    ListView(QTableWidget *t,  TagConverter *tag);
     ~ListView();
 };
 

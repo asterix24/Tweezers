@@ -55,7 +55,7 @@ Tweezers::Tweezers(QWidget *parent) :
     ui->expField->setText(preference_window->getLastExp());
     ui->expList->addItems(tag->getTagDesc());
 
-    table = new ListView(ui->fileList);
+    table = new ListView(ui->fileList, tag);
     timer = new QTimer(this);
 
     createActions();
@@ -67,7 +67,9 @@ Tweezers::Tweezers(QWidget *parent) :
 
     // Some init actions
     loadFiles();
-    table->showFiles("*.*");
+    table->setExpression(ui->expField->text());
+    table->preview();
+    table->showFiles();
     // Update the preview only every 500ms
     timer->start(200);
 
@@ -135,8 +137,9 @@ void Tweezers::selectDirectory()
 
 void Tweezers::filterView(void)
 {
-    table->showFiles(ui->globSelect->text());
-    preview();
+    table->setExpression(ui->expField->text());
+    table->preview();
+    table->showFiles();
 }
 
 void Tweezers::loadFiles(void)
@@ -144,7 +147,7 @@ void Tweezers::loadFiles(void)
     QDir dir(curr_path);
 
     table->addFiles(curr_path, dir.entryList(QDir::Files,QDir::Name));
-    table->showFiles("*.*");
+    table->showFiles();
 
     ui->expSelect->clear();
     ui->expSelect->addItem("*.*");
@@ -166,13 +169,14 @@ void Tweezers::updateFiles()
 
     qDebug() << glob_list;
     table->addFiles(curr_path, dir.entryList(glob_list, QDir::Files));
-    table->showFiles("*.*");
+    table->showFiles();
 
     // Update preview if there is already written the expression into its field.
     if (!ui->expField->text().isEmpty())
     {
         expr_changed = true;
-        preview();
+        table->preview();
+        table->showFiles();
     }
 }
 
@@ -181,93 +185,14 @@ void Tweezers::exprChanged()
     expr_changed = true;
 }
 
-void Tweezers::updateTaglist()
-{
-    QRegExp rx(TAG_PATTEN);
-
-    QString exp = ui->expField->text();
-
-    int pos = 0;
-    while (1)
-    {
-        pos = rx.indexIn(exp, pos);
-        if (pos < 0)
-            break;
-
-        //we find the tag, make it lower case and save into list
-        tag_list << rx.cap(1);
-        pos += rx.matchedLength();
-    }
-}
-
 void Tweezers::preview()
 {
-    if (!expr_changed)
-        return;
-
-    updateTaglist();
-
-    // Update the table view
-    table->initIterator();
-    while(table->hasNext())
-    {
-        QString value = tag->fill_tags(curr_path, table->getFile(), ui->expField->text(), tag_list);
-        table->setFilePreview(value);
-        table->next();
-    }
-
     expr_changed = false;
 }
 
 
 void Tweezers::rename()
 {
-    int count_renamed = 0;
-    int count_warning = 0;
-    int count_error = 0;
-
-    table->initIterator();
-    while(table->hasNext())
-    {
-        if (rename_selected_only && table->currItemNotSelected())
-        {
-            table->next();
-            continue;
-        }
-
-        QString origin = curr_path + QDir::separator () + table->getFile();
-        QString renamed = curr_path + QDir::separator () + table->getFilePreview();
-
-        QFile origin_filename(origin);
-
-        // The are two file with same name, we skip it.
-        if (backup.contains(renamed))
-        {
-            table->setRenamedWarning();
-            table->next();
-            count_warning++;
-            continue;
-        }
-
-        if (origin_filename.rename(renamed))
-        {
-            backup[renamed] = origin;
-            table->setRenamedOk();
-            count_renamed++;
-        }
-        else /* Rename fail, set warning in the layout */
-        {
-            table->setRenamedError();
-            count_error++;
-        }
-
-        statusBar()->showMessage(tr("Renamed: ") + QString::number(count_renamed) +
-                                 tr(" Warning: ") +  QString::number(count_warning) +
-                                 tr(" Error: ") + QString::number(count_error));
-        table->next();
-    }
-
-    expr_changed = false;
 }
 
 void Tweezers::renameSelection()
@@ -280,6 +205,7 @@ void Tweezers::renameSelection()
  */
 void Tweezers::undoRename()
 {
+#if 0
     QHashIterator<QString, QString> i(backup);
     while (i.hasNext())
     {
@@ -291,6 +217,7 @@ void Tweezers::undoRename()
     updateFiles();
     expr_changed = true;
     preview();
+#endif
     statusBar()->showMessage(tr("Ready"));
 }
 

@@ -74,9 +74,6 @@ private slots:
 private:
     ListView *table;
     QString curr_path;
-    QList<QString> tag_list;
-
-    QHash<QString, QString> backup;
 
     // Application Actions
     QAction *preferenceAct;
@@ -106,8 +103,6 @@ private:
     Preference *preference_window;
     TagConverter *tag;
     Ui::Tweezers *ui;
-
-    void updateTaglist();
 };
 
 #endif // TWEEZERS_H
