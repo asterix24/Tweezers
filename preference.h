@@ -30,60 +30,60 @@
 #include <QtGui/QWidget>
 
 namespace Ui {
-    class Preference;
+	class Preference;
 }
 
 class Preference : public QWidget {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    QString getPath() { return curr_path; }
-    QString getLastExp() { return last_expr; }
+	QString getPath() { return curr_path; }
+	QString getLastExp() { return last_expr; }
 
-    void setPath(QString path) { curr_path = path; }
-    void setLastExp(QString expr) { last_expr = expr; }
+	void setPath(QString path) { curr_path = path; }
+	void setLastExp(QString expr) { last_expr = expr; }
 
-    QPoint getPos() { return pos; }
-    QSize getSize() { return size; }
+	QPoint getPos() { return pos; }
+	QSize getSize() { return size; }
 
-    void setPos(QPoint p) { pos = p; }
-    void setSize(QSize s) { size = s; }
+	void setPos(QPoint p) { pos = p; }
+	void setSize(QSize s) { size = s; }
 
-    QString getTimeFmt();
-    QString getDateFmt();
+	QString getTimeFmt();
+	QString getDateFmt();
 
-    Preference(QWidget *parent = 0);
-    ~Preference();
+	Preference(QWidget *parent = 0);
+	~Preference();
 
 protected:
-    void changeEvent(QEvent *e);
+	void changeEvent(QEvent *e);
 
 private slots:
-    void ok(void);
-    void cancel(void);
-    void preview(QTableWidgetItem *item);
-    void upDatePreview(QString str);
+	void ok(void);
+	void cancel(void);
+	void preview(QTableWidgetItem *item);
+	void upDatePreview(QString str);
 
 private:
-    // Path settings
-    QString curr_path;
-    QString last_expr;
+	// Path settings
+	QString curr_path;
+	QString last_expr;
 
-    // Windows settings
-    QPoint pos;
-    QSize size;
+	// Windows settings
+	QPoint pos;
+	QSize size;
 
-    //Default format
-    int curr_fmt;
+	//Default format
+	int curr_fmt;
 
-    void fillCategory();
+	void fillCategory();
 
-    void readSettings();
-    void writeSettings();
+	void readSettings();
+	void writeSettings();
 
-    void createActions();
+	void createActions();
 
-    Ui::Preference *m_ui;
+	Ui::Preference *m_ui;
 };
 
 #endif // PREFERENCE_H

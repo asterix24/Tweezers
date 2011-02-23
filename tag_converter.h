@@ -36,15 +36,15 @@ typedef QString (*tag_callback)(QString path, QString item, Preference *p);
 class TagConverter
 {
 public:
-    QString fill_tags(QString path, QString item, QString exp, QList<QString> tag_list);
-    QList<QString> getTagDesc();
-    TagConverter(Preference *pref);
-    ~TagConverter();
+	QString fill_tags(QString path, QString item, QString exp, QList<QString> tag_list);
+	QList<QString> getTagDesc();
+	TagConverter(Preference *pref);
+	~TagConverter();
 private:
-    QHash<QString, tag_callback> callback_table;
-    QList<QString> descr_table;
+	QHash<QString, tag_callback> callback_table;
+	QList<QString> descr_table;
 
-    Preference *preference;
+	Preference *preference;
 };
 
 

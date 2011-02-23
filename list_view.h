@@ -33,48 +33,44 @@
 
 struct ItemNode
 {
-    QString path;
-    QString origin_name;
-    QString new_name;
-    QString expression;
-    QString suffix;
-    bool renamed;
+	QString path;
+	QString origin_name;
+	QString new_name;
+	QString expression;
+	QString suffix;
+	bool renamed;
 
-    ItemNode(QString _path, QString _origin_name, QString _new_name, QString _suffix):
-        path(_path), origin_name(_origin_name), new_name(_new_name), suffix(_suffix)
-    {}
+	ItemNode(QString _path, QString _origin_name, QString _new_name, QString _suffix):
+			path(_path), origin_name(_origin_name), new_name(_new_name), suffix(_suffix)
+	{}
 };
 
 
 class ListView
 {
 private:
-    QTableWidget *table;
-    TagConverter *tag_converter;
-    QList<ItemNode> items;
-    QHash<QString, QString> backup;
-    QHash<QString, int> glob_list;
-    QList<QString> tag_list;
-    QString expression;
-    int index;
+	QTableWidget *table;
+	TagConverter *tag_converter;
+	QList<ItemNode> items;
+	QHash<QString, int> glob_list;
+	QList<QString> tag_list;
+	QString expression;
+	int index;
 
 public:
-    void clean();
+	void clean();
 
-    void addFiles(QString path, QStringList files);
-    QStringList getGlobs();
-    int getLoadedItems() { return index; }
+	void addFiles(QString path, QStringList files);
+	QStringList getGlobs();
+	int getLoadedItems() { return index; }
 
-    void showFiles();
-    void rename();
-    void setExpression(QString exp);
-    void preview();
+	void showFiles();
+	void rename();
+	void setExpression(QString exp);
+	void preview();
 
-    bool currItemNotSelected();
-    bool areItemsSelected();
-
-    ListView(QTableWidget *t,  TagConverter *tag);
-    ~ListView();
+	ListView(QTableWidget *t,  TagConverter *tag);
+	~ListView();
 };
 
 #endif // LIST_VIEW_H

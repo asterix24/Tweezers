@@ -1,4 +1,4 @@
-    /**
+/**
  * \file
  * <!--
  * Tweezers is free software; you can redistribute it and/or modify
@@ -44,187 +44,187 @@
 
 QString getExif(QString path, QString item, QString exif_tag)
 {
-    try
-    {
-        QString name = path + QDir::separator () + item;
+	try
+	{
+		QString name = path + QDir::separator () + item;
 
-        Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(name.toStdString());
+		Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(name.toStdString());
 
-        assert(image.get() != 0);
-        image->readMetadata();
+		assert(image.get() != 0);
+		image->readMetadata();
 
-        Exiv2::ExifData &exifData = image->exifData();
-        if (exifData.empty())
-        {
-            std::string error(name.toStdString());
-            return "";
-        }
+		Exiv2::ExifData &exifData = image->exifData();
+		if (exifData.empty())
+		{
+			std::string error(name.toStdString());
+			return "";
+		}
 
-        return QString(exifData[exif_tag.toStdString()].toString().c_str());
+		return QString(exifData[exif_tag.toStdString()].toString().c_str());
 
-    }
-    catch (Exiv2::AnyError& e)
-    {
-        qDebug() << "Caught Exiv2 exception";
-        return "";
-    }
+	}
+	catch (Exiv2::AnyError& e)
+	{
+		qDebug() << "Caught Exiv2 exception";
+		return "";
+	}
 }
 
 QString getExifdate(QString path, QString item, Preference *p)
 {
-    QString data_str = getExif(path, item, "Exif.Image.DateTime");
+	QString data_str = getExif(path, item, "Exif.Image.DateTime");
 
-    if (data_str.isEmpty())
-        return "";
+	if (data_str.isEmpty())
+		return "";
 
-    QStringList data_list = data_str.split(" ");
-    QString str = "";
+	QStringList data_list = data_str.split(" ");
+	QString str = "";
 
-    if (!data_list.isEmpty())
-    {
-        data_list = data_list[0].split(":");
+	if (!data_list.isEmpty())
+	{
+		data_list = data_list[0].split(":");
 
-        if (data_list.length() >= 3)
-        {
-            QDate date(data_list[0].toInt(), data_list[1].toInt(), data_list[2].toInt());
-            str = date.toString(p->getDateFmt());
-        }
-    }
+		if (data_list.length() >= 3)
+		{
+			QDate date(data_list[0].toInt(), data_list[1].toInt(), data_list[2].toInt());
+			str = date.toString(p->getDateFmt());
+		}
+	}
 
-    return str;
+	return str;
 }
 
 QString getExiftime(QString path, QString item, Preference *p)
 {
-    QString time_str = getExif(path, item, "Exif.Image.DateTime");
+	QString time_str = getExif(path, item, "Exif.Image.DateTime");
 
-    if (time_str.isEmpty())
-        return "";
+	if (time_str.isEmpty())
+		return "";
 
-    QString str = "";
-    QStringList time_list = time_str.split(" ");
+	QString str = "";
+	QStringList time_list = time_str.split(" ");
 
-    if (!time_list.isEmpty())
-    {
-        time_list = time_list[1].split(":");
+	if (!time_list.isEmpty())
+	{
+		time_list = time_list[1].split(":");
 
-        if (time_list.length() >= 3)
-        {
-            QTime time(time_list[0].toInt(), time_list[1].toInt(), time_list[2].toInt());
-            str = time.toString(p->getTimeFmt());
-        }
-    }
+		if (time_list.length() >= 3)
+		{
+			QTime time(time_list[0].toInt(), time_list[1].toInt(), time_list[2].toInt());
+			str = time.toString(p->getTimeFmt());
+		}
+	}
 
-    return str;
+	return str;
 }
 
 QString getExt(QString path, QString item, Preference *p)
 {
-    QString name = path + QDir::separator () + item;
-    QFileInfo fi(name);
+	QString name = path + QDir::separator () + item;
+	QFileInfo fi(name);
 
-    return fi.suffix();
+	return fi.suffix();
 }
 
 QString getExtLow(QString path, QString item, Preference *p)
 {
-    QString str = getExt(path, item, p);
+	QString str = getExt(path, item, p);
 
-    if (str.isEmpty())
-        return "";
+	if (str.isEmpty())
+		return "";
 
-    return str.toLower();
+	return str.toLower();
 }
 
 QString getExtUp(QString path, QString item, Preference *p)
 {
-    QString str = getExt(path, item, p);
+	QString str = getExt(path, item, p);
 
-    if (str.isEmpty())
-        return "";
+	if (str.isEmpty())
+		return "";
 
-    return str.toUpper();
+	return str.toUpper();
 }
 
 
 QString getName(QString path, QString item, Preference *p)
 {
-    QString name = path + QDir::separator () + item;
-    QFileInfo fi(name);
+	QString name = path + QDir::separator () + item;
+	QFileInfo fi(name);
 
-    return fi.completeBaseName();
+	return fi.completeBaseName();
 }
 
 QString getNameLow(QString path, QString item, Preference *p)
 {
-    QString str = getName(path, item, p);
+	QString str = getName(path, item, p);
 
-    if (str.isEmpty())
-        return "";
+	if (str.isEmpty())
+		return "";
 
-    return str.toLower();
+	return str.toLower();
 }
 
 QString getNameUp(QString path, QString item, Preference *p)
 {
-    QString str = getName(path, item, p);
+	QString str = getName(path, item, p);
 
-    if (str.isEmpty())
-        return "";
+	if (str.isEmpty())
+		return "";
 
-    return str.toUpper();
+	return str.toUpper();
 }
 
 QString TagConverter::fill_tags(QString path, QString item, QString exp, QList<QString> tag_list)
 {
-    for (int i = 0; i < tag_list.length(); ++i)
-    {
-        if (callback_table.contains(tag_list[i].toLower()))
-        {
-            // Search the right function to convert tag
-            tag_callback f = callback_table[tag_list[i].toLower()];
+	for (int i = 0; i < tag_list.length(); ++i)
+	{
+		if (callback_table.contains(tag_list[i].toLower()))
+		{
+			// Search the right function to convert tag
+			tag_callback f = callback_table[tag_list[i].toLower()];
 
-            // Call the right function to convert tag
-            QString  tag_value = f(path, item, preference);
-            exp = exp.replace(tag_list[i], tag_value);
-        }
-    }
-    return exp;
+			// Call the right function to convert tag
+			QString  tag_value = f(path, item, preference);
+			exp = exp.replace(tag_list[i], tag_value);
+		}
+	}
+	return exp;
 }
 
 QList<QString> TagConverter::getTagDesc()
 {
-    return descr_table;
+	return descr_table;
 }
 
 TagConverter::TagConverter(Preference *pref)
 {
-    preference = pref;
-    descr_table << "Elenco dei tag..";
+	preference = pref;
+	descr_table << "Elenco dei tag..";
 
-    callback_table["<exiftime>"] = getExiftime;
-    descr_table << "<EXIFTIME>: Ritorna l'ora di scatto della foto";
+	callback_table["<exiftime>"] = getExiftime;
+	descr_table << "<EXIFTIME>: Ritorna l'ora di scatto della foto";
 
-    callback_table["<exifdate>"] = getExifdate;
-    descr_table << "<EXIFDATE>: Ritorna la data di scatto della foto";
+	callback_table["<exifdate>"] = getExifdate;
+	descr_table << "<EXIFDATE>: Ritorna la data di scatto della foto";
 
-    callback_table["<ext>"] = getExt;
-    descr_table << "<EXT>: Ritorna l'estensione del file";
+	callback_table["<ext>"] = getExt;
+	descr_table << "<EXT>: Ritorna l'estensione del file";
 
-    callback_table["<ext_low>"] = getExtLow;
-    descr_table << "<EXT_LOW>: Ritorna l'estensione del file lowercase";
+	callback_table["<ext_low>"] = getExtLow;
+	descr_table << "<EXT_LOW>: Ritorna l'estensione del file lowercase";
 
-    callback_table["<ext_up>"] = getExtUp;
-    descr_table << "<EXT_UP>: Ritorna l'estensione del file uppercase";
+	callback_table["<ext_up>"] = getExtUp;
+	descr_table << "<EXT_UP>: Ritorna l'estensione del file uppercase";
 
-    callback_table["<name>"] = getName;
-    descr_table << "<NAME>: Ritorna il nome del file senza estensione";
+	callback_table["<name>"] = getName;
+	descr_table << "<NAME>: Ritorna il nome del file senza estensione";
 
-    callback_table["<name_low>"] = getNameLow;
-    descr_table << "<NAME_LOW>: Ritorna il nome del file senza estensione lowercase";
+	callback_table["<name_low>"] = getNameLow;
+	descr_table << "<NAME_LOW>: Ritorna il nome del file senza estensione lowercase";
 
-    callback_table["<name_up>"] = getNameUp;
-    descr_table << "<NAME_UP>: Ritorna il nome del file senza estensione uppercase";
+	callback_table["<name_up>"] = getNameUp;
+	descr_table << "<NAME_UP>: Ritorna il nome del file senza estensione uppercase";
 }
 
 TagConverter::~TagConverter()

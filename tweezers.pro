@@ -15,27 +15,33 @@
 # -->
 # \brief Tweezers project.
 # \author Daniele Basile <asterix@develer.com>
+
 TARGET = tweezers
 TEMPLATE = app
-SOURCES += main.cpp \
-    tweezers.cpp \
-    preference.cpp \
-    tag_converter.cpp \
-    list_view.cpp
-HEADERS += tweezers.h \
-    tag_converter.h \
-    preference.h \
-    list_view.h
-FORMS += tweezers.ui \
-    preference.ui
-LIBS += -Llib/lib \
-    -lexiv2
-CONFIG += qt \
-    warn_on \
-    static
-INCLUDEPATH += lib/include \
-    lib/lib
+
+CONFIG += qt
+CONFIG += warn_on
+CONFIG += static
+
+SOURCES += main.cpp
+SOURCES += tweezers.cpp
+SOURCES += preference.cpp
+SOURCES += tag_converter.cpp
+SOURCES += list_view.cpp
+
+HEADERS += tweezers.h
+HEADERS += tag_converter.h
+HEADERS += preference.h
+HEADERS += list_view.h
+
+FORMS += tweezers.ui
+FORMS += preference.ui
+
+LIBS += -Llib/lib -lexiv2
+INCLUDEPATH += lib/include lib/lib
+
 RESOURCES += tweezers_res.qrc
-OTHER_FILES += images/warning.png \
-    images/ok.png \
-    images/error.png
+
+OTHER_FILES += images/warning.png
+OTHER_FILES += images/ok.png
+OTHER_FILES += images/error.png

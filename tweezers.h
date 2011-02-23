@@ -35,74 +35,73 @@
 #include <QFile>
 
 namespace Ui {
-    class Tweezers;
+	class Tweezers;
 }
 
 
 class Tweezers : public QMainWindow {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    Tweezers(QWidget *parent = 0);
-    ~Tweezers();
+	Tweezers(QWidget *parent = 0);
+	~Tweezers();
 
 protected:
-    void changeEvent(QEvent *e);
-    void closeEvent(QCloseEvent *e);
-    void loadFiles(void);
+	void changeEvent(QEvent *e);
+	void closeEvent(QCloseEvent *e);
+	void loadFiles(void);
 
 private slots:
-    void preview();
+	void preview();
 
-    void openDir();
-    void updateFiles(void);
-    void selectDirectory();
+	void openDir();
+	void updateFiles(void);
+	void selectDirectory();
 
-    void filterView();
+	void filterView();
 
-    void selExpCombo(int index);
-    void selExtCombo(int index);
+	void selExpCombo(int index);
+	void selExtCombo(int index);
 
-    void rename();
-    void renameSelection();
-    void undoRename();
+	void rename();
+	void renameSelection();
+	void undoRename();
 
-    void preferences();
-    void about();
+	void preferences();
+	void about();
 
-    void exprChanged();
+	void exprChanged();
 
 private:
-    ListView *table;
-    QString curr_path;
+	ListView *table;
+	QString curr_path;
 
-    // Application Actions
-    QAction *preferenceAct;
-    QAction *aboutAct;
-    QAction *openAct;
-    QAction *exitAct;
+	// Application Actions
+	QAction *preferenceAct;
+	QAction *aboutAct;
+	QAction *openAct;
+	QAction *exitAct;
 
-    QMenu *fileMenu;
-    QMenu *editMenu;
-    QMenu *helpMenu;
+	QMenu *fileMenu;
+	QMenu *editMenu;
+	QMenu *helpMenu;
 
-    QToolBar *fileToolBar;
-    QToolBar *editToolBar;
+	QToolBar *fileToolBar;
+	QToolBar *editToolBar;
 
-    QTimer *timer;
+	QTimer *timer;
 
-    bool expr_changed;
-    bool rename_selected_only;
+	bool expr_changed;
 
-    // Init the application menu and actions
-    void createActions();
-    void createMenus();
-    void createToolBars();
-    void createStatusBar();
+	// Init the application menu and actions
+	void createActions();
+	void createMenus();
+	void createToolBars();
+	void createStatusBar();
 
-    // External class pointers
-    Preference *preference_window;
-    TagConverter *tag;
-    Ui::Tweezers *ui;
+	// External class pointers
+	Preference *preference_window;
+	TagConverter *tag;
+	Ui::Tweezers *ui;
 };
 
 #endif // TWEEZERS_H
