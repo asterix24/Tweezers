@@ -65,7 +65,7 @@ Tweezers::Tweezers(QWidget *parent) :
 
 	setUnifiedTitleAndToolBarOnMac(true);
 
-	// Some init actions
+	// Init action
 	loadFiles();
 	table->setExpression(ui->expField->text());
 	table->preview();

@@ -34,9 +34,6 @@
 #include <QDebug>
 #include <QDate>
 
-#include <exiv2/image.hpp>
-#include <exiv2/exif.hpp>
-
 #include <iostream>
 #include <iomanip>
 #include <cassert>
@@ -44,30 +41,7 @@
 
 QString getExif(QString path, QString item, QString exif_tag)
 {
-	try
-	{
-		QString name = path + QDir::separator () + item;
-
-		Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(name.toStdString());
-
-		assert(image.get() != 0);
-		image->readMetadata();
-
-		Exiv2::ExifData &exifData = image->exifData();
-		if (exifData.empty())
-		{
-			std::string error(name.toStdString());
-			return "";
-		}
-
-		return QString(exifData[exif_tag.toStdString()].toString().c_str());
-
-	}
-	catch (Exiv2::AnyError& e)
-	{
-		qDebug() << "Caught Exiv2 exception";
-		return "";
-	}
+	return "";
 }
 
 QString getExifdate(QString path, QString item, Preference *p)
@@ -200,31 +174,37 @@ QList<QString> TagConverter::getTagDesc()
 TagConverter::TagConverter(Preference *pref)
 {
 	preference = pref;
-	descr_table << "Elenco dei tag..";
+	descr_table << tr("Elenco dei tag..");
 
 	callback_table["<exiftime>"] = getExiftime;
-	descr_table << "<EXIFTIME>: Ritorna l'ora di scatto della foto";
+	descr_table << tr("<EXIFTIME>: Ritorna l'ora di scatto della foto");
 
 	callback_table["<exifdate>"] = getExifdate;
-	descr_table << "<EXIFDATE>: Ritorna la data di scatto della foto";
+	descr_table << tr("<EXIFDATE>: Ritorna la data di scatto della foto");
 
 	callback_table["<ext>"] = getExt;
-	descr_table << "<EXT>: Ritorna l'estensione del file";
+	descr_table << tr("<EXT>: Ritorna l'estensione del file");
 
 	callback_table["<ext_low>"] = getExtLow;
-	descr_table << "<EXT_LOW>: Ritorna l'estensione del file lowercase";
+	descr_table << tr("<EXT_LOW>: Ritorna l'estensione del file lowercase");
 
 	callback_table["<ext_up>"] = getExtUp;
-	descr_table << "<EXT_UP>: Ritorna l'estensione del file uppercase";
+	descr_table << tr("<EXT_UP>: Ritorna l'estensione del file uppercase");
 
 	callback_table["<name>"] = getName;
-	descr_table << "<NAME>: Ritorna il nome del file senza estensione";
+	descr_table << tr("<NAME>: Ritorna il nome del file senza estensione");
 
 	callback_table["<name_low>"] = getNameLow;
-	descr_table << "<NAME_LOW>: Ritorna il nome del file senza estensione lowercase";
+	descr_table << tr("<NAME_LOW>: Ritorna il nome del file senza estensione lowercase");
 
 	callback_table["<name_up>"] = getNameUp;
-	descr_table << "<NAME_UP>: Ritorna il nome del file senza estensione uppercase";
+	descr_table << tr("<NAME_UP>: Ritorna il nome del file senza estensione uppercase");
+}
+
+std::string TagConverter::prova(int a)
+{
+	std::cout << "Prova " << a << std::endl;
+	return "";
 }
 
 TagConverter::~TagConverter()

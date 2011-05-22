@@ -125,8 +125,7 @@ void ListView::preview()
 
 void ListView::rename()
 {
-	for (QList<ItemNode>::iterator f = items.begin();
-	f != items.end(); f++)
+	for (QList<ItemNode>::iterator f = items.begin(); f != items.end(); f++)
 	{
 		(*f).renamed = false;
 

@@ -19,6 +19,14 @@
 TARGET = tweezers
 TEMPLATE = app
 
+DESTDIR = dist
+OBJECTS_DIR = build
+
+QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS_DEBUG += -O0 -g3 -ggdb
+
+DEFINES += DEBUG
+
 CONFIG += qt
 CONFIG += warn_on
 CONFIG += static
@@ -37,8 +45,8 @@ HEADERS += list_view.h
 FORMS += tweezers.ui
 FORMS += preference.ui
 
-LIBS += -Llib/lib -lexiv2
-INCLUDEPATH += lib/include lib/lib
+LIBS +=
+INCLUDEPATH +=
 
 RESOURCES += tweezers_res.qrc
 
