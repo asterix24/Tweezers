@@ -35,6 +35,9 @@
 #include <cfg/cfg_tweezers.h>
 
 #include <QtGui>
+#include <QDir>
+#include <iostream>
+#include <exifinfo.h>
 
 Tweezers::Tweezers(QWidget *parent) :
 		QMainWindow(parent),
@@ -203,11 +206,22 @@ void Tweezers::rename()
 
 void Tweezers::renameSelection()
 {
+	qDebug() << "Qui";
 }
 
 void Tweezers::undoRename()
 {
 	statusBar()->showMessage(tr("Ready"));
+}
+
+void Tweezers::fileInfo(int r, int c)
+{
+	ItemNode node = table->getItem(r);
+	std::cout << node;
+	QString f = node.path + "/" + node.origin_name;
+	ExifInfo e(f);
+	ui->fileInfo->append(node.path);
+	ui->fileInfo->append(node.origin_name);
 }
 
 /*
@@ -296,7 +310,7 @@ void Tweezers::createActions()
 
 	// Manage list file to rename
 	connect(ui->fileList, SIGNAL(itemSelectionChanged()), this, SLOT(renameSelection()));
-
+	connect(ui->fileList, SIGNAL(cellClicked(int,int)), this, SLOT(fileInfo(int, int)));
 	// Manage ext selector
 	connect(ui->expSelect, SIGNAL(activated(int)), this, SLOT(selExtCombo(int)));
 }

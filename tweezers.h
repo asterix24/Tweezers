@@ -61,6 +61,7 @@ private slots:
 
 	void selExpCombo(int index);
 	void selExtCombo(int index);
+	void fileInfo(int r, int c);
 
 	void rename();
 	void renameSelection();
