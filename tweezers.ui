@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
-    <height>487</height>
+    <width>760</width>
+    <height>479</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,21 +57,6 @@
          <bool>false</bool>
         </attribute>
         <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderHighlightSections">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderStretchLastSection">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderHighlightSections">
          <bool>false</bool>
         </attribute>
         <attribute name="verticalHeaderHighlightSections">
@@ -150,6 +135,13 @@
          </layout>
         </item>
        </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="3">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QTextEdit" name="fileInfo"/>
       </item>
      </layout>
     </item>
