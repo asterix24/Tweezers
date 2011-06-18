@@ -32,12 +32,14 @@ CONFIG += warn_on
 CONFIG += static
 
 SOURCES += main.cpp
+SOURCES += exifinfo.cpp
 SOURCES += tweezers.cpp
 SOURCES += preference.cpp
 SOURCES += tag_converter.cpp
 SOURCES += list_view.cpp
 
 HEADERS += tweezers.h
+HEADERS += exifinfo.h
 HEADERS += tag_converter.h
 HEADERS += preference.h
 HEADERS += list_view.h
@@ -45,8 +47,8 @@ HEADERS += list_view.h
 FORMS += tweezers.ui
 FORMS += preference.ui
 
-LIBS +=
-INCLUDEPATH +=
+LIBS += -L/usr/local/lib -lexif
+INCLUDEPATH += /usr/local/include
 
 RESOURCES += tweezers_res.qrc
 
