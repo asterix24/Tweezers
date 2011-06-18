@@ -29,10 +29,12 @@
 
 #include <cfg/cfg_tweezers.h>
 
+#include <QFileInfo>
 #include <QDebug>
 
 #define FILE_COL       0
 #define PREVIEW_COL    1
+#define ITEM_REF       1
 
 void ListView::clean()
 {
@@ -55,9 +57,14 @@ void ListView::addFiles(QString path, QStringList files)
 	{
 		QFileInfo fi(*f);
 		QString suff = fi.suffix().toLower();
-		ItemNode *item = new ItemNode(path, *f, "-",suff);
+		ItemNode node;
+		node.path = path;
+		node.origin_name = *f;
+		node.new_name = "-";
+		node.suffix = suff;
+		//ItemNode *item = new ItemNode(path, *f, "-",suff);
 		glob_list[suff] = 0;
-		items.append(*item);
+		items.append(node);
 	}
 }
 
@@ -77,14 +84,17 @@ void ListView::showFiles()
 	table->setSortingEnabled(false);
 	table->setRowCount(len);
 
+	ItemNode *p;
 	for (QList<ItemNode>::iterator it = items.begin();
 	it != items.end(); it++)
 	{
-		QVariant item_ref = qVariantFromValue((void *)&(*it));
+		p = &(*it);
+		QVariant item_ref;
+		item_ref.setValue<ItemNode *>(&(*it));
 		QTableWidgetItem *item0 = new QTableWidgetItem((*it).origin_name);
 		QTableWidgetItem *item1 = new QTableWidgetItem((*it).new_name);
 
-		item0->setData(0, item_ref);
+		item0->setData(ITEM_REF, item_ref);
 		table->setItem(index, FILE_COL, item0);
 		table->setItem(index, PREVIEW_COL, item1);
 
@@ -92,6 +102,25 @@ void ListView::showFiles()
 	}
 	table->show();
 	qApp->processEvents();
+
+	qDebug() << p->origin_name << p->new_name;
+}
+
+QTableWidgetItem *ListView::getPreview(int row)
+{
+	return table->item(row, PREVIEW_COL);
+}
+
+QTableWidgetItem *ListView::getFile(int row)
+{
+	return table->item(row, FILE_COL);
+}
+
+ItemNode ListView::getItem(int row)
+{
+	QTableWidgetItem *item = table->item(row, FILE_COL);
+	QVariant ref = item->data(ITEM_REF);
+	return *ref.value<ItemNode *>();
 }
 
 void ListView::setExpression(QString exp)
