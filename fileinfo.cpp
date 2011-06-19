@@ -19,28 +19,32 @@
  *
  * -->
  *
- * \brief List view manager.
+ * \brief File Info module.
  *
  * \author Daniele Basile <asterix@develer.com>
  */
 
-#ifndef EXIFINFO_H
-#define EXIFINFO_H
+#include "fileinfo.h"
 
-#include <QObject>
 #include <QString>
+#include <QDebug>
 
 #include <libexif/exif-data.h>
 
-class ExifInfo : public QObject
+ExifInfo::ExifInfo(QString file_name)
 {
-private:
-	ExifData *ed;
-	ExifEntry *entry;
+	if (file_name.isEmpty())
+		qDebug() << tr("Empty file name.");
 
-public:
-	ExifInfo(QString file_name);
-	~ExifInfo();
-};
+	// Load an ExifData object from an EXIF file
+	ed = exif_data_new_from_file(file_name.toStdString().c_str());
+	if (!ed)
+		qDebug() << tr("File not readable or no EXIF data in file ") << file_name;
+}
 
-#endif // EXIFINFO_H
+ExifInfo::~ExifInfo()
+{
+	/* Free the EXIF data */
+	exif_data_unref(ed);
+}
+
