@@ -32,14 +32,14 @@ CONFIG += warn_on
 CONFIG += static
 
 SOURCES += main.cpp
-SOURCES += exifinfo.cpp
+SOURCES += fileinfo.cpp
 SOURCES += tweezers.cpp
 SOURCES += preference.cpp
 SOURCES += tag_converter.cpp
 SOURCES += list_view.cpp
 
 HEADERS += tweezers.h
-HEADERS += exifinfo.h
+HEADERS += fileinfo.h
 HEADERS += tag_converter.h
 HEADERS += preference.h
 HEADERS += list_view.h

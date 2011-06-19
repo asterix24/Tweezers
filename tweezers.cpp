@@ -37,7 +37,7 @@
 #include <QtGui>
 #include <QDir>
 #include <iostream>
-#include <exifinfo.h>
+#include <fileinfo.h>
 
 Tweezers::Tweezers(QWidget *parent) :
 		QMainWindow(parent),
@@ -216,12 +216,14 @@ void Tweezers::undoRename()
 
 void Tweezers::fileInfo(int r, int c)
 {
+	(void)c;
+
 	ItemNode node = table->getItem(r);
-	std::cout << node;
 	QString f = node.path + "/" + node.origin_name;
-	ExifInfo e(f);
+	FileInfo e(f);
 	ui->fileInfo->append(node.path);
 	ui->fileInfo->append(node.origin_name);
+	ui->fileInfo->append(e.showTag(EXIF_TAG_DATE_TIME));
 }
 
 /*

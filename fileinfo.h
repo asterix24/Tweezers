@@ -32,16 +32,17 @@
 
 #include <libexif/exif-data.h>
 
-class ExifInfo : public QObject
+class FileInfo : public QObject
 {
 private:
-	ExifData *ed;
-	ExifEntry *entry;
+	ExifData *exif_data;
 
 public:
-	ExifInfo(QString file_name);
-	~ExifInfo();
+	QString showTag(ExifTag tag);
+	FileInfo(QString file_name);
+	~FileInfo();
 };
+
 
 #endif // FILEINFO_H
 

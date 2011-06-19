@@ -27,24 +27,43 @@
 #include "fileinfo.h"
 
 #include <QString>
+#include <QVector>
 #include <QDebug>
 
 #include <libexif/exif-data.h>
 
-ExifInfo::ExifInfo(QString file_name)
+FileInfo::FileInfo(QString file_name)
 {
 	if (file_name.isEmpty())
 		qDebug() << tr("Empty file name.");
 
 	// Load an ExifData object from an EXIF file
-	ed = exif_data_new_from_file(file_name.toStdString().c_str());
-	if (!ed)
+	exif_data = exif_data_new_from_file(file_name.toStdString().c_str());
+
+	if (!exif_data)
 		qDebug() << tr("File not readable or no EXIF data in file ") << file_name;
 }
 
-ExifInfo::~ExifInfo()
+QString FileInfo::showTag(ExifTag tag)
 {
-	/* Free the EXIF data */
-	exif_data_unref(ed);
+	// See if this tag exists
+	ExifEntry *entry = exif_content_get_entry(exif_data->ifd[0], tag);
+	if (entry)
+	{
+		char buf[1024];
+
+		// Get the contents of the tag in human-readable form
+		exif_entry_get_value(entry, buf, sizeof(buf));
+		QString desc(exif_tag_get_name_in_ifd(tag, (ExifIfd)0));
+
+		return desc + " " + QString(buf);
+	}
+	return "";
+}
+
+FileInfo::~FileInfo()
+{
+	// Free the EXIF data
+	exif_data_unref(exif_data);
 }
 
