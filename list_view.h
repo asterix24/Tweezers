@@ -27,40 +27,10 @@
 #ifndef LIST_VIEW_H
 #define LIST_VIEW_H
 
+#include "itemnode.h"
 #include "tag_converter.h"
 
 #include <QtGui>
-#include <QMetaType>
-
-struct ItemNode
-{
-	QString path;
-	QString origin_name;
-	QString new_name;
-	QString expression;
-	QString suffix;
-	bool renamed;
-
-	/*
-	ItemNode(QString _path, QString _origin_name, QString _new_name, QString _suffix):
-			path(_path), origin_name(_origin_name), new_name(_new_name), suffix(_suffix)
-	{}
-	*/
-};
-
-Q_DECLARE_METATYPE(ItemNode);
-Q_DECLARE_METATYPE(ItemNode *);
-
-inline std::ostream &operator<< (std::ostream &os, const ItemNode node)
-{
-	os << "Path " << node.path.toStdString() << "\n"
-			<< "Origin name " << node.origin_name.toStdString() << "\n"
-			<< "New name " << node.new_name.toStdString() << "\n"
-			<< "Suffix " << node.suffix.toStdString() << "\n"
-			<< "Expression " << node.expression.toStdString() << "\n";
-
-	return os;
-}
 
 class ListView
 {

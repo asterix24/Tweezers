@@ -27,6 +27,8 @@
 #ifndef FILEINFO_H
 #define FILEINFO_H
 
+#include "itemnode.h"
+
 #include <QObject>
 #include <QString>
 
@@ -36,10 +38,15 @@ class FileInfo : public QObject
 {
 private:
 	ExifData *exif_data;
+	QString showTag(ExifIfd id, ExifTag tag);
+	void loadExif(QString file_name);
 
 public:
-	QString showTag(ExifTag tag);
+	void showAll();
+
+	QStringList getAllExifTag();
 	FileInfo(QString file_name);
+	FileInfo(ItemNode &node);
 	~FileInfo();
 };
 

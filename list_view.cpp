@@ -57,14 +57,9 @@ void ListView::addFiles(QString path, QStringList files)
 	{
 		QFileInfo fi(*f);
 		QString suff = fi.suffix().toLower();
-		ItemNode node;
-		node.path = path;
-		node.origin_name = *f;
-		node.new_name = "-";
-		node.suffix = suff;
-		//ItemNode *item = new ItemNode(path, *f, "-",suff);
+		ItemNode *item = new ItemNode(path, *f, "-",suff);
 		glob_list[suff] = 0;
-		items.append(node);
+		items.append(*item);
 	}
 }
 
@@ -102,8 +97,6 @@ void ListView::showFiles()
 	}
 	table->show();
 	qApp->processEvents();
-
-	qDebug() << p->origin_name << p->new_name;
 }
 
 QTableWidgetItem *ListView::getPreview(int row)
@@ -144,11 +137,10 @@ void ListView::setExpression(QString exp)
 
 void ListView::preview()
 {
-	for (QList<ItemNode>::iterator it = items.begin();
-	it != items.end(); it++)
+	for (QList<ItemNode>::iterator it = items.begin(); it != items.end(); it++)
 	{
 		(*it).expression = expression;
-		(*it).new_name = tag_converter->fill_tags((*it).path, (*it).origin_name, (*it).expression, tag_list);
+		tag_converter->fill_tags(&(*it), tag_list);
 	}
 }
 
