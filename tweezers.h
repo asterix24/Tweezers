@@ -27,9 +27,9 @@
 #ifndef TWEEZERS_H
 #define TWEEZERS_H
 
-#include "tag_converter.h"
 #include "preference.h"
 #include "list_view.h"
+#include "itemnode.h"
 
 #include <QMainWindow>
 #include <QFile>

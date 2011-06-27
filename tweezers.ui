@@ -141,7 +141,11 @@
     <item row="1" column="3">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QTextEdit" name="fileInfo"/>
+       <widget class="QTextEdit" name="fileInfo">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

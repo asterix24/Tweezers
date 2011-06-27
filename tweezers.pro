@@ -39,6 +39,7 @@ SOURCES += tag_converter.cpp
 SOURCES += list_view.cpp
 
 HEADERS += tweezers.h
+HEADERS += itemnode.h
 HEADERS += fileinfo.h
 HEADERS += tag_converter.h
 HEADERS += preference.h

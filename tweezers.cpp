@@ -206,7 +206,6 @@ void Tweezers::rename()
 
 void Tweezers::renameSelection()
 {
-	qDebug() << "Qui";
 }
 
 void Tweezers::undoRename()
@@ -219,11 +218,10 @@ void Tweezers::fileInfo(int r, int c)
 	(void)c;
 
 	ItemNode node = table->getItem(r);
-	QString f = node.path + "/" + node.origin_name;
-	FileInfo e(f);
-	ui->fileInfo->append(node.path);
-	ui->fileInfo->append(node.origin_name);
-	ui->fileInfo->append(e.showTag(EXIF_TAG_DATE_TIME));
+	FileInfo e(node.full_origin_name);
+	QStringList l = e.getAllExifTag();
+	for(int i = 0; i < l.size(); i++)
+		ui->fileInfo->append(l[i]);
 }
 
 /*

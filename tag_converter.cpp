@@ -25,6 +25,7 @@
  */
 
 #include "tag_converter.h"
+#include "fileinfo.h"
 #include <cfg/cfg_tweezers.h>
 
 #include <QString>
@@ -38,15 +39,9 @@
 #include <iomanip>
 #include <cassert>
 
-
-QString getExif(QString path, QString item, QString exif_tag)
+static QString getExifdate(ItemNode *node, FileInfo *info, Preference *p)
 {
-	return "";
-}
-
-QString getExifdate(QString path, QString item, Preference *p)
-{
-	QString data_str = getExif(path, item, "Exif.Image.DateTime");
+	QString data_str = "";
 
 	if (data_str.isEmpty())
 		return "";
@@ -68,9 +63,9 @@ QString getExifdate(QString path, QString item, Preference *p)
 	return str;
 }
 
-QString getExiftime(QString path, QString item, Preference *p)
+static QString getExiftime(ItemNode *node, FileInfo *info, Preference *p)
 {
-	QString time_str = getExif(path, item, "Exif.Image.DateTime");
+	QString time_str = "";
 
 	if (time_str.isEmpty())
 		return "";
@@ -92,78 +87,55 @@ QString getExiftime(QString path, QString item, Preference *p)
 	return str;
 }
 
-QString getExt(QString path, QString item, Preference *p)
+static QString getExt(ItemNode *node, FileInfo *info, Preference *p)
 {
-	QString name = path + QDir::separator () + item;
-	QFileInfo fi(name);
-
-	return fi.suffix();
+	return node->suffix;
 }
 
-QString getExtLow(QString path, QString item, Preference *p)
+static QString getExtLow(ItemNode *node, FileInfo *info, Preference *p)
 {
-	QString str = getExt(path, item, p);
-
-	if (str.isEmpty())
-		return "";
-
-	return str.toLower();
+	return node->suffix.toLower();
 }
 
-QString getExtUp(QString path, QString item, Preference *p)
+static QString getExtUp(ItemNode *node, FileInfo *info, Preference *p)
 {
-	QString str = getExt(path, item, p);
-
-	if (str.isEmpty())
-		return "";
-
-	return str.toUpper();
+	return node->suffix.toUpper();
 }
 
 
-QString getName(QString path, QString item, Preference *p)
+static QString getName(ItemNode *node, FileInfo *info, Preference *p)
 {
-	QString name = path + QDir::separator () + item;
-	QFileInfo fi(name);
-
-	return fi.completeBaseName();
+	qDebug() << node->origin_name;
+	return node->origin_name;
 }
 
-QString getNameLow(QString path, QString item, Preference *p)
+static QString getNameLow(ItemNode *node, FileInfo *info, Preference *p)
 {
-	QString str = getName(path, item, p);
-
-	if (str.isEmpty())
-		return "";
-
-	return str.toLower();
+	return node->origin_name.toLower();
 }
 
-QString getNameUp(QString path, QString item, Preference *p)
+static QString getNameUp(ItemNode *node, FileInfo *info, Preference *p)
 {
-	QString str = getName(path, item, p);
-
-	if (str.isEmpty())
-		return "";
-
-	return str.toUpper();
+	return node->origin_name.toUpper();
 }
 
-QString TagConverter::fill_tags(QString path, QString item, QString exp, QList<QString> tag_list)
+
+QString TagConverter::fill_tags(ItemNode *node, QList<QString> tag_list)
 {
+	FileInfo *info = new FileInfo(*node);
 	for (int i = 0; i < tag_list.length(); ++i)
 	{
 		if (callback_table.contains(tag_list[i].toLower()))
 		{
 			// Search the right function to convert tag
-			tag_callback f = callback_table[tag_list[i].toLower()];
+			tag_callback foo = callback_table[tag_list[i].toLower()];
 
 			// Call the right function to convert tag
-			QString  tag_value = f(path, item, preference);
-			exp = exp.replace(tag_list[i], tag_value);
+			QString  tag_value = foo(node, info, preference);
+			node->expression = node->expression.replace(tag_list[i], tag_value);
 		}
 	}
-	return exp;
+	return node->expression;
 }
 
 QList<QString> TagConverter::getTagDesc()
@@ -199,12 +171,6 @@ TagConverter::TagConverter(Preference *pref)
 
 	callback_table["<name_up>"] = getNameUp;
 	descr_table << tr("<NAME_UP>: Ritorna il nome del file senza estensione uppercase");
-}
-
-std::string TagConverter::prova(int a)
-{
-	std::cout << "Prova " << a << std::endl;
-	return "";
 }
 
 TagConverter::~TagConverter()

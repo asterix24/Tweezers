@@ -28,30 +28,32 @@
 #define TAG_CONVERTER_H
 
 #include "preference.h"
+#include "itemnode.h"
+#include "fileinfo.h"
 
 #include <QString>
 #include <QHash>
 #include <QObject>
+
 #include <map>
 
-#include <tr1/functional>
-
-typedef QString (*tag_callback)(QString path, QString item, Preference *p);
+typedef QString (*tag_callback)(ItemNode *node, FileInfo *info, Preference *p);
 
 class TagConverter : public QObject
 {
-public:
-	QString fill_tags(QString path, QString item, QString exp, QList<QString> tag_list);
-	QList<QString> getTagDesc();
-	TagConverter(Preference *pref);
-	~TagConverter();
 private:
 	QHash<QString, tag_callback> callback_table;
-	std::map<std::string, std::tr1::function<std::string (int)> > table;
 	QList<QString> descr_table;
 
-	std::string prova(int a);
 	Preference *preference;
+
+public:
+	QString fill_tags(ItemNode *node, QList<QString> tag_list);
+
+	QList<QString> getTagDesc();
+
+	TagConverter(Preference *pref);
+	~TagConverter();
 };
 
 #endif // TAG_CONVERTER_H
