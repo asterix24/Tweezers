@@ -35,8 +35,8 @@
 class ListView
 {
 private:
+	TagConverter tag;
 	QTableWidget *table;
-	TagConverter *tag_converter;
 	QList<ItemNode> items;
 	QHash<QString, int> glob_list;
 	QList<QString> tag_list;
@@ -58,7 +58,7 @@ public:
 	QTableWidgetItem *getFile(int row);
 	ItemNode getItem(int row);
 
-	ListView(QTableWidget *t,  TagConverter *tag);
+	ListView(QTableWidget *t, Preference *preference);
 	~ListView();
 };
 

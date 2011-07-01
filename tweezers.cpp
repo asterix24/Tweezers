@@ -44,7 +44,6 @@ Tweezers::Tweezers(QWidget *parent) :
 		ui(new Ui::Tweezers)
 {
 	preference_window = new Preference;
-	tag = new TagConverter(preference_window);
 
 	// Read settings
 	resize(preference_window->getSize());
@@ -56,9 +55,10 @@ Tweezers::Tweezers(QWidget *parent) :
 	ui->selectDir->setText(curr_path);
 	ui->globSelect->setText("*.*");
 	ui->expField->setText(preference_window->getLastExp());
-	ui->expList->addItems(tag->getTagDesc());
+#warning Fix me..
+	//ui->expList->addItems(tag->getTagDesc());
 
-	table = new ListView(ui->fileList, tag);
+	table = new ListView(ui->fileList, preference_window);
 	timer = new QTimer(this);
 
 	createActions();
@@ -84,7 +84,6 @@ Tweezers::Tweezers(QWidget *parent) :
 
 Tweezers::~Tweezers()
 {
-	delete tag;
 	delete preference_window;
 	delete ui;
 }

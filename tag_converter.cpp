@@ -34,13 +34,21 @@
 #include <QHash>
 #include <QDebug>
 #include <QDate>
+#include <QObject>
 
 #include <iostream>
 #include <iomanip>
 #include <cassert>
+#include <map>
+
 
 static QString getExifdate(ItemNode *node, FileInfo *info, Preference *p)
 {
+
+	(void)node;
+	(void)info;
+	(void)p;
+
 	QString data_str = "";
 
 	if (data_str.isEmpty())
@@ -65,6 +73,9 @@ static QString getExifdate(ItemNode *node, FileInfo *info, Preference *p)
 
 static QString getExiftime(ItemNode *node, FileInfo *info, Preference *p)
 {
+	(void)node;
+	(void)info;
+	(void)p;
 	QString time_str = "";
 
 	if (time_str.isEmpty())
@@ -89,88 +100,103 @@ static QString getExiftime(ItemNode *node, FileInfo *info, Preference *p)
 
 static QString getExt(ItemNode *node, FileInfo *info, Preference *p)
 {
+	(void)node;
+	(void)info;
+	(void)p;
 	return node->suffix;
 }
 
 static QString getExtLow(ItemNode *node, FileInfo *info, Preference *p)
 {
+
+	(void)node;
+	(void)info;
+	(void)p;
 	return node->suffix.toLower();
 }
 
 static QString getExtUp(ItemNode *node, FileInfo *info, Preference *p)
 {
+
+	(void)node;
+	(void)info;
+	(void)p;
 	return node->suffix.toUpper();
 }
 
 
 static QString getName(ItemNode *node, FileInfo *info, Preference *p)
 {
+
+	(void)node;
+	(void)info;
+	(void)p;
 	qDebug() << node->origin_name;
 	return node->origin_name;
 }
 
 static QString getNameLow(ItemNode *node, FileInfo *info, Preference *p)
 {
+
+	(void)node;
+	(void)info;
+	(void)p;
 	return node->origin_name.toLower();
 }
 
 static QString getNameUp(ItemNode *node, FileInfo *info, Preference *p)
 {
+
+	(void)node;
+	(void)info;
+	(void)p;
 	return node->origin_name.toUpper();
 }
 
 
-QString TagConverter::fill_tags(ItemNode *node, QList<QString> tag_list)
+TagNode tags[] =
 {
-	FileInfo *info = new FileInfo(*node);
-	for (int i = 0; i < tag_list.length(); ++i)
+	{ "<exiftime>", getExiftime, QObject::tr("<EXIFTIME>: Ritorna l'ora di scatto della foto") },
+	{ "<exifdate>", getExifdate, QObject::tr("<EXIFDATE>: Ritorna la data di scatto della foto") },
+	{ "<ext>",      getExt,      QObject::tr("<EXT>: Ritorna l'estensione del file") },
+	{ "<ext_low>",  getExtLow,   QObject::tr("<EXT_LOW>: Ritorna l'estensione del file lowercase") },
+	{ "<ext_up>",   getExtUp,    QObject::tr("<EXT_UP>: Ritorna l'estensione del file uppercase") },
+	{ "<name>",     getName,     QObject::tr("<NAME>: Ritorna il nome del file senza estensione") },
+	{ "<name_low>", getNameLow,  QObject::tr("<NAME_LOW>: Ritorna il nome del file senza estensione lowercase") },
+	{ "<name_up>",  getNameUp,   QObject::tr("<NAME_UP:") },
+	{ "",           NULL,        "" }
+};
+
+tag_callback TagConverter::callback(QString key)
+{
+	if (table.contains(key))
+		return table[key].callback;
+
+	return NULL;
+}
+
+
+ItemNode TagConverter::fill_tags(ItemNode node, QStringList tag_list)
+{
+	FileInfo *info = new FileInfo(node);
+	for (QStringList::iterator l = tag_list.begin(); l != tag_list.end(); ++l)
 	{
-		if (callback_table.contains(tag_list[i].toLower()))
-		{
-			// Search the right function to convert tag
-			tag_callback foo = callback_table[tag_list[i].toLower()];
+		tag_callback call = callback((*l));
+		QString  tag_value = "";
+		if (call)
+			tag_value = call(&node, info, preference);
 
-			// Call the right function to convert tag
-			QString  tag_value = foo(node, info, preference);
-			node->expression = node->expression.replace(tag_list[i], tag_value);
-		}
+		node.expression = node.expression.replace((*l), tag_value);
 	}
-	return node->expression;
+	return node;
 }
 
-QList<QString> TagConverter::getTagDesc()
+TagConverter::TagConverter(Preference *_preference)
 {
-	return descr_table;
-}
+	preference = _preference;
+	for (int i = 0; tags[i].key != ""; i++)
+		table[tags[i].key] = tags[i];
 
-TagConverter::TagConverter(Preference *pref)
-{
-	preference = pref;
-	descr_table << tr("Elenco dei tag..");
-
-	callback_table["<exiftime>"] = getExiftime;
-	descr_table << tr("<EXIFTIME>: Ritorna l'ora di scatto della foto");
-
-	callback_table["<exifdate>"] = getExifdate;
-	descr_table << tr("<EXIFDATE>: Ritorna la data di scatto della foto");
-
-	callback_table["<ext>"] = getExt;
-	descr_table << tr("<EXT>: Ritorna l'estensione del file");
-
-	callback_table["<ext_low>"] = getExtLow;
-	descr_table << tr("<EXT_LOW>: Ritorna l'estensione del file lowercase");
-
-	callback_table["<ext_up>"] = getExtUp;
-	descr_table << tr("<EXT_UP>: Ritorna l'estensione del file uppercase");
-
-	callback_table["<name>"] = getName;
-	descr_table << tr("<NAME>: Ritorna il nome del file senza estensione");
-
-	callback_table["<name_low>"] = getNameLow;
-	descr_table << tr("<NAME_LOW>: Ritorna il nome del file senza estensione lowercase");
-
-	callback_table["<name_up>"] = getNameUp;
-	descr_table << tr("<NAME_UP>: Ritorna il nome del file senza estensione uppercase");
 }
 
 TagConverter::~TagConverter()

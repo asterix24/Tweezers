@@ -33,27 +33,30 @@
 
 #include <QString>
 #include <QHash>
-#include <QObject>
 
-#include <map>
 
 typedef QString (*tag_callback)(ItemNode *node, FileInfo *info, Preference *p);
 
+struct TagNode
+{
+	QString key;
+	tag_callback callback;
+	QString description;
+};
+
 class TagConverter : public QObject
 {
-private:
-	QHash<QString, tag_callback> callback_table;
-	QList<QString> descr_table;
+public:
+	ItemNode fill_tags(ItemNode node, QStringList tag_list);
 
+	TagConverter(Preference *_preference);
+	~TagConverter();
+
+private:
+	QHash<QString, TagNode> table;
 	Preference *preference;
 
-public:
-	QString fill_tags(ItemNode *node, QList<QString> tag_list);
-
-	QList<QString> getTagDesc();
-
-	TagConverter(Preference *pref);
-	~TagConverter();
+	tag_callback callback(QString key);
 };
 
 #endif // TAG_CONVERTER_H

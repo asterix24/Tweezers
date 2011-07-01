@@ -140,7 +140,8 @@ void ListView::preview()
 	for (QList<ItemNode>::iterator it = items.begin(); it != items.end(); it++)
 	{
 		(*it).expression = expression;
-		tag_converter->fill_tags(&(*it), tag_list);
+#warning fix me..
+		(*it) = tag.fill_tags((*it), tag_list);
 	}
 }
 
@@ -161,10 +162,10 @@ void ListView::rename()
 }
 
 
-ListView::ListView(QTableWidget *t, TagConverter *tag)
+ListView::ListView(QTableWidget *t, Preference *preference):
+		tag(preference)
 {
 	table = t;
-	tag_converter = tag;
 	clean();
 };
 

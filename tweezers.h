@@ -101,7 +101,6 @@ private:
 
 	// External class pointers
 	Preference *preference_window;
-	TagConverter *tag;
 	Ui::Tweezers *ui;
 };
 
