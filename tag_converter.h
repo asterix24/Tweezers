@@ -31,6 +31,7 @@
 #include "itemnode.h"
 #include "fileinfo.h"
 
+#include <QStringList>
 #include <QString>
 #include <QHash>
 
@@ -47,13 +48,15 @@ struct TagNode
 class TagConverter : public QObject
 {
 public:
-	ItemNode fill_tags(ItemNode node, QStringList tag_list);
+	void fill_tags(ItemNode *node, QString expression, QStringList tag_list);
+	QStringList getDescriptionList() { return tag_descriptions; }
 
 	TagConverter(Preference *_preference);
 	~TagConverter();
 
 private:
 	QHash<QString, TagNode> table;
+	QStringList tag_descriptions;
 	Preference *preference;
 
 	tag_callback callback(QString key);

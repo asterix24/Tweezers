@@ -137,12 +137,9 @@ void ListView::setExpression(QString exp)
 
 void ListView::preview()
 {
-	for (QList<ItemNode>::iterator it = items.begin(); it != items.end(); it++)
-	{
-		(*it).expression = expression;
-#warning fix me..
-		(*it) = tag.fill_tags((*it), tag_list);
-	}
+	qDebug() << expression;
+	for (int i = 0; i < items.size(); i++)
+		tag->fill_tags(&items[i], expression, tag_list);
 }
 
 void ListView::rename()
@@ -162,10 +159,10 @@ void ListView::rename()
 }
 
 
-ListView::ListView(QTableWidget *t, Preference *preference):
-		tag(preference)
+ListView::ListView(QTableWidget *t, TagConverter *_tag)
 {
 	table = t;
+	tag = _tag;
 	clean();
 };
 

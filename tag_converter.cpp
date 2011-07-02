@@ -131,7 +131,6 @@ static QString getName(ItemNode *node, FileInfo *info, Preference *p)
 	(void)node;
 	(void)info;
 	(void)p;
-	qDebug() << node->origin_name;
 	return node->origin_name;
 }
 
@@ -169,6 +168,7 @@ TagNode tags[] =
 
 tag_callback TagConverter::callback(QString key)
 {
+	key = key.toLower();
 	if (table.contains(key))
 		return table[key].callback;
 
@@ -176,26 +176,34 @@ tag_callback TagConverter::callback(QString key)
 }
 
 
-ItemNode TagConverter::fill_tags(ItemNode node, QStringList tag_list)
+void TagConverter::fill_tags(ItemNode *node, QString expression, QStringList tag_list)
 {
-	FileInfo *info = new FileInfo(node);
-	for (QStringList::iterator l = tag_list.begin(); l != tag_list.end(); ++l)
+	FileInfo *info = new FileInfo(*node);
+	for (QStringList::iterator tag_item = tag_list.begin(); tag_item != tag_list.end(); ++tag_item)
 	{
-		tag_callback call = callback((*l));
+#warning valutate the possibility to remove this field
+		node->expression = expression;
+		tag_callback call = callback((*tag_item));
+
 		QString  tag_value = "";
 		if (call)
-			tag_value = call(&node, info, preference);
+		{
+			tag_value = call(node, info, preference);
+		}
 
-		node.expression = node.expression.replace((*l), tag_value);
+		node->new_name = expression.replace((*tag_item), tag_value);
 	}
-	return node;
 }
+
 
 TagConverter::TagConverter(Preference *_preference)
 {
 	preference = _preference;
 	for (int i = 0; tags[i].key != ""; i++)
+	{
 		table[tags[i].key] = tags[i];
+		tag_descriptions.append(tags[i].description);
+	}
 
 }
 
