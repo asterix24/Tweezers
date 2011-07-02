@@ -173,11 +173,12 @@ FileInfo::FileInfo(QString file_name)
 
 void FileInfo::loadExif(QString file_name)
 {
-// Load an ExifData object from an EXIF file
-exif_data = exif_data_new_from_file(file_name.toStdString().c_str());
+	// Load an ExifData object from an EXIF file
+	exif_data = exif_data_new_from_file(file_name.toStdString().c_str());
 
-if (!exif_data)
-	qDebug() << tr("File not readable or no EXIF data in file ") << file_name;
+/*	if (!exif_data)
+		qDebug() << tr("File not readable or no EXIF data in file ") << file_name;
+		*/
 }
 
 QString FileInfo::showTag(ExifIfd id, ExifTag tag)

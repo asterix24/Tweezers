@@ -44,6 +44,7 @@ Tweezers::Tweezers(QWidget *parent) :
 		ui(new Ui::Tweezers)
 {
 	preference_window = new Preference;
+	tag_converter = new TagConverter(preference_window);
 
 	// Read settings
 	resize(preference_window->getSize());
@@ -55,10 +56,9 @@ Tweezers::Tweezers(QWidget *parent) :
 	ui->selectDir->setText(curr_path);
 	ui->globSelect->setText("*.*");
 	ui->expField->setText(preference_window->getLastExp());
-#warning Fix me..
-	//ui->expList->addItems(tag->getTagDesc());
+	ui->expList->addItems(tag_converter->getDescriptionList());
 
-	table = new ListView(ui->fileList, preference_window);
+	table = new ListView(ui->fileList, tag_converter);
 	timer = new QTimer(this);
 
 	createActions();
@@ -78,13 +78,15 @@ Tweezers::Tweezers(QWidget *parent) :
 
 	// Update the preview only every 500ms
 	timer->start(200);
-	// Init flags
 	expr_changed = false;
 }
 
 Tweezers::~Tweezers()
 {
 	delete preference_window;
+	delete tag_converter;
+	delete table;
+	delete timer;
 	delete ui;
 }
 
@@ -172,11 +174,8 @@ void Tweezers::updateFiles()
 	else
 		glob_list << glob;
 
-
-	qDebug() << glob_list;
 	table->addFiles(curr_path, dir.entryList(glob_list, QDir::Files));
 
-	// Update preview if there is already written the expression into its field.
 	if (!ui->expField->text().isEmpty())
 	{
 		expr_changed = true;
@@ -195,7 +194,13 @@ void Tweezers::exprChanged()
 
 void Tweezers::preview()
 {
-	expr_changed = false;
+	if (expr_changed && !ui->expField->text().isEmpty())
+	{
+		table->setExpression(ui->expField->text());
+		table->preview();
+		table->showFiles();
+		expr_changed = false;
+	}
 }
 
 
