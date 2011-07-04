@@ -38,13 +38,21 @@ class FileInfo : public QObject
 {
 private:
 	ExifData *exif_data;
+	bool error;
+
 	QString showTag(ExifIfd id, ExifTag tag);
+	QString rawTag(ExifIfd id, ExifTag tag);
+
 	void loadExif(QString file_name);
 
 public:
-	void showAll();
 
-	QStringList getAllExifTag();
+	QString dateTimeOriginal() { return rawTag(EXIF_IFD_EXIF, EXIF_TAG_DATE_TIME_ORIGINAL); }
+	QString dateTimeDigitized() { return rawTag(EXIF_IFD_EXIF, EXIF_TAG_DATE_TIME_DIGITIZED); }
+
+	void showAll();
+	QStringList allExifTag();
+
 	FileInfo(QString file_name);
 	FileInfo(ItemNode &node);
 	~FileInfo();

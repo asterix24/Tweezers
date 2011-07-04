@@ -154,47 +154,141 @@ static const ExifTag tag_list[] =
 	EXIF_TAG_PADDING,
 };
 
+struct ExifTable
+{
+	int id;
+	ExifTag tag;
+};
+
+static struct ExifTable exif_table[] =
+{
+   { 0, EXIF_TAG_IMAGE_DESCRIPTION },
+   { 0, EXIF_TAG_MAKE },
+   { 0, EXIF_TAG_MODEL },
+   { 0, EXIF_TAG_ORIENTATION },
+   { 0, EXIF_TAG_X_RESOLUTION },
+   { 0, EXIF_TAG_Y_RESOLUTION },
+   { 0, EXIF_TAG_RESOLUTION_UNIT },
+   { 0, EXIF_TAG_SOFTWARE },
+   { 0, EXIF_TAG_DATE_TIME },
+   { 0, EXIF_TAG_YCBCR_POSITIONING },
+   { 1, EXIF_TAG_X_RESOLUTION },
+   { 1, EXIF_TAG_Y_RESOLUTION },
+   { 1, EXIF_TAG_RESOLUTION_UNIT },
+   { 1, EXIF_TAG_COMPRESSION },
+   { 2, EXIF_TAG_CUSTOM_RENDERED },
+   { 2, EXIF_TAG_EXPOSURE_MODE },
+   { 2, EXIF_TAG_WHITE_BALANCE },
+   { 2, EXIF_TAG_DIGITAL_ZOOM_RATIO },
+   { 2, EXIF_TAG_FOCAL_LENGTH_IN_35MM_FILM },
+   { 2, EXIF_TAG_SCENE_CAPTURE_TYPE },
+   { 2, EXIF_TAG_GAIN_CONTROL },
+   { 2, EXIF_TAG_CONTRAST },
+   { 2, EXIF_TAG_SATURATION },
+   { 2, EXIF_TAG_SHARPNESS },
+   { 2, EXIF_TAG_SUBJECT_DISTANCE_RANGE },
+   { 2, EXIF_TAG_EXPOSURE_TIME },
+   { 2, EXIF_TAG_FNUMBER },
+   { 2, EXIF_TAG_EXPOSURE_PROGRAM },
+   { 2, EXIF_TAG_ISO_SPEED_RATINGS },
+   { 2, EXIF_TAG_EXIF_VERSION },
+   { 2, EXIF_TAG_DATE_TIME_ORIGINAL },
+   { 2, EXIF_TAG_DATE_TIME_DIGITIZED },
+   { 2, EXIF_TAG_COMPONENTS_CONFIGURATION },
+   { 2, EXIF_TAG_COMPRESSED_BITS_PER_PIXEL },
+   { 2, EXIF_TAG_SHUTTER_SPEED_VALUE },
+   { 2, EXIF_TAG_APERTURE_VALUE },
+   { 2, EXIF_TAG_EXPOSURE_BIAS_VALUE },
+   { 2, EXIF_TAG_MAX_APERTURE_VALUE },
+   { 2, EXIF_TAG_METERING_MODE },
+   { 2, EXIF_TAG_LIGHT_SOURCE },
+   { 2, EXIF_TAG_FLASH },
+   { 2, EXIF_TAG_FOCAL_LENGTH },
+   { 2, EXIF_TAG_SUBJECT_AREA },
+   { 2, EXIF_TAG_MAKER_NOTE },
+   { 2, EXIF_TAG_USER_COMMENT },
+   { 2, EXIF_TAG_FLASH_PIX_VERSION },
+   { 2, EXIF_TAG_COLOR_SPACE },
+   { 2, EXIF_TAG_PIXEL_X_DIMENSION },
+   { 2, EXIF_TAG_PIXEL_Y_DIMENSION },
+   { 2, EXIF_TAG_SENSING_METHOD },
+   { 2, EXIF_TAG_FILE_SOURCE },
+   { 2, EXIF_TAG_SCENE_TYPE },
+   { 3, EXIF_TAG_INTEROPERABILITY_INDEX },
+   { 3, EXIF_TAG_INTEROPERABILITY_VERSION },
+   { 4, EXIF_TAG_INTEROPERABILITY_INDEX },
+   { 4, EXIF_TAG_INTEROPERABILITY_VERSION },
+};
+
 
 FileInfo::FileInfo(ItemNode &node)
 {
+	error = false;
 	if (node.full_origin_name.isEmpty())
+	{
+		error = true;
 		qDebug() << tr("Empty file name.");
+	}
 
 	loadExif(node.full_origin_name);
 }
 
 FileInfo::FileInfo(QString file_name)
 {
+	error = false;
 	if (file_name.isEmpty())
+	{
+		error = true;
 		qDebug() << tr("Empty file name.");
+	}
 
-	loadExif(file_name);
+	if (!error)
+		loadExif(file_name);
 }
 
 void FileInfo::loadExif(QString file_name)
 {
-	// Load an ExifData object from an EXIF file
 	exif_data = exif_data_new_from_file(file_name.toStdString().c_str());
-
-/*	if (!exif_data)
+	if (!exif_data)
+	{
+		error = true;
 		qDebug() << tr("File not readable or no EXIF data in file ") << file_name;
-		*/
+	}
 }
 
 QString FileInfo::showTag(ExifIfd id, ExifTag tag)
 {
-	// See if this tag exists
+	if (error)
+		return "";
+
 	ExifEntry *entry = exif_content_get_entry(exif_data->ifd[id], tag);
 	if (entry)
 	{
 		char buf[1024];
-
-		// Get the contents of the tag in human-readable form
 		exif_entry_get_value(entry, buf, sizeof(buf));
-		QString desc(exif_tag_get_name_in_ifd(tag, id));
-
-		return desc + ": " + QString(buf);
+		return QString(exif_tag_get_name_in_ifd(tag, id)) + ": " + QString(buf);
 	}
+
+	return "";
+}
+
+QString FileInfo::rawTag(ExifIfd id, ExifTag tag)
+{
+	if (error)
+	{
+		qDebug() << "Error..";
+		return "";
+	}
+
+	ExifEntry *entry = exif_content_get_entry(exif_data->ifd[id], tag);
+	if (entry)
+	{
+		char buf[1024];
+		return QString(exif_entry_get_value(entry, buf, sizeof(buf)));
+	}
+	else
+		qDebug() << "Empty entry";
+
 	return "";
 }
 
@@ -212,26 +306,30 @@ void FileInfo::showAll()
 	}
 }
 
-QStringList FileInfo::getAllExifTag()
+QStringList FileInfo::allExifTag()
 {
 
 	QStringList l;
+	std::cout << "[\n";
 	for (int j = 0; j < EXIF_IFD_COUNT; j++)
 	{
 		for (size_t i = 0; i < sizeof(tag_list); i++)
 		{
 			QString s(showTag((ExifIfd)j, tag_list[i]));
 			if (!s.isEmpty())
+			{
 				l << s;
+				std::cout << "\"" << j << " " << i << "\",\n";
+
+			}
 		}
 	}
-
+	std::cout << "]\n";
 	return l;
 }
 
 FileInfo::~FileInfo()
 {
-	// Free the EXIF data
 	exif_data_unref(exif_data);
 }
 
