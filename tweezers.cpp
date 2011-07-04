@@ -223,7 +223,7 @@ void Tweezers::fileInfo(int r, int c)
 
 	ItemNode node = table->getItem(r);
 	FileInfo e(node.full_origin_name);
-	QStringList l = e.getAllExifTag();
+	QStringList l = e.allExifTag();
 	for(int i = 0; i < l.size(); i++)
 		ui->fileInfo->append(l[i]);
 }
