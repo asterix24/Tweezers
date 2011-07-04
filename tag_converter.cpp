@@ -35,6 +35,7 @@
 #include <QDebug>
 #include <QDate>
 #include <QObject>
+#include <QFileInfo>
 
 #include <iostream>
 #include <iomanip>
@@ -46,10 +47,8 @@ static QString getExifdate(ItemNode *node, FileInfo *info, Preference *p)
 {
 
 	(void)node;
-	(void)info;
-	(void)p;
 
-	QString data_str = "";
+	QString data_str = info->dateTimeOriginal();
 
 	if (data_str.isEmpty())
 		return "";
@@ -74,9 +73,8 @@ static QString getExifdate(ItemNode *node, FileInfo *info, Preference *p)
 static QString getExiftime(ItemNode *node, FileInfo *info, Preference *p)
 {
 	(void)node;
-	(void)info;
-	(void)p;
-	QString time_str = "";
+
+	QString time_str = info->dateTimeOriginal();
 
 	if (time_str.isEmpty())
 		return "";
@@ -131,7 +129,8 @@ static QString getName(ItemNode *node, FileInfo *info, Preference *p)
 	(void)node;
 	(void)info;
 	(void)p;
-	return node->origin_name;
+	QFileInfo name(node->origin_name);
+	return name.baseName();
 }
 
 static QString getNameLow(ItemNode *node, FileInfo *info, Preference *p)
@@ -140,7 +139,8 @@ static QString getNameLow(ItemNode *node, FileInfo *info, Preference *p)
 	(void)node;
 	(void)info;
 	(void)p;
-	return node->origin_name.toLower();
+	QFileInfo name(node->origin_name);
+	return name.baseName().toLower();
 }
 
 static QString getNameUp(ItemNode *node, FileInfo *info, Preference *p)
@@ -149,7 +149,8 @@ static QString getNameUp(ItemNode *node, FileInfo *info, Preference *p)
 	(void)node;
 	(void)info;
 	(void)p;
-	return node->origin_name.toUpper();
+	QFileInfo name(node->origin_name);
+	return name.baseName().toUpper();
 }
 
 
