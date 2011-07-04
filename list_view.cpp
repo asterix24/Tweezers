@@ -137,7 +137,6 @@ void ListView::setExpression(QString exp)
 
 void ListView::preview()
 {
-	qDebug() << expression;
 	for (int i = 0; i < items.size(); i++)
 		tag->fill_tags(&items[i], expression, tag_list);
 }
