@@ -46,18 +46,20 @@ Tweezers::Tweezers(QWidget *parent) :
 	preference_window = new Preference;
 	tag_converter = new TagConverter(preference_window);
 
-	// Read settings
+	// Settings block
 	resize(preference_window->getSize());
 	move(preference_window->getPos());
-
 	curr_path = preference_window->getPath();
 
+	// Set default widget value
 	ui->setupUi(this);
 	ui->selectDir->setText(curr_path);
 	ui->globSelect->setText("*.*");
 	ui->expField->setText(preference_window->getLastExp());
+	ui->expList->addItem("Elenco dei tag..");
 	ui->expList->addItems(tag_converter->getDescriptionList());
 
+	// Create layout object
 	table = new ListView(ui->fileList, tag_converter);
 	timer = new QTimer(this);
 
@@ -76,7 +78,7 @@ Tweezers::Tweezers(QWidget *parent) :
 	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
 
 
-	// Update the preview only every 500ms
+	// Update the preview lazy
 	timer->start(200);
 	expr_changed = false;
 }
@@ -124,7 +126,7 @@ void Tweezers::closeEvent(QCloseEvent *e)
 	}
 }
 
-void Tweezers::openDir()
+void Tweezers::openDirectory()
 {
 	curr_path = QFileDialog::getExistingDirectory(this, QString(tr("Open Directory")), curr_path, QFileDialog::ShowDirsOnly);
 
@@ -201,6 +203,12 @@ void Tweezers::preview()
 		table->showFiles();
 		expr_changed = false;
 	}
+	else if (expr_changed)
+	{
+		table->setExpression(ui->expField->text());
+		table->preview();
+		table->showFiles();
+	}
 }
 
 
@@ -233,6 +241,7 @@ void Tweezers::fileInfo(int r, int c)
  */
 void Tweezers::selExpCombo(int index)
 {
+	// Skip the decription text
 	if (!index)
 		return;
 
@@ -258,10 +267,7 @@ void Tweezers::preferences()
 
 void Tweezers::about()
 {
-	QMessageBox::about(this, tr("About Application"),
-					   tr("The <b>Application</b> example demonstrates how to "
-						  "write modern GUI applications using Qt, with a menu bar, "
-						  "toolbars, and a status bar."));
+	QMessageBox::about(this, tr("About Application"), tr(""));
 }
 
 void Tweezers::createActions()
@@ -285,7 +291,7 @@ void Tweezers::createActions()
 	openAct = new QAction(tr("&Open..."), this);
 	openAct->setShortcuts(QKeySequence::Open);
 	openAct->setStatusTip(tr("Open an existing file"));
-	connect(openAct, SIGNAL(triggered()), this, SLOT(openDir()));
+	connect(openAct, SIGNAL(triggered()), this, SLOT(openDirectory()));
 
 	exitAct = new QAction(tr("E&xit"), this);
 #ifdef Q_WS_MAC
@@ -297,7 +303,7 @@ void Tweezers::createActions()
 	connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
 	// Manage all directory widget signals
-	connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDir()));
+	connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDirectory()));
 	connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(filterView()));
 	connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
 

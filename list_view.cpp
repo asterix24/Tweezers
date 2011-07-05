@@ -138,7 +138,10 @@ void ListView::setExpression(QString exp)
 void ListView::preview()
 {
 	for (int i = 0; i < items.size(); i++)
+	{
 		tag->fill_tags(&items[i], expression, tag_list);
+		qDebug() << items[i].new_name;
+	}
 }
 
 void ListView::rename()

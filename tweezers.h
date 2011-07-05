@@ -33,6 +33,7 @@
 
 #include <QMainWindow>
 #include <QFile>
+#include <QObject>
 
 namespace Ui {
 	class Tweezers;
@@ -53,7 +54,7 @@ protected:
 private slots:
 	void preview();
 
-	void openDir();
+	void openDirectory();
 	void updateFiles(void);
 	void selectDirectory();
 

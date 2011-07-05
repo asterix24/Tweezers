@@ -192,6 +192,7 @@ void TagConverter::fill_tags(ItemNode *node, QString expression, QStringList tag
 			tag_value = call(node, info, preference);
 		}
 
+		qDebug() << expression.replace((*tag_item), tag_value);
 		node->new_name = expression.replace((*tag_item), tag_value);
 	}
 }

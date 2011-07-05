@@ -252,7 +252,7 @@ void FileInfo::loadExif(QString file_name)
 	if (!exif_data)
 	{
 		error = true;
-		qDebug() << tr("File not readable or no EXIF data in file ") << file_name;
+		//qDebug() << tr("File not readable or no EXIF data in file ") << file_name;
 	}
 }
 
