@@ -162,8 +162,8 @@ TagNode tags[] =
 	{ "<ext_low>",  getExtLow,   QObject::tr("<EXT_LOW>: Ritorna l'estensione del file lowercase") },
 	{ "<ext_up>",   getExtUp,    QObject::tr("<EXT_UP>: Ritorna l'estensione del file uppercase") },
 	{ "<name>",     getName,     QObject::tr("<NAME>: Ritorna il nome del file senza estensione") },
-	{ "<name_low>", getNameLow,  QObject::tr("<NAME_LOW>: Ritorna il nome del file senza estensione lowercase") },
-	{ "<name_up>",  getNameUp,   QObject::tr("<NAME_UP:") },
+	{ "<name_low>", getNameLow,  QObject::tr("<NAME_LOW>: Ritorna il nome del file senza estensione minuscolo") },
+	{ "<name_up>",  getNameUp,   QObject::tr("<NAME_UP>: Ritorna il nome del file senza estensione maiuscolo") },
 	{ "",           NULL,        "" }
 };
 

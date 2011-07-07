@@ -189,7 +189,7 @@ void Tweezers::updateFiles()
 
 }
 
-void Tweezers::exprChanged()
+void Tweezers::expressionFieldChanged()
 {
 	expr_changed = true;
 }
@@ -225,7 +225,7 @@ void Tweezers::undoRename()
 	statusBar()->showMessage(tr("Ready"));
 }
 
-void Tweezers::fileInfo(int r, int c)
+void Tweezers::fileInfoBox(int r, int c)
 {
 	(void)c;
 
@@ -251,7 +251,6 @@ void Tweezers::tagSelectionList(int index)
 	if (!list.isEmpty())
 		ui->expField->insert(list.at(0));
 }
-
 
 /*
  * Insert into the filter line edit the extension select
@@ -314,7 +313,7 @@ void Tweezers::createActions()
 	connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
 
 	// Manage all expression field signals
-	connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(exprChanged()));
+	connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(expressionFieldChanged()));
 	connect(timer, SIGNAL(timeout()), this, SLOT(preview()));
 
 	// Manage the rename action signals
@@ -326,7 +325,7 @@ void Tweezers::createActions()
 
 	// Manage list file to rename
 	connect(ui->fileList, SIGNAL(itemSelectionChanged()), this, SLOT(renameSelection()));
-	connect(ui->fileList, SIGNAL(cellClicked(int,int)), this, SLOT(fileInfo(int, int)));
+	connect(ui->fileList, SIGNAL(cellClicked(int,int)), this, SLOT(fileInfoBox(int, int)));
 	// Manage ext selector
 	connect(ui->expSelect, SIGNAL(activated(int)), this, SLOT(extetionSelectionList(int)));
 }

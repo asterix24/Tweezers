@@ -52,17 +52,20 @@ protected:
 	void loadFiles(void);
 
 private slots:
+	// File system manager
 	void openDirectory();
 	void updateFiles(void);
 	void selectDirectory();
 
+	// Table list view
 	void preview();
 	void filterView();
 
+	// combo box manager
 	void tagSelectionList(int index);
 	void extensionSelectionList(int index);
-	void fileInfo(int r, int c);
 
+	// File manager
 	void rename();
 	void renameSelection();
 	void undoRename();
@@ -70,7 +73,8 @@ private slots:
 	void preferences();
 	void about();
 
-	void exprChanged();
+	void expressionFieldChanged();
+	void fileInfoBox(int r, int c);
 
 private:
 	ListView *table;
