@@ -186,7 +186,6 @@ void Tweezers::updateFiles()
 
 	table->showFiles();
 	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
-
 }
 
 void Tweezers::expressionFieldChanged()
@@ -327,7 +326,7 @@ void Tweezers::createActions()
 	connect(ui->fileList, SIGNAL(itemSelectionChanged()), this, SLOT(renameSelection()));
 	connect(ui->fileList, SIGNAL(cellClicked(int,int)), this, SLOT(fileInfoBox(int, int)));
 	// Manage ext selector
-	connect(ui->expSelect, SIGNAL(activated(int)), this, SLOT(extetionSelectionList(int)));
+	connect(ui->expSelect, SIGNAL(activated(int)), this, SLOT(extensionSelectionList(int)));
 }
 
 void Tweezers::createMenus()
