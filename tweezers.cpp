@@ -56,7 +56,7 @@ Tweezers::Tweezers(QWidget *parent) :
 	ui->selectDir->setText(curr_path);
 	ui->globSelect->setText("*.*");
 	ui->expField->setText(preference_window->getLastExp());
-	ui->expList->addItem("Elenco dei tag..");
+	ui->expList->addItem(tr("Elenco dei tag.."));
 	ui->expList->addItems(tag_converter->getDescriptionList());
 
 	// Create layout object
@@ -72,10 +72,9 @@ Tweezers::Tweezers(QWidget *parent) :
 
 	// Init action
 	loadFiles();
-	table->setExpression(ui->expField->text());
-	table->preview();
+	table->preview(ui->expField->text());
 	table->showFiles();
-	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
+	statusBar()->showMessage(tr("Caricati: ") + QString::number(table->lenght()));
 
 
 	// Update the preview lazy
@@ -145,10 +144,9 @@ void Tweezers::selectDirectory()
 void Tweezers::filterView(void)
 {
 	updateFiles();
-	table->setExpression(ui->expField->text());
-	table->preview();
+	table->preview(ui->expField->text());
 	table->showFiles();
-	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
+	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->lenght()));
 }
 
 void Tweezers::loadFiles(void)
@@ -157,11 +155,11 @@ void Tweezers::loadFiles(void)
 
 	table->addFiles(curr_path, dir.entryList(QDir::Files,QDir::Name));
 	table->showFiles();
-	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
+	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->lenght()));
 
 	ui->expSelect->clear();
 	ui->expSelect->addItem("*.*");
-	ui->expSelect->addItems(table->getGlobs());
+	ui->expSelect->addItems(table->extensionList());
 }
 
 void Tweezers::updateFiles()
@@ -181,11 +179,11 @@ void Tweezers::updateFiles()
 	if (!ui->expField->text().isEmpty())
 	{
 		expr_changed = true;
-		table->preview();
+		table->preview(ui->expField->text());
 	}
 
 	table->showFiles();
-	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->getLoadedItems()));
+	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->lenght()));
 }
 
 void Tweezers::expressionFieldChanged()
@@ -197,15 +195,13 @@ void Tweezers::preview()
 {
 	if (expr_changed && !ui->expField->text().isEmpty())
 	{
-		table->setExpression(ui->expField->text());
-		table->preview();
+		table->preview(ui->expField->text());
 		table->showFiles();
 		expr_changed = false;
 	}
 	else if (expr_changed)
 	{
-		table->setExpression(ui->expField->text());
-		table->preview();
+		table->preview(ui->expField->text());
 		table->showFiles();
 	}
 }
@@ -228,7 +224,7 @@ void Tweezers::fileInfoBox(int r, int c)
 {
 	(void)c;
 
-	ItemNode node = table->getItem(r);
+	ItemNode node = table->item(r);
 	FileInfo e(node.full_origin_name);
 	QStringList l = e.allExifTag();
 	for(int i = 0; i < l.size(); i++)

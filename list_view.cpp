@@ -49,7 +49,7 @@ void ListView::clean()
 
 void ListView::addFiles(QString path, QStringList files)
 {
-	glob_list.clear();
+	extension_list.clear();
 	items.clear();
 
 	for (QStringList::iterator f = files.begin();
@@ -58,20 +58,15 @@ void ListView::addFiles(QString path, QStringList files)
 		QFileInfo fi(*f);
 		QString suff = fi.suffix().toLower();
 		ItemNode *item = new ItemNode(path, *f, "-",suff);
-		glob_list[suff] = 0;
+		extension_list[suff] = 0;
 		items.append(*item);
 	}
-}
-
-QStringList ListView::getGlobs()
-{
-	return glob_list.keys();
 }
 
 void ListView::showFiles()
 {
 	int len = items.length();
-	index = 0;
+	item_counter = 0;
 
 	clean();
 	table->hide();
@@ -90,39 +85,28 @@ void ListView::showFiles()
 		QTableWidgetItem *item1 = new QTableWidgetItem((*it).new_name);
 
 		item0->setData(ITEM_REF, item_ref);
-		table->setItem(index, FILE_COL, item0);
-		table->setItem(index, PREVIEW_COL, item1);
+		table->setItem(item_counter, FILE_COL, item0);
+		table->setItem(item_counter, PREVIEW_COL, item1);
 
-		index++;
+		item_counter++;
 	}
 	table->show();
 	qApp->processEvents();
 }
 
-QTableWidgetItem *ListView::getPreview(int row)
-{
-	return table->item(row, PREVIEW_COL);
-}
-
-QTableWidgetItem *ListView::getFile(int row)
-{
-	return table->item(row, FILE_COL);
-}
-
-ItemNode ListView::getItem(int row)
+ItemNode ListView::item(int row)
 {
 	QTableWidgetItem *item = table->item(row, FILE_COL);
 	QVariant ref = item->data(ITEM_REF);
 	return *ref.value<ItemNode *>();
 }
 
-void ListView::setExpression(QString exp)
+QStringList ListView::extractTagList(QString expression)
 {
 	QRegExp rx(TAG_PATTEN);
 
 	int pos = 0;
-	tag_list.clear();
-	expression = exp;
+	QStringList tag_list;
 
 	while (1)
 	{
@@ -133,10 +117,13 @@ void ListView::setExpression(QString exp)
 		tag_list << rx.cap(1);
 		pos += rx.matchedLength();
 	}
+
+	return tag_list;
 }
 
-void ListView::preview()
+void ListView::preview(QString expression)
 {
+	QStringList tag_list = extractTagList(expression);
 	for (int i = 0; i < items.size(); i++)
 	{
 		tag->fill_tags(&items[i], expression, tag_list);

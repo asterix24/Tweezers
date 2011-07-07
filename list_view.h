@@ -37,26 +37,26 @@ class ListView
 private:
 	TagConverter *tag;
 	QTableWidget *table;
-	QList<ItemNode> items;
-	QHash<QString, int> glob_list;
-	QList<QString> tag_list;
-	QString expression;
-	int index;
 
+	QList<ItemNode> items;
+	QHash<QString, int> extension_list;
+
+	// Statistic
+	int item_counter;
+
+	QStringList extractTagList(QString expression);
 public:
 	void clean();
 
 	void addFiles(QString path, QStringList files);
-	QStringList getGlobs();
-	int getLoadedItems() { return index; }
+	QStringList extensionList() { return extension_list.keys(); }
+	int lenght() { return item_counter; }
 
 	void showFiles();
+	void preview(QString expression);
 	void rename();
-	void setExpression(QString exp);
-	void preview();
-	QTableWidgetItem *getPreview(int row);
-	QTableWidgetItem *getFile(int row);
-	ItemNode getItem(int row);
+
+	ItemNode item(int row);
 
 	ListView(QTableWidget *t, TagConverter *_tag);
 	~ListView();
