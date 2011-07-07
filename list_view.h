@@ -52,8 +52,8 @@ public:
 	QStringList extensionList() { return extension_list.keys(); }
 	int lenght() { return item_counter; }
 
-	void showFiles();
 	void preview(QString expression);
+	void showFiles();
 	void rename();
 
 	ItemNode item(int row);

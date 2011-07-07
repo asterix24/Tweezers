@@ -180,20 +180,20 @@ tag_callback TagConverter::callback(QString key)
 void TagConverter::fill_tags(ItemNode *node, QString expression, QStringList tag_list)
 {
 	FileInfo *info = new FileInfo(*node);
+
+#warning valutate the possibility to remove this field
+	node->expression = expression;
+	node->new_name = expression;
+
 	for (QStringList::iterator tag_item = tag_list.begin(); tag_item != tag_list.end(); ++tag_item)
 	{
-#warning valutate the possibility to remove this field
-		node->expression = expression;
 		tag_callback call = callback((*tag_item));
-
 		QString  tag_value = "";
 		if (call)
 		{
 			tag_value = call(node, info, preference);
+			node->new_name = node->new_name.replace((*tag_item), tag_value);
 		}
-
-		qDebug() << expression.replace((*tag_item), tag_value);
-		node->new_name = expression.replace((*tag_item), tag_value);
 	}
 }
 
