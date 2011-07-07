@@ -52,16 +52,15 @@ protected:
 	void loadFiles(void);
 
 private slots:
-	void preview();
-
 	void openDirectory();
 	void updateFiles(void);
 	void selectDirectory();
 
+	void preview();
 	void filterView();
 
-	void selExpCombo(int index);
-	void selExtCombo(int index);
+	void tagSelectionList(int index);
+	void extensionSelectionList(int index);
 	void fileInfo(int r, int c);
 
 	void rename();

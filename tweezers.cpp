@@ -237,9 +237,10 @@ void Tweezers::fileInfo(int r, int c)
 }
 
 /*
- * Fill expr edit line with tags select from combo tag list.
+ * Add to the expressiont line edit the tag select
+ * from the expList combobox
  */
-void Tweezers::selExpCombo(int index)
+void Tweezers::tagSelectionList(int index)
 {
 	// Skip the decription text
 	if (!index)
@@ -251,7 +252,12 @@ void Tweezers::selExpCombo(int index)
 		ui->expField->insert(list.at(0));
 }
 
-void Tweezers::selExtCombo(int index)
+
+/*
+ * Insert into the filter line edit the extension select
+ * from combo list.
+ */
+void Tweezers::extensionSelectionList(int index)
 {
 	if (ui->expSelect->itemText(index) != "*.*")
 		ui->globSelect->setText("*." + ui->expSelect->itemText(index));
@@ -316,13 +322,13 @@ void Tweezers::createActions()
 	connect(ui->undoRename, SIGNAL(clicked()), this, SLOT(undoRename()));
 
 	// Manage tag list signals
-	connect(ui->expList, SIGNAL(activated(int)), this, SLOT(selExpCombo(int)));
+	connect(ui->expList, SIGNAL(activated(int)), this, SLOT(tagSelectionList(int)));
 
 	// Manage list file to rename
 	connect(ui->fileList, SIGNAL(itemSelectionChanged()), this, SLOT(renameSelection()));
 	connect(ui->fileList, SIGNAL(cellClicked(int,int)), this, SLOT(fileInfo(int, int)));
 	// Manage ext selector
-	connect(ui->expSelect, SIGNAL(activated(int)), this, SLOT(selExtCombo(int)));
+	connect(ui->expSelect, SIGNAL(activated(int)), this, SLOT(extetionSelectionList(int)));
 }
 
 void Tweezers::createMenus()
