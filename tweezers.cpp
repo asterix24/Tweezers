@@ -193,17 +193,15 @@ void Tweezers::expressionFieldChanged()
 
 void Tweezers::preview()
 {
-	if (expr_changed && !ui->expField->text().isEmpty())
-	{
+	if (!ui->expField->text().isEmpty())
 		table->preview(ui->expField->text());
+	else
+		table->preview("-");
+
+	if (expr_changed)
 		table->showFiles();
-		expr_changed = false;
-	}
-	else if (expr_changed)
-	{
-		table->preview(ui->expField->text());
-		table->showFiles();
-	}
+
+	expr_changed = false;
 }
 
 
