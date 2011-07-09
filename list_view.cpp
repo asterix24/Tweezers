@@ -30,6 +30,7 @@
 #include <cfg/cfg_tweezers.h>
 
 #include <QFileInfo>
+#include <QFile>
 #include <QDebug>
 
 #define FILE_COL       0
@@ -57,9 +58,8 @@ void ListView::addFiles(QString path, QStringList files)
 	{
 		QFileInfo fi(*f);
 		QString suff = fi.suffix().toLower();
-		ItemNode *item = new ItemNode(path, *f, "-",suff);
 		extension_list[suff] = 0;
-		items.append(*item);
+		items.append(ItemNode(path, *f, "-",suff));
 	}
 }
 
@@ -74,11 +74,8 @@ void ListView::showFiles()
 	table->setSortingEnabled(false);
 	table->setRowCount(len);
 
-	ItemNode *p;
-	for (QList<ItemNode>::iterator it = items.begin();
-	it != items.end(); it++)
+	for (QList<ItemNode>::iterator it = items.begin(); it != items.end(); it++)
 	{
-		p = &(*it);
 		QVariant item_ref;
 		item_ref.setValue<ItemNode *>(&(*it));
 		QTableWidgetItem *item0 = new QTableWidgetItem((*it).origin_name);
@@ -103,10 +100,14 @@ ItemNode ListView::item(int row)
 
 QStringList ListView::extractTagList(QString expression)
 {
-	QRegExp rx(TAG_PATTEN);
 
-	int pos = 0;
 	QStringList tag_list;
+	int pos = 0;
+
+	if (expression.isEmpty())
+		return tag_list;
+
+	QRegExp rx(TAG_PATTEN);
 
 	while (1)
 	{
@@ -126,7 +127,10 @@ void ListView::preview(QString expression)
 	QStringList tag_list = extractTagList(expression);
 	for (int i = 0; i < items.size(); i++)
 	{
-		tag->fill_tags(&items[i], expression, tag_list);
+		if (tag_list.isEmpty())
+			items[i].new_name = expression;
+		else
+			tag->fill_tags(&items[i], expression, tag_list);
 	}
 }
 
@@ -136,15 +140,37 @@ void ListView::rename()
 	{
 		(*f).renamed = false;
 
-		QFile origin_filename((*f).path + QDir::separator() + (*f).origin_name);
-		if (origin_filename.rename((*f).path + QDir::separator() + (*f).new_name))
-			(*f).renamed = true;
-	}
+		QFile origin_filename((*f).full_origin_name);
 
-	//    table->item(count, FILE_COL)->setIcon(QIcon("./images/ok.png"));
-	//    table->item(count, FILE_COL)->setText(table->item(count, PREVIEW_COL)->text());
-	//    table->item(count, PREVIEW_COL)->setText("");
+		if (origin_filename.rename((*f).path + QDir::separator() + (*f).new_name))
+		{
+			(*f).renamed = true;
+			(*f).prev_name = (*f).origin_name;
+			(*f).origin_name = (*f).new_name;
+			(*f).new_name = "";
+		}
+	}
 }
+
+void ListView::undoRename()
+{
+	for (QList<ItemNode>::iterator f = items.begin(); f != items.end(); f++)
+	{
+		if ((*f).renamed)
+		{
+			QFile renamed_filename((*f).path + QDir::separator() + (*f).origin_name);
+			QString uno = (*f).path + QDir::separator() + (*f).origin_name;
+
+			if (renamed_filename.rename((*f).path + QDir::separator() + (*f).prev_name))
+			{
+				(*f).renamed = false;
+				(*f).prev_name = (*f).origin_name;
+			}
+		}
+	}
+}
+
+
 
 
 ListView::ListView(QTableWidget *t, TagConverter *_tag)

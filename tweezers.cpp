@@ -193,13 +193,15 @@ void Tweezers::expressionFieldChanged()
 
 void Tweezers::preview()
 {
-	if (!ui->expField->text().isEmpty())
-		table->preview(ui->expField->text());
-	else
-		table->preview("-");
-
 	if (expr_changed)
+	{
+		if (!ui->expField->text().isEmpty())
+			table->preview(ui->expField->text());
+		else
+			table->preview("-");
+
 		table->showFiles();
+	}
 
 	expr_changed = false;
 }
@@ -207,6 +209,8 @@ void Tweezers::preview()
 
 void Tweezers::rename()
 {
+	table->rename();
+	table->showFiles();
 }
 
 void Tweezers::renameSelection()
@@ -216,6 +220,8 @@ void Tweezers::renameSelection()
 void Tweezers::undoRename()
 {
 	statusBar()->showMessage(tr("Ready"));
+	table->undoRename();
+	updateFiles();
 }
 
 void Tweezers::fileInfoBox(int r, int c)
