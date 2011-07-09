@@ -225,10 +225,7 @@ FileInfo::FileInfo(ItemNode &node)
 {
 	error = false;
 	if (node.full_origin_name.isEmpty())
-	{
 		error = true;
-		qDebug() << tr("Empty file name.");
-	}
 
 	loadExif(node.full_origin_name);
 }
@@ -237,10 +234,7 @@ FileInfo::FileInfo(QString file_name)
 {
 	error = false;
 	if (file_name.isEmpty())
-	{
 		error = true;
-		qDebug() << tr("Empty file name.");
-	}
 
 	if (!error)
 		loadExif(file_name);
@@ -250,10 +244,7 @@ void FileInfo::loadExif(QString file_name)
 {
 	exif_data = exif_data_new_from_file(file_name.toStdString().c_str());
 	if (!exif_data)
-	{
 		error = true;
-		//qDebug() << tr("File not readable or no EXIF data in file ") << file_name;
-	}
 }
 
 QString FileInfo::showTag(ExifIfd id, ExifTag tag)
@@ -275,10 +266,7 @@ QString FileInfo::showTag(ExifIfd id, ExifTag tag)
 QString FileInfo::rawTag(ExifIfd id, ExifTag tag)
 {
 	if (error)
-	{
-		qDebug() << "Error..";
 		return "";
-	}
 
 	ExifEntry *entry = exif_content_get_entry(exif_data->ifd[id], tag);
 	if (entry)
@@ -286,8 +274,6 @@ QString FileInfo::rawTag(ExifIfd id, ExifTag tag)
 		char buf[1024];
 		return QString(exif_entry_get_value(entry, buf, sizeof(buf)));
 	}
-	else
-		qDebug() << "Empty entry";
 
 	return "";
 }
