@@ -11,6 +11,7 @@ struct ItemNode
 	QString path;
 	QString origin_name;
 	QString new_name;
+	QString prev_name;
 	QString expression;
 	QString suffix;
 	QString full_origin_name;
@@ -18,7 +19,10 @@ struct ItemNode
 
 	ItemNode(QString _path, QString _origin_name, QString _new_name, QString _suffix):
 			path(_path), origin_name(_origin_name), new_name(_new_name), suffix(_suffix)
-	{ full_origin_name = path + QDir::separator() + origin_name; }
+	{
+		full_origin_name = path + QDir::separator() + origin_name;
+		prev_name = "";
+	}
 };
 
 Q_DECLARE_METATYPE(ItemNode *);
