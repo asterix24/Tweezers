@@ -55,7 +55,6 @@ public:
 	void preview(QString expression);
 	void showFiles();
 	void rename();
-	void undoRename();
 
 	ItemNode item(int row);
 

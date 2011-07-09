@@ -275,7 +275,10 @@ QString FileInfo::showTag(ExifIfd id, ExifTag tag)
 QString FileInfo::rawTag(ExifIfd id, ExifTag tag)
 {
 	if (error)
+	{
+		qDebug() << "Error..";
 		return "";
+	}
 
 	ExifEntry *entry = exif_content_get_entry(exif_data->ifd[id], tag);
 	if (entry)
@@ -283,6 +286,8 @@ QString FileInfo::rawTag(ExifIfd id, ExifTag tag)
 		char buf[1024];
 		return QString(exif_entry_get_value(entry, buf, sizeof(buf)));
 	}
+	else
+		qDebug() << "Empty entry";
 
 	return "";
 }
