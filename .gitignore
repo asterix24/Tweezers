@@ -1,0 +1,10 @@
+.gitignore
+Makefile
+build/
+dist/
+moc_preference.cpp
+moc_tweezers.cpp
+qrc_tweezers_res.cpp
+tweezers.pro.user
+ui_preference.h
+ui_tweezers.h
