@@ -61,7 +61,6 @@ Tweezers::Tweezers(QWidget *parent) :
 
 	// Create layout object
 	table = new ListView(ui->fileList, tag_converter);
-	timer = new QTimer(this);
 
 	createActions();
 	createMenus();
@@ -75,11 +74,6 @@ Tweezers::Tweezers(QWidget *parent) :
 	table->preview(ui->expField->text());
 	table->showFiles();
 	statusBar()->showMessage(tr("Caricati: ") + QString::number(table->lenght()));
-
-
-	// Update the preview lazy
-	timer->start(200);
-	expr_changed = false;
 }
 
 Tweezers::~Tweezers()
@@ -87,7 +81,6 @@ Tweezers::~Tweezers()
 	delete preference_window;
 	delete tag_converter;
 	delete table;
-	delete timer;
 	delete ui;
 }
 
@@ -178,17 +171,11 @@ void Tweezers::updateFiles()
 
 	if (!ui->expField->text().isEmpty())
 	{
-		expr_changed = true;
 		table->preview(ui->expField->text());
 	}
 
 	table->showFiles();
 	statusBar()->showMessage(tr("Loaded: ") + QString::number(table->lenght()));
-}
-
-void Tweezers::expressionFieldChanged()
-{
-	expr_changed = true;
 }
 
 void Tweezers::preview()
@@ -198,10 +185,7 @@ void Tweezers::preview()
 	else
 		table->preview("-");
 
-	if (expr_changed)
-		table->showFiles();
-
-	expr_changed = false;
+        table->showFiles();
 }
 
 
@@ -306,8 +290,7 @@ void Tweezers::createActions()
 	connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
 
 	// Manage all expression field signals
-	connect(ui->expField, SIGNAL(textChanged(const QString)), this, SLOT(expressionFieldChanged()));
-	connect(timer, SIGNAL(timeout()), this, SLOT(preview()));
+        connect(ui->previewUpdate, SIGNAL(clicked()), this, SLOT(preview()));
 
 	// Manage the rename action signals
 	connect(ui->doRename, SIGNAL(clicked()), this, SLOT(rename()));

@@ -27,10 +27,10 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="4">
+      <item row="6" column="4" colspan="2">
        <widget class="QComboBox" name="expList"/>
       </item>
-      <item row="4" column="2" colspan="3">
+      <item row="4" column="2" colspan="4">
        <widget class="QTableWidget" name="fileList">
         <property name="editTriggers">
          <set>QAbstractItemView::SelectedClicked</set>
@@ -74,7 +74,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2" colspan="3">
+      <item row="0" column="2" colspan="4">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -135,6 +135,13 @@
          </layout>
         </item>
        </layout>
+      </item>
+      <item row="5" column="5">
+       <widget class="QPushButton" name="previewUpdate">
+        <property name="text">
+         <string>Anteprima</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

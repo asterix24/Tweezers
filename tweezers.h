@@ -73,7 +73,6 @@ private slots:
 	void preferences();
 	void about();
 
-	void expressionFieldChanged();
 	void fileInfoBox(int r, int c);
 
 private:
@@ -92,10 +91,6 @@ private:
 
 	QToolBar *fileToolBar;
 	QToolBar *editToolBar;
-
-	QTimer *timer;
-
-	bool expr_changed;
 
 	// Init the application menu and actions
 	void createActions();
