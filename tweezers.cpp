@@ -104,11 +104,14 @@ void Tweezers::closeEvent(QCloseEvent *e)
 							   QMessageBox::Ok | QMessageBox::Cancel);
 
 	if (ret == QMessageBox::Ok)
-	{
+        {
+            if (preference_window->saveOnExit())
+            {
 		preference_window->setSize(size());
 		preference_window->setPos(pos());
 		preference_window->setPath(curr_path);
 		preference_window->setLastExp(ui->expField->text());
+            }
 
 		e->accept();
 	}

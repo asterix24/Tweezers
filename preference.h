@@ -52,6 +52,8 @@ public:
 	QString getTimeFmt();
 	QString getDateFmt();
 
+        bool saveOnExit() { return save_on_exit; }
+
 	Preference(QWidget *parent = 0);
 	~Preference();
 
@@ -63,6 +65,7 @@ private slots:
 	void cancel(void);
 	void preview(QTableWidgetItem *item);
 	void upDatePreview(QString str);
+        void updateState(void);
 
 private:
 	// Path settings
@@ -72,6 +75,9 @@ private:
 	// Windows settings
 	QPoint pos;
 	QSize size;
+
+        //Other settings
+        bool save_on_exit;
 
 	//Default format
 	int curr_fmt;
