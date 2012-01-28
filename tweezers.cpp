@@ -215,10 +215,14 @@ void Tweezers::fileInfoBox(int r, int c)
     ui->hideFileInfo->show();
 
     ItemNode node = table->item(r);
+    ui->fileInfo->append("File Name: " + node.origin_name);
+
     FileInfo e(node.full_origin_name);
     QStringList l = e.allExifTag();
     for(int i = 0; i < l.size(); i++)
             ui->fileInfo->append(l[i]);
+
+    ui->fileInfo->moveCursor(QTextCursor::Start);
 }
 
 void Tweezers::hideFileInfoBox()
