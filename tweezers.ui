@@ -146,7 +146,14 @@
      </layout>
     </item>
     <item row="1" column="3">
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="infoLayout">
+      <item>
+       <widget class="QPushButton" name="hideFileInfo">
+        <property name="text">
+         <string>Nascondi</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QTextEdit" name="fileInfo">
         <property name="readOnly">

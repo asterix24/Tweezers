@@ -74,6 +74,8 @@ private slots:
 	void about();
 
 	void fileInfoBox(int r, int c);
+        void hideFileInfoBox(void);
+        void showFileInfoBox(void);
 
 private:
 	ListView *table;
