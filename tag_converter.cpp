@@ -181,7 +181,7 @@ void TagConverter::fill_tags(ItemNode *node, QString expression, QStringList tag
 {
 	FileInfo *info = new FileInfo(*node);
 
-#warning valutate the possibility to remove this field
+#warning evalute the possibility to remove this field
 	node->expression = expression;
 	node->new_name = expression;
 

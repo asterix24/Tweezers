@@ -42,7 +42,9 @@ private:
 	QHash<QString, int> extension_list;
 
 	// Statistic
-	int item_counter;
+        int item_counter;
+        int item_renamed;
+        int item_not_renamed;
 
 	QStringList extractTagList(QString expression);
 public:
@@ -51,6 +53,8 @@ public:
 	void addFiles(QString path, QStringList files);
 	QStringList extensionList() { return extension_list.keys(); }
 	int lenght() { return item_counter; }
+        int renanmed() { return item_renamed; }
+        int notRenanmed() { return item_not_renamed; }
 
 	void preview(QString expression);
 	void showFiles();

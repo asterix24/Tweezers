@@ -137,10 +137,11 @@ void ListView::preview(QString expression)
 
 void ListView::rename()
 {
+    item_renamed = 0;
+    item_not_renamed = 0;
 	for (QList<ItemNode>::iterator f = items.begin(); f != items.end(); f++)
 	{
 		(*f).renamed = false;
-
 		QFile origin_filename((*f).full_origin_name);
 
 		if (origin_filename.rename((*f).path + QDir::separator() + (*f).new_name))
@@ -149,12 +150,20 @@ void ListView::rename()
 			(*f).prev_name = (*f).origin_name;
 			(*f).origin_name = (*f).new_name;
 			(*f).new_name = "";
+                    item_renamed++;
 		}
+                else
+                {
+                    item_not_renamed++;
+                }
 	}
 }
 
 void ListView::undoRename()
 {
+
+    item_renamed = 0;
+    item_not_renamed = 0;
 	for (QList<ItemNode>::iterator f = items.begin(); f != items.end(); f++)
 	{
 		if ((*f).renamed)
@@ -166,7 +175,12 @@ void ListView::undoRename()
 			{
 				(*f).renamed = false;
 				(*f).prev_name = (*f).origin_name;
+                                item_renamed++;
 			}
+                        else
+                        {
+                                item_not_renamed++;
+                        }
 		}
 	}
 }

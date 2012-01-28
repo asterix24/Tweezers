@@ -195,6 +195,10 @@ void Tweezers::preview()
 
 void Tweezers::rename()
 {
+    table->rename();
+    statusBar()->showMessage(tr("Totale: ") + QString::number(table->lenght()) +
+                             tr(" Rinominati: ") + QString::number(table->renanmed()) +
+                             tr(" Non rinominati: ") + QString::number(table->notRenanmed()));
 }
 
 void Tweezers::renameSelection()
@@ -203,7 +207,10 @@ void Tweezers::renameSelection()
 
 void Tweezers::undoRename()
 {
-    statusBar()->showMessage(tr("Ready"));
+    table->undoRename();
+    statusBar()->showMessage(tr("Totale: ") + QString::number(table->lenght()) +
+                             tr(" Ripristinati: ") + QString::number(table->renanmed()) +
+                             tr(" Non ripristinati: ") + QString::number(table->notRenanmed()));
 }
 
 void Tweezers::fileInfoBox(int r, int c)
