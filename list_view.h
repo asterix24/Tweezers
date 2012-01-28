@@ -35,36 +35,36 @@
 class ListView
 {
 private:
-	TagConverter *tag;
-	QTableWidget *table;
+    TagConverter *tag;
+    QTableWidget *table;
 
-	QList<ItemNode> items;
-	QHash<QString, int> extension_list;
+    QList<ItemNode> items;
+    QHash<QString, int> extension_list;
 
-	// Statistic
-        int item_counter;
-        int item_renamed;
-        int item_not_renamed;
+    // Statistic
+    int item_counter;
+    int item_renamed;
+    int item_not_renamed;
 
-	QStringList extractTagList(QString expression);
+    QStringList extractTagList(QString expression);
 public:
-	void clean();
+    void clean();
 
-	void addFiles(QString path, QStringList files);
-	QStringList extensionList() { return extension_list.keys(); }
-	int lenght() { return item_counter; }
-        int renanmed() { return item_renamed; }
-        int notRenanmed() { return item_not_renamed; }
+    void addFiles(QString path, QStringList files);
+    QStringList extensionList() { return extension_list.keys(); }
+    int lenght() { return item_counter; }
+    int renanmed() { return item_renamed; }
+    int notRenanmed() { return item_not_renamed; }
 
-	void preview(QString expression);
-	void showFiles();
-	void rename();
-	void undoRename();
+    void preview(QString expression);
+    void showFiles();
+    void rename();
+    void undoRename();
 
-	ItemNode item(int row);
+    ItemNode item(int row);
 
-	ListView(QTableWidget *t, TagConverter *_tag);
-	~ListView();
+    ListView(QTableWidget *t, TagConverter *_tag);
+    ~ListView();
 };
 
 #endif // LIST_VIEW_H

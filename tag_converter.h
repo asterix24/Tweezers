@@ -40,26 +40,26 @@ typedef QString (*tag_callback)(ItemNode *node, FileInfo *info, Preference *p);
 
 struct TagNode
 {
-	QString key;
-	tag_callback callback;
-	QString description;
+    QString key;
+    tag_callback callback;
+    QString description;
 };
 
 class TagConverter : public QObject
 {
 public:
-	void fill_tags(ItemNode *node, QString expression, QStringList tag_list);
-	QStringList getDescriptionList() { return tag_descriptions; }
+    void fill_tags(ItemNode *node, QString expression, QStringList tag_list);
+    QStringList getDescriptionList() { return tag_descriptions; }
 
-	TagConverter(Preference *_preference);
-	~TagConverter();
+    TagConverter(Preference *_preference);
+    ~TagConverter();
 
 private:
-	QHash<QString, TagNode> table;
-	QStringList tag_descriptions;
-	Preference *preference;
+    QHash<QString, TagNode> table;
+    QStringList tag_descriptions;
+    Preference *preference;
 
-	tag_callback callback(QString key);
+    tag_callback callback(QString key);
 };
 
 #endif // TAG_CONVERTER_H
