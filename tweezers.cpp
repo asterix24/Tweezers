@@ -179,7 +179,7 @@ void Tweezers::updateFiles()
     }
 
     table->showFiles();
-    statusBar()->showMessage(tr("Loaded: ") + QString::number(table->lenght()));
+    statusBar()->showMessage(tr("Caricati: ") + QString::number(table->lenght()));
 }
 
 void Tweezers::preview()
@@ -199,6 +199,8 @@ void Tweezers::rename()
     statusBar()->showMessage(tr("Totale: ") + QString::number(table->lenght()) +
                              tr(" Rinominati: ") + QString::number(table->renanmed()) +
                              tr(" Non rinominati: ") + QString::number(table->notRenanmed()));
+
+    preview();
 }
 
 void Tweezers::renameSelection()
@@ -211,6 +213,8 @@ void Tweezers::undoRename()
     statusBar()->showMessage(tr("Totale: ") + QString::number(table->lenght()) +
                              tr(" Ripristinati: ") + QString::number(table->renanmed()) +
                              tr(" Non ripristinati: ") + QString::number(table->notRenanmed()));
+
+    updateFiles();
 }
 
 void Tweezers::fileInfoBox(int r, int c)

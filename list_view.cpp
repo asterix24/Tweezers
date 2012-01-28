@@ -175,6 +175,9 @@ void ListView::undoRename()
             {
                 (*f).renamed = false;
                 (*f).prev_name = (*f).origin_name;
+                (*f).origin_name = (*f).new_name;
+                (*f).new_name = "";
+
                 item_renamed++;
             }
             else
