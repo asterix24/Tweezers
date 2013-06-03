@@ -36,6 +36,8 @@
 #include <QDate>
 #include <QObject>
 #include <QFileInfo>
+#include <QCryptographicHash>
+#include <QByteArray>
 
 #include <iostream>
 #include <iomanip>
@@ -152,6 +154,12 @@ static QString getNameUp(ItemNode *node, FileInfo *info, Preference *p)
     return name.baseName().toUpper();
 }
 
+static QString getHasFromName(ItemNode *node, FileInfo *info, Preference *p)
+{
+    QString s = node->origin_name;
+    const char *str = s.toStdString().c_str();
+    return QString(QCryptographicHash::hash(QByteArray (str),QCryptographicHash::Md5).toHex());
+}
 
 TagNode tags[] =
 {
@@ -163,6 +171,7 @@ TagNode tags[] =
     { "<name>",     getName,     QObject::tr("<NAME>: Ritorna il nome del file senza estensione") },
     { "<name_low>", getNameLow,  QObject::tr("<NAME_LOW>: Ritorna il nome del file senza estensione minuscolo") },
     { "<name_up>",  getNameUp,   QObject::tr("<NAME_UP>: Ritorna il nome del file senza estensione maiuscolo") },
+    { "<hash_from_name>",  getHasFromName,   QObject::tr("<HASH_FROM_NAME>: Ritorna l\'hash del nome del file") },
     { "",           NULL,        "" }
 };
 
