@@ -15,7 +15,14 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
+    <item row="9" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QListWidget" name="directoryList"/>
+      </item>
+     </layout>
+    </item>
+    <item row="9" column="5">
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="5" column="4">
        <widget class="QLineEdit" name="expField"/>
@@ -71,6 +78,13 @@
        <widget class="QPushButton" name="doRename">
         <property name="text">
          <string>Rinomina</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="5">
+       <widget class="QPushButton" name="previewUpdate">
+        <property name="text">
+         <string>Anteprima</string>
         </property>
        </widget>
       </item>
@@ -136,16 +150,9 @@
         </item>
        </layout>
       </item>
-      <item row="5" column="5">
-       <widget class="QPushButton" name="previewUpdate">
-        <property name="text">
-         <string>Anteprima</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </item>
-    <item row="1" column="3">
+    <item row="9" column="8">
      <layout class="QVBoxLayout" name="infoLayout">
       <item>
        <widget class="QPushButton" name="hideFileInfo">
@@ -162,6 +169,9 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item row="0" column="4" colspan="3">
+     <widget class="QLineEdit" name="absPath"/>
     </item>
    </layout>
   </widget>

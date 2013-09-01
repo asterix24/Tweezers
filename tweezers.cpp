@@ -71,6 +71,7 @@ Tweezers::Tweezers(QWidget *parent) :
     setUnifiedTitleAndToolBarOnMac(true);
 
     // Init action
+    directoryList();
     loadFiles();
     table->preview(ui->expField->text());
     table->showFiles();
@@ -126,16 +127,40 @@ void Tweezers::openDirectory()
 {
     curr_path = QFileDialog::getExistingDirectory(this, QString(tr("Open Directory")), curr_path, QFileDialog::ShowDirsOnly);
 
-    if (! curr_path.isEmpty())
-            ui->selectDir->setText(curr_path);
+    if (!curr_path.isEmpty())
+        ui->selectDir->setText(curr_path);
 }
 
 void Tweezers::selectDirectory()
 {
     curr_path = ui->selectDir->text();
+    directoryList();
 
     if (!curr_path.isEmpty())
-            updateFiles();
+        updateFiles();
+}
+
+void Tweezers::directoryListSelect(QListWidgetItem *item)
+{
+    if (!item)
+        return;
+
+    qDebug() << item->text();
+    QString s = ui->absPath->text() + QDir::separator() + item->text();
+    ui->selectDir->setText(s);
+    selectDirectory();
+}
+
+void Tweezers::directoryList(void)
+{
+    if (curr_path.isEmpty())
+        return;
+
+    QDir d = QDir(curr_path);
+    d.setFilter(QDir::AllDirs);
+    QStringList l = d.entryList();
+    ui->directoryList->addItems(l);
+    ui->absPath->setText(curr_path);
 }
 
 void Tweezers::filterView(void)
@@ -322,6 +347,7 @@ void Tweezers::createActions()
     connect(ui->selDirButton, SIGNAL(clicked()), this, SLOT(openDirectory()));
     connect(ui->globSelect, SIGNAL(textChanged(const QString)), this, SLOT(filterView()));
     connect(ui->selectDir, SIGNAL(textChanged(const QString)), this, SLOT(selectDirectory()));
+    connect(ui->directoryList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(directoryListSelect(QListWidgetItem*)));
 
     // Manage all expression field signals
     connect(ui->previewUpdate, SIGNAL(clicked()), this, SLOT(preview()));

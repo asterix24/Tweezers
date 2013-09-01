@@ -36,74 +36,76 @@
 #include <QObject>
 
 namespace Ui {
-	class Tweezers;
+    class Tweezers;
 }
 
 
 class Tweezers : public QMainWindow {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	Tweezers(QWidget *parent = 0);
-	~Tweezers();
+    Tweezers(QWidget *parent = 0);
+    ~Tweezers();
 
 protected:
-	void changeEvent(QEvent *e);
-	void closeEvent(QCloseEvent *e);
-	void loadFiles(void);
+    void changeEvent(QEvent *e);
+    void closeEvent(QCloseEvent *e);
+    void loadFiles(void);
 
 private slots:
-	// File system manager
-	void openDirectory();
-	void updateFiles(void);
-	void selectDirectory();
+    // File system manager
+    void openDirectory();
+    void updateFiles(void);
+    void selectDirectory();
 
-	// Table list view
-	void preview();
-	void filterView();
+    // Table list view
+    void preview();
+    void filterView();
 
-	// combo box manager
-	void tagSelectionList(int index);
-	void extensionSelectionList(int index);
+    // Combo box manager
+    void tagSelectionList(int index);
+    void extensionSelectionList(int index);
 
-	// File manager
-	void rename();
-	void renameSelection();
-	void undoRename();
+    // File manager
+    void rename();
+    void renameSelection();
+    void undoRename();
+    void directoryList();
+    void directoryListSelect(QListWidgetItem *item);
 
-	void preferences();
-	void about();
+    void preferences();
+    void about();
 
-	void fileInfoBox(int r, int c);
-        void hideFileInfoBox(void);
-        void showFileInfoBox(void);
+    void fileInfoBox(int r, int c);
+    void hideFileInfoBox(void);
+    void showFileInfoBox(void);
 
 private:
-	ListView *table;
-	QString curr_path;
+    ListView *table;
+    QString curr_path;
 
-	// Application Actions
-	QAction *preferenceAct;
-	QAction *aboutAct;
-	QAction *openAct;
-	QAction *exitAct;
+    // Application Actions
+    QAction *preferenceAct;
+    QAction *aboutAct;
+    QAction *openAct;
+    QAction *exitAct;
 
-	QMenu *fileMenu;
-	QMenu *editMenu;
-	QMenu *helpMenu;
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *helpMenu;
 
-	QToolBar *fileToolBar;
-	QToolBar *editToolBar;
+    QToolBar *fileToolBar;
+    QToolBar *editToolBar;
 
-	// Init the application menu and actions
-	void createActions();
-	void createMenus();
-	void createToolBars();
-	void createStatusBar();
+    // Init the application menu and actions
+    void createActions();
+    void createMenus();
+    void createToolBars();
+    void createStatusBar();
 
-	// External class pointers
-	Preference *preference_window;
-	TagConverter *tag_converter;
-	Ui::Tweezers *ui;
+    // External class pointers
+    Preference *preference_window;
+    TagConverter *tag_converter;
+    Ui::Tweezers *ui;
 };
 
 #endif // TWEEZERS_H
