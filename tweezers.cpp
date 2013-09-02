@@ -91,10 +91,10 @@ void Tweezers::changeEvent(QEvent *e)
     QMainWindow::changeEvent(e);
     switch (e->type())
     {
-    case QEvent::LanguageChange:
+        case QEvent::LanguageChange:
             ui->retranslateUi(this);
             break;
-    default:
+        default:
             break;
     }
 }
@@ -145,9 +145,22 @@ void Tweezers::directoryListSelect(QListWidgetItem *item)
     if (!item)
         return;
 
-    qDebug() << item->text();
-    QString s = ui->absPath->text() + QDir::separator() + item->text();
-    ui->selectDir->setText(s);
+    QString s = item->text();
+
+    if (s == ".")
+        return;
+
+    if (item->text() == "..")
+    {
+        int i = curr_path.lastIndexOf(QDir::separator());
+        curr_path = curr_path.remove(i, curr_path.length());
+    }
+    else
+    {
+        curr_path = curr_path + QDir::separator() + item->text();
+    }
+
+    ui->selectDir->setText(curr_path);
     selectDirectory();
 }
 
@@ -159,8 +172,8 @@ void Tweezers::directoryList(void)
     QDir d = QDir(curr_path);
     d.setFilter(QDir::AllDirs);
     QStringList l = d.entryList();
+    ui->directoryList->clear();
     ui->directoryList->addItems(l);
-    ui->absPath->setText(curr_path);
 }
 
 void Tweezers::filterView(void)
@@ -220,6 +233,8 @@ void Tweezers::preview()
 
 void Tweezers::rename()
 {
+
+    preview();
     table->rename();
     statusBar()->showMessage(tr("Totale: ") + QString::number(table->lenght()) +
                              tr(" Rinominati: ") + QString::number(table->renanmed()) +

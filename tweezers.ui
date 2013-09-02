@@ -6,120 +6,40 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>760</width>
-    <height>479</height>
+    <width>912</width>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Tweezers</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="9" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QListWidget" name="directoryList"/>
-      </item>
-     </layout>
-    </item>
-    <item row="9" column="5">
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="5" column="4">
-       <widget class="QLineEdit" name="expField"/>
-      </item>
-      <item row="6" column="2" colspan="2">
-       <widget class="QPushButton" name="undoRename">
-        <property name="text">
-         <string>Undo</string>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0,0,0,0,0">
+    <item row="2" column="2">
+     <layout class="QGridLayout" name="main_2" columnstretch="0,0,0,0">
+      <item row="3" column="0" rowspan="2">
+       <widget class="QListWidget" name="directoryList">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
        </widget>
       </item>
-      <item row="6" column="4" colspan="2">
-       <widget class="QComboBox" name="expList"/>
-      </item>
-      <item row="4" column="2" colspan="4">
-       <widget class="QTableWidget" name="fileList">
-        <property name="editTriggers">
-         <set>QAbstractItemView::SelectedClicked</set>
+      <item row="3" column="1" rowspan="2" colspan="2">
+       <layout class="QVBoxLayout" name="Main">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetFixedSize</enum>
         </property>
-        <property name="alternatingRowColors">
-         <bool>true</bool>
-        </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::MultiSelection</enum>
-        </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectRows</enum>
-        </property>
-        <property name="showGrid">
-         <bool>false</bool>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-        <attribute name="horizontalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="horizontalHeaderHighlightSections">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderHighlightSections">
-         <bool>false</bool>
-        </attribute>
-        <attribute name="verticalHeaderStretchLastSection">
-         <bool>false</bool>
-        </attribute>
-       </widget>
-      </item>
-      <item row="5" column="2" colspan="2">
-       <widget class="QPushButton" name="doRename">
-        <property name="text">
-         <string>Rinomina</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="5">
-       <widget class="QPushButton" name="previewUpdate">
-        <property name="text">
-         <string>Anteprima</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2" colspan="4">
-       <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Directory</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="selectDir"/>
-          </item>
-          <item>
-           <widget class="QToolButton" name="selDirButton">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Filter</string>
-            </property>
-           </widget>
-          </item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QLineEdit" name="globSelect">
             <property name="minimumSize">
@@ -133,45 +53,115 @@
           <item>
            <widget class="QComboBox" name="expSelect"/>
           </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="fileList">
+          <property name="editTriggers">
+           <set>QAbstractItemView::SelectedClicked</set>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="showGrid">
+           <bool>false</bool>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="expField"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+           <widget class="QPushButton" name="doRename">
+            <property name="text">
+             <string>Rinomina</string>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="undoRename">
+            <property name="text">
+             <string>Undo</string>
             </property>
-           </spacer>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="previewUpdate">
+            <property name="text">
+             <string>Anteprima</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="expList"/>
           </item>
          </layout>
         </item>
        </layout>
       </item>
-     </layout>
-    </item>
-    <item row="9" column="8">
-     <layout class="QVBoxLayout" name="infoLayout">
-      <item>
-       <widget class="QPushButton" name="hideFileInfo">
-        <property name="text">
-         <string>Nascondi</string>
-        </property>
-       </widget>
+      <item row="2" column="0" colspan="4">
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <item>
+         <widget class="QLineEdit" name="selectDir"/>
+        </item>
+        <item>
+         <widget class="QToolButton" name="selDirButton">
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item>
-       <widget class="QTextEdit" name="fileInfo">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
+      <item row="3" column="3">
+       <layout class="QVBoxLayout" name="infoLayout">
+        <item>
+         <widget class="QPushButton" name="hideFileInfo">
+          <property name="text">
+           <string>Nascondi</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="fileInfo">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
-    </item>
-    <item row="0" column="4" colspan="3">
-     <widget class="QLineEdit" name="absPath"/>
     </item>
    </layout>
   </widget>
